@@ -10,18 +10,21 @@ import java.util.List;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-
+@SpringBootTest
 class StudentDaoTest {
+
   private JdbcTemplate jdbcTemplate;
   private StudentDao dao;
   
   @BeforeEach
   public void setup() {
     DataSource dataSource = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
+        .addScript("classpath:jdbc/groups.sql")
         .addScript("classpath:jdbc/students.sql")
         .build();
     

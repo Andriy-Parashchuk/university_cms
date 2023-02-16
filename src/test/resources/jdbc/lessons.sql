@@ -4,19 +4,19 @@ DROP TABLE IF EXISTS public.lessons CASCADE;
 
 CREATE TABLE IF NOT EXISTS public.lessons
 (
-    lesson_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
     name character varying  NOT NULL,
     teacher_id integer NOT NULL,
     group_id integer NOT NULL,
     "time" timestamp with time zone NOT NULL,
     audience integer NOT NULL,
-    CONSTRAINT lessons_pkey PRIMARY KEY (lesson_id),
+    CONSTRAINT lessons_pkey PRIMARY KEY (id),
     CONSTRAINT lessons_group FOREIGN KEY (group_id)
-        REFERENCES public.groups (group_id) 
+        REFERENCES public.groups (id) 
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
     CONSTRAINT lessons_teacher FOREIGN KEY (teacher_id)
-        REFERENCES public.teachers (teacher_id) 
+        REFERENCES public.teachers (id) 
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 );

@@ -2,6 +2,7 @@ package com.foxminded.parashchuk.university.models;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -9,6 +10,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @EqualsAndHashCode (callSuper = true)
+@NoArgsConstructor
 public class Teacher extends User {
   private int id;
   private String firstName;

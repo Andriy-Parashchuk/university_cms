@@ -4,12 +4,12 @@ DROP TABLE IF EXISTS public.teachers CASCADE;
 
 CREATE TABLE IF NOT EXISTS public.teachers
 (
-    teacher_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
     first_name character varying NOT NULL,
     last_name character varying NOT NULL,
     audience integer,
     department character varying, 
-    CONSTRAINT teachers_pkey PRIMARY KEY (teacher_id)
+    CONSTRAINT teachers_pkey PRIMARY KEY (id)
 );
 
  

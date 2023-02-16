@@ -6,34 +6,29 @@ import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 /**Class with call to lessons table in DB. */
-@Component
+@Repository
 public class LessonDao {
   private static final Logger log = LoggerFactory.getLogger(LessonDao.class);
+  @Autowired
   private JdbcTemplate jdbcTemplate;
   
   public LessonDao(JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
   }
   
-  RowMapper<Lesson> rowMapper = (resultSet, rowNum) -> {
-    return new Lesson(
-        resultSet.getInt("lesson_id"), 
-        resultSet.getString("name"),
-        resultSet.getInt("teacher_id"),
-        resultSet.getInt("group_id"),
-        resultSet.getTimestamp("time").toLocalDateTime(),
-        resultSet.getInt("audience"));
-  };
+  RowMapper<Lesson> rowMapper = BeanPropertyRowMapper.newInstance(Lesson.class);
   
   /**Get all lessons from table in DB.*/
   public List<Lesson> getAllLessons() {
-    String sql = "select lesson_id, name, teacher_id, group_id, \"time\", audience "
+    String sql = "select id, name, teacher_id, group_id, \"time\", audience "
         + "from lessons order by \"time\"";
     return jdbcTemplate.query(sql, rowMapper);
   }
@@ -57,13 +52,13 @@ public class LessonDao {
   
   /**Get one lesson from table in DB by id.*/
   public Optional<Lesson> getLessonById(int id) {
-    String sql = "select lesson_id, name, teacher_id, group_id, \"time\", audience "
-        + "from lessons where lesson_id = ?";
+    String sql = "select id, name, teacher_id, group_id, \"time\", audience "
+        + "from lessons where id = ?";
     Lesson lesson = null;
     try {
       lesson = jdbcTemplate.queryForObject(sql, new Object[]{id}, rowMapper);
     } catch (DataAccessException exception) {
-      log.info(String.format("Lesson with id %d not found.", id));
+      log.error(String.format("Lesson with id %d not found.", id));
     }
     return Optional.ofNullable(lesson);
   }
@@ -72,7 +67,7 @@ public class LessonDao {
    * Return 1 if overwriting was successful*/
   public int updateLessonById(Lesson lesson, int id) {
     String sql = "update lessons set name = ?, teacher_id = ?, group_id = ?, \"time\" = ?, "
-        + "audience = ? where lesson_id = ?"; 
+        + "audience = ? where id = ?"; 
     return jdbcTemplate.update(
         sql, 
         lesson.getName(), 
@@ -86,7 +81,7 @@ public class LessonDao {
   /**Delete lesson by id from table in DB.
    * Return 1 if deleting was successful*/
   public int deleteLessonById(int id) {
-    return jdbcTemplate.update("delete from lessons where lesson_id = ?", id);
+    return jdbcTemplate.update("delete from lessons where id = ?", id);
   }
   
   

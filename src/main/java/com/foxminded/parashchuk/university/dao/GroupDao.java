@@ -5,29 +5,33 @@ import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
 
 /**Class with call to groups table in DB. */
-@Component
+@Repository
 public class GroupDao {
   
   private static final Logger log = LoggerFactory.getLogger(GroupDao.class);
+  
+  @Autowired
   private JdbcTemplate jdbcTemplate;
   
+  @Autowired
   public GroupDao(JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
   }
   
-  RowMapper<Group> rowMapper = (resultSet, rowNum) -> {
-    return new Group(resultSet.getInt("group_id"), resultSet.getString("name"));
-  };
+  RowMapper<Group> rowMapper = BeanPropertyRowMapper.newInstance(Group.class);
   
   /**Get all groups from table in DB.*/
   public List<Group> getAllGroups() {
-    String sql = "select group_id, name from groups order by group_id";
+    String sql = "select id, name from groups order by id";
     return jdbcTemplate.query(sql, rowMapper);
   }
   
@@ -43,12 +47,12 @@ public class GroupDao {
   
   /**Get one group from table in DB by id.*/
   public Optional<Group> getGroupById(int id) {
-    String sql = "select group_id, name from groups where group_id = ?";
+    String sql = "select id, name from groups where id = ?";
     Group group = null;
     try {
       group = jdbcTemplate.queryForObject(sql, new Object[]{id}, rowMapper);
     } catch (DataAccessException exception) {
-      log.info(String.format("Group with id %d not found.", id));
+      log.error(String.format("Group with id %d not found.", id));
     }
     return Optional.ofNullable(group);
   }
@@ -56,14 +60,14 @@ public class GroupDao {
   /**Update group by existing id in table and group object for overwriting.
    * Return 1 if overwriting was successful*/
   public int updateGroupById(Group group, int id) {
-    String sql = "update groups set name = ? where group_id = ?"; 
+    String sql = "update groups set name = ? where id = ?"; 
     return jdbcTemplate.update(sql, group.getName(), id);
   }
   
   /**Delete group by id from table in DB.
    * Return 1 if deleting was successful*/
   public int deleteGroupById(int id) {
-    return jdbcTemplate.update("delete from groups where group_id = ?", id);
+    return jdbcTemplate.update("delete from groups where id = ?", id);
   }
 
 }

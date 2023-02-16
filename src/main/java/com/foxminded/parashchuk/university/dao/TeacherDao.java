@@ -5,37 +5,30 @@ import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 /**Class with call to teachers table in DB. */
-@Component
+@Repository
 public class TeacherDao {
   private static final Logger log = LoggerFactory.getLogger(TeacherDao.class);
+  @Autowired
   private JdbcTemplate jdbcTemplate;
   
   public TeacherDao(JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
   }
   
-  RowMapper<Teacher> rowMapper = (resultSet, rowNum) -> {
-    Teacher teacher = new Teacher(
-        resultSet.getInt("teacher_id"), 
-        resultSet.getString("first_name"),
-        resultSet.getString("last_name"));
-    
-    teacher.setAudience(resultSet.getInt("audience"));
-    teacher.setDepartment(resultSet.getString("department"));
-    
-    return teacher;
-  };
+  RowMapper<Teacher> rowMapper = BeanPropertyRowMapper.newInstance(Teacher.class);
   
   /**Get all teachers from table in DB.*/
   public List<Teacher> getAllTeachers() {
-    String sql = "select teacher_id, first_name, last_name, audience, department "
-        + "from teachers order by teacher_id";
+    String sql = "select id, first_name, last_name, audience, department "
+        + "from teachers order by id";
     return jdbcTemplate.query(sql, rowMapper);
   }
   
@@ -57,13 +50,13 @@ public class TeacherDao {
   
   /**Get one teacher from table in DB by id.*/
   public Optional<Teacher> getTeacherById(int id) {
-    String sql = "select teacher_id, first_name, last_name, audience, department "
-        + "from teachers where teacher_id = ?";
+    String sql = "select id, first_name, last_name, audience, department "
+        + "from teachers where id = ?";
     Teacher teacher = null;
     try {
       teacher = jdbcTemplate.queryForObject(sql, new Object[]{id}, rowMapper);
     } catch (DataAccessException exception) {
-      log.info(String.format("Teacher with id %d not found.", id));
+      log.error(String.format("Teacher with id %d not found.", id));
     }
     return Optional.ofNullable(teacher);
   }
@@ -72,7 +65,7 @@ public class TeacherDao {
    * Return 1 if overwriting was successful*/
   public int updateTeacherById(Teacher teacher, int id) {
     String sql = "update teachers set first_name = ?, last_name = ?, audience = ?, department = ?"
-        + "where teacher_id = ?";
+        + "where id = ?";
     return jdbcTemplate.update(
         sql, 
         teacher.getFirstName(), 
@@ -85,6 +78,6 @@ public class TeacherDao {
   /**Delete teacher by id from table in DB.
    * Return 1 if deleting was successful*/
   public int deleteTeacherById(int id) {
-    return jdbcTemplate.update("delete from teachers where teacher_id = ?", id);
+    return jdbcTemplate.update("delete from teachers where id = ?", id);
   }
 }
