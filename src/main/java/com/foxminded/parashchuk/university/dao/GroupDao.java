@@ -19,14 +19,13 @@ public class GroupDao {
   
   private static final Logger log = LoggerFactory.getLogger(GroupDao.class);
   
-  @Autowired
   private JdbcTemplate jdbcTemplate;
   
   @Autowired
   public GroupDao(JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
   }
-  
+
   RowMapper<Group> rowMapper = BeanPropertyRowMapper.newInstance(Group.class);
   
   /**Get all groups from table in DB.*/

@@ -4,32 +4,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.foxminded.parashchuk.university.config.TestConfig;
 import com.foxminded.parashchuk.university.models.Teacher;
 import java.util.Arrays;
 import java.util.List;
-import javax.sql.DataSource;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
+
 
 @SpringBootTest
+@ContextConfiguration(classes = {TestConfig.class})
+@Sql(value = {"classpath:jdbc/teachers.sql"}, 
+    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class TeacherDaoTest {
   
-  private JdbcTemplate jdbcTemplate;
+  @Autowired
   private TeacherDao dao;
-  
-  @BeforeEach
-  public void setup() {
-    DataSource dataSource = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
-        .addScript("classpath:jdbc/teachers.sql")
-        .build();
-    
-    jdbcTemplate = new JdbcTemplate(dataSource);
-    dao = new TeacherDao(jdbcTemplate); 
-  }
   
   @Test 
   void getAllTeachers_ReturnListWithTeachers_whenDbIsNotEmpty() {

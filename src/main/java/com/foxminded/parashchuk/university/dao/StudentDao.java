@@ -16,9 +16,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class StudentDao {
   private static final Logger log = LoggerFactory.getLogger(StudentDao.class);
-  @Autowired
+  
   private JdbcTemplate jdbcTemplate;
   
+  @Autowired
   public StudentDao(JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
   }

@@ -4,33 +4,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.foxminded.parashchuk.university.config.TestConfig;
 import com.foxminded.parashchuk.university.models.Student;
 import java.util.Arrays;
 import java.util.List;
-import javax.sql.DataSource;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
+@ContextConfiguration(classes = {TestConfig.class})
+@Sql(value = {"classpath:jdbc/groups.sql", "classpath:jdbc/students.sql"}, 
+    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class StudentDaoTest {
-
-  private JdbcTemplate jdbcTemplate;
-  private StudentDao dao;
   
-  @BeforeEach
-  public void setup() {
-    DataSource dataSource = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
-        .addScript("classpath:jdbc/groups.sql")
-        .addScript("classpath:jdbc/students.sql")
-        .build();
-    
-    jdbcTemplate = new JdbcTemplate(dataSource);
-    dao = new StudentDao(jdbcTemplate); 
-  }
+  @Autowired
+  private StudentDao dao;
   
   @Test 
   void getAllStdeunts_ReturnListWithStudents_whenDbIsNotEmpty() {
