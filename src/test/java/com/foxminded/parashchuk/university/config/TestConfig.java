@@ -46,8 +46,4 @@ public class TestConfig {
     return new LessonDao(jdbcTemplate());
   }
 
-  @Bean
-  GroupRequest groupRequest() {
-    return new GroupRequest(groupDao());
-  }
 }
