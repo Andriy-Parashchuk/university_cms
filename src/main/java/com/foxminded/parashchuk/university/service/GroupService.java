@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 
 /**Class contains requests for GroupDao class.*/
 @Service
-public class GroupRequest {
+public class GroupService {
 
   private GroupDao dao;
 
   @Autowired
-  public GroupRequest(GroupDao dao) {
+  public GroupService(GroupDao dao) {
     this.dao = dao;
   }
 

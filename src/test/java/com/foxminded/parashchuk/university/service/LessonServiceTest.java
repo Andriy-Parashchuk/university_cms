@@ -19,9 +19,9 @@ import java.util.Optional;
 
 
 @ExtendWith(MockitoExtension.class)
-class LessonRequestTest {
+class LessonServiceTest {
   @InjectMocks
-  private LessonRequest lessonRequest;
+  private LessonService lessonService;
 
   @Mock
   LessonDao dao;
@@ -35,7 +35,7 @@ class LessonRequestTest {
             new Lesson(1, "Bio", 1, 2, time1, 22),
             new Lesson(2, "Geo", 2, 2, time2, 22));
     when(dao.getAllLessons()).thenReturn(expected);
-    assertEquals(expected, lessonRequest.getAllLessons());
+    assertEquals(expected, lessonService.getAllLessons());
     verify(dao, times(1)).getAllLessons();
   }
 
@@ -43,7 +43,7 @@ class LessonRequestTest {
   void createGroup_shouldReturnResultOfInsert_whenGetGroup(){
     Lesson lesson = new Lesson(1, "Bio", 1, 2, time1, 22);
     when(dao.createLesson(lesson)).thenReturn(1);
-    assertEquals(1, lessonRequest.createLesson(lesson));
+    assertEquals(1, lessonService.createLesson(lesson));
     verify(dao, times(1)).createLesson(any(Lesson.class));
   }
 
@@ -51,7 +51,7 @@ class LessonRequestTest {
   void getGroupById_shouldReturnGroup_whenGetExistingId() {
     Lesson lesson = new Lesson(1, "Bio", 1, 2, time1, 22);
     when(dao.getLessonById(1)).thenReturn(Optional.of(lesson));
-    assertEquals(lesson, lessonRequest.getLessonById(1));
+    assertEquals(lesson, lessonService.getLessonById(1));
     verify(dao, times(1)).getLessonById(anyInt());
   }
 
@@ -59,14 +59,14 @@ class LessonRequestTest {
   void updateGroupById_shouldReturnResultOfUpdate_whenGetGroupAndExistingId() {
     Lesson lesson = new Lesson(1, "Bio", 1, 2, time1, 22);
     when(dao.updateLessonById(lesson, 1)).thenReturn(1);
-    assertEquals(1, lessonRequest.updateLessonById(lesson, 1));
+    assertEquals(1, lessonService.updateLessonById(lesson, 1));
     verify(dao, times(1)).updateLessonById(any(Lesson.class), anyInt());
   }
 
   @Test
   void deleteGroupById_shouldReturnResultOfDelete_whenGetId() {
     when(dao.deleteLessonById(1)).thenReturn(1);
-    assertEquals(1, lessonRequest.deleteLessonById(1));
+    assertEquals(1, lessonService.deleteLessonById(1));
     verify(dao, times(1)).deleteLessonById(anyInt());
   }
 }

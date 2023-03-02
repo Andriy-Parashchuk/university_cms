@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 /**Class contains requests for LessonDao class.*/
 
 @Service
-public class LessonRequest {
+public class LessonService {
   @Autowired
   private LessonDao dao;
 

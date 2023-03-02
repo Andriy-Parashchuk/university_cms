@@ -2,7 +2,6 @@ package com.foxminded.parashchuk.university.config;
 
 import javax.sql.DataSource;
 
-import com.foxminded.parashchuk.university.service.GroupRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -44,10 +43,5 @@ public class TestConfig {
   @Bean
   LessonDao lessonDao() {
     return new LessonDao(jdbcTemplate());
-  }
-
-  @Bean
-  GroupRequest groupRequest() {
-    return new GroupRequest(groupDao());
   }
 }

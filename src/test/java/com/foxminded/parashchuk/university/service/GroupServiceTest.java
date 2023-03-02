@@ -16,9 +16,9 @@ import java.util.Optional;
 
 
 @ExtendWith(MockitoExtension.class)
-class GroupRequestTest {
+class GroupServiceTest {
   @InjectMocks
-  private GroupRequest groupRequest;
+  private GroupService groupService;
 
   @Mock
   GroupDao dao;
@@ -29,7 +29,7 @@ class GroupRequestTest {
             new Group(1, "first"),
             new Group(2, "second"));
     when(dao.getAllGroups()).thenReturn(expected);
-    assertEquals(expected, groupRequest.getAllGroups());
+    assertEquals(expected, groupService.getAllGroups());
     verify(dao, times(1)).getAllGroups();
   }
 
@@ -37,7 +37,7 @@ class GroupRequestTest {
   void createGroup_shouldReturnResultOfInsert_whenGetGroup() {
     Group group = new Group(1, "first");
     when(dao.createGroup(group)).thenReturn(1);
-    assertEquals(1, groupRequest.createGroup(group));
+    assertEquals(1, groupService.createGroup(group));
     verify(dao, times(1)).createGroup(any(Group.class));
   }
 
@@ -45,7 +45,7 @@ class GroupRequestTest {
   void getGroupById_shouldReturnGroup_whenGetExistingId() {
     Group group = new Group(1, "first");
     when(dao.getGroupById(1)).thenReturn(Optional.of(group));
-    assertEquals(group, groupRequest.getGroupById(1));
+    assertEquals(group, groupService.getGroupById(1));
     verify(dao, times(1)).getGroupById(anyInt());
   }
 
@@ -53,14 +53,14 @@ class GroupRequestTest {
   void updateGroupById_shouldReturnResultOfUpdate_whenGetGroupAndExistingId() {
     Group group = new Group(1, "first");
     when(dao.updateGroupById(group, 1)).thenReturn(1);
-    assertEquals(1, groupRequest.updateGroupById(group, 1));
+    assertEquals(1, groupService.updateGroupById(group, 1));
     verify(dao, times(1)).updateGroupById(any(Group.class), anyInt());
   }
 
   @Test
   void deleteGroupById_shouldReturnResultOfDelete_whenGetId() {
     when(dao.deleteGroupById(1)).thenReturn(1);
-    assertEquals(1, groupRequest.deleteGroupById(1));
+    assertEquals(1, groupService.deleteGroupById(1));
     verify(dao, times(1)).deleteGroupById(anyInt());
   }
 }

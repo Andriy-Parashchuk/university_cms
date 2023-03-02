@@ -11,15 +11,13 @@ import com.foxminded.parashchuk.university.models.Teacher;
 
 /**In this class all lessons from DB filtered by teacher or group and time (week or month).*/
 @Service
-public class ScheduleRequest {
+public class ScheduleService {
   @Autowired
-  private LessonRequest lessonRequest;
-
-  private List<Lesson> lessons;
+  private LessonService lessonService;
 
   /**Check all Lessons for teacher for one day.*/
   public List<Lesson> getLessonsTeacherDay(Teacher teacher, LocalDate date) {
-    lessons = lessonRequest.getAllLessons();
+    List<Lesson> lessons = lessonService.getAllLessons();
     List<Lesson> result = new ArrayList<>();
     for (Lesson l : lessons) {
       if (l.getTeacherId() == teacher.getId() && l.getTime().toLocalDate().equals(date)) {
@@ -31,7 +29,7 @@ public class ScheduleRequest {
 
   /**Check all Lessons for teacher by the end of the month.*/
   public List<Lesson> getLessonsTeacherMonth(Teacher teacher, LocalDate date) {
-    lessons = lessonRequest.getAllLessons();
+    List<Lesson> lessons = lessonService.getAllLessons();
     List<Lesson> result = new ArrayList<>();
     for (Lesson l : lessons) {
       if (l.getTeacherId() == teacher.getId()
@@ -45,7 +43,7 @@ public class ScheduleRequest {
 
   /**Check all Lessons for student for one day.*/
   public List<Lesson> getLessonsStudentDay(Student student, LocalDate date) {
-    lessons = lessonRequest.getAllLessons();
+    List<Lesson> lessons = lessonService.getAllLessons();
     List<Lesson> result = new ArrayList<>();
     for (Lesson l : lessons) {
       if (l.getGroupId() == student.getGroupId() && l.getTime().toLocalDate().equals(date)) {
@@ -57,7 +55,7 @@ public class ScheduleRequest {
 
   /**Check all Lessons for student by the end of the month.*/
   public List<Lesson> getLessonsStudentMonth(Student student, LocalDate date) {
-    lessons = lessonRequest.getAllLessons();
+    List<Lesson> lessons = lessonService.getAllLessons();
     List<Lesson> result = new ArrayList<>();
     for (Lesson l : lessons) {
       if (l.getGroupId() == student.getGroupId()

@@ -19,7 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ScheduleRequestTest {
+class ScheduleServiceTest {
   Teacher teacher1 = new Teacher(1, "Mark", "Robinson");
   Teacher teacher2 = new Teacher(2, "Elizabeth", "Miller"); 
   
@@ -41,14 +41,14 @@ class ScheduleRequestTest {
       new Lesson(5, "Chemistry", teacher1.getId(), group2.getId(), time2, 22));
 
   @InjectMocks
-  ScheduleRequest schedule;
+  ScheduleService schedule;
 
   @Mock
-  LessonRequest lessonRequest;
+  LessonService lessonService;
   
   @Test
   void getLessonsTeacherDay_shouldReturnListWithLessons_whenTeacherSearchLessonsAtDay() {
-    when(lessonRequest.getAllLessons()).thenReturn(lessons);
+    when(lessonService.getAllLessons()).thenReturn(lessons);
     List<Lesson> expected = Arrays.asList(
             new Lesson(1, "Bio", teacher1.getId(), group1.getId(), time1, 22));
     assertEquals(expected, schedule.getLessonsTeacherDay(teacher1, LocalDate.of(2023, 2, 12)));
@@ -56,7 +56,7 @@ class ScheduleRequestTest {
   
   @Test
   void getLessonsTeacherMonth_shouldReturnListWithLessons_whenTeacherSearchLessonsAtMonth() {
-    when(lessonRequest.getAllLessons()).thenReturn(lessons);
+    when(lessonService.getAllLessons()).thenReturn(lessons);
 
     List<Lesson> expected = Arrays.asList(
             new Lesson(1,"Bio", teacher1.getId(), group1.getId(), time1, 22),
@@ -66,7 +66,7 @@ class ScheduleRequestTest {
 
   @Test
   void getLessonsStudentDay_shouldReturnListWithLessons_whenStudentSearchLessonsAtDay() {
-    when(lessonRequest.getAllLessons()).thenReturn(lessons);
+    when(lessonService.getAllLessons()).thenReturn(lessons);
     List<Lesson> expected = Arrays.asList(
         new Lesson(2, "Geo", teacher2.getId(), group2.getId(), time2, 22),
         new Lesson(5, "Chemistry", teacher1.getId(), group2.getId(), time2, 22));
@@ -75,7 +75,7 @@ class ScheduleRequestTest {
 
   @Test
   void getLessonsStudentMonth_shouldReturnListWithLessons_whenStudentSearchLessonsAtMonth() {
-    when(lessonRequest.getAllLessons()).thenReturn(lessons);
+    when(lessonService.getAllLessons()).thenReturn(lessons);
     List<Lesson> expected = Arrays.asList(
         new Lesson(1, "Bio", teacher1.getId(), group1.getId(), time1, 22),
         new Lesson(3, "Physics", teacher1.getId(), group1.getId(), time3, 22),
