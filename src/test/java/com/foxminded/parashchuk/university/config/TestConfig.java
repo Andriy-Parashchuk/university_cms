@@ -44,4 +44,5 @@ public class TestConfig {
   LessonDao lessonDao() {
     return new LessonDao(jdbcTemplate());
   }
+
 }
