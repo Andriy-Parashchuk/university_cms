@@ -2,6 +2,7 @@ package com.foxminded.parashchuk.university.dao;
 
 import com.foxminded.parashchuk.university.models.Teacher;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ public class TeacherDao {
   
   /**Get all teachers from table in DB.*/
   public List<Teacher> getAllTeachers() {
+    log.info("Get all data from Teachers table.");
     String sql = "select id, first_name, last_name, audience, department "
         + "from teachers order by id";
     return jdbcTemplate.query(sql, rowMapper);
@@ -38,6 +40,7 @@ public class TeacherDao {
     if (teacher == null) {
       throw new IllegalArgumentException("Teacher can not be a null");
     } else {
+      log.info("Create new Teacher with firstname {} and surname {}.", teacher.getFirstName(), teacher.getLastName());
       String sql = "insert into teachers (first_name, last_name, audience, department) "
           + "values (?, ?, ?, ?)";
       return jdbcTemplate.update(
@@ -51,6 +54,7 @@ public class TeacherDao {
   
   /**Get one teacher from table in DB by id.*/
   public Optional<Teacher> getTeacherById(int id) {
+    log.info("Get Teacher with id {}.", id);
     String sql = "select id, first_name, last_name, audience, department "
         + "from teachers where id = ?";
     Teacher teacher = null;
@@ -65,20 +69,35 @@ public class TeacherDao {
   /**Update teacher by existing id in table and teacher object for overwriting.
    * Return 1 if overwriting was successful*/
   public int updateTeacherById(Teacher teacher, int id) {
+    log.info("Update Teacher with id {}.", id);
     String sql = "update teachers set first_name = ?, last_name = ?, audience = ?, department = ?"
         + "where id = ?";
-    return jdbcTemplate.update(
+    int result = jdbcTemplate.update(
         sql, 
         teacher.getFirstName(), 
         teacher.getLastName(), 
         teacher.getAudience(), 
         teacher.getDepartment(),
         id);
+
+    if (result == 0){
+      log.error("Teacher with id {} is not found.", id);
+      throw new NoSuchElementException(String.format("Teacher with id %d is not found.", id));
+    } else {
+      return result;
+    }
   }
   
   /**Delete teacher by id from table in DB.
    * Return 1 if deleting was successful*/
   public int deleteTeacherById(int id) {
-    return jdbcTemplate.update("delete from teachers where id = ?", id);
+    log.info("Delete Teacher with id {}.", id);
+    int result = jdbcTemplate.update("delete from teachers where id = ?", id);
+    if (result == 0){
+      log.error("Teacher with id {} is not found.", id);
+      throw new NoSuchElementException(String.format("Teacher with id %d is not found.", id));
+    } else {
+      return result;
+    }
   }
 }

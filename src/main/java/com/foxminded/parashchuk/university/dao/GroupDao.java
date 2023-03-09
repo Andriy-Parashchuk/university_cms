@@ -2,6 +2,7 @@ package com.foxminded.parashchuk.university.dao;
 
 import com.foxminded.parashchuk.university.models.Group;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ public class GroupDao {
   
   /**Get all groups from table in DB.*/
   public List<Group> getAllGroups() {
+    log.info("Get all data from Groups table.");
     String sql = "select id, name from groups order by id";
     return jdbcTemplate.query(sql, rowMapper);
   }
@@ -39,6 +41,7 @@ public class GroupDao {
     if (group == null) {
       throw new IllegalArgumentException("Group can not be a null");
     } else {
+      log.info("Create new Group with name {}.", group.getName());
       String sql = "insert into groups (name) values (?)";
       return jdbcTemplate.update(sql, group.getName());
     }
@@ -46,27 +49,42 @@ public class GroupDao {
   
   /**Get one group from table in DB by id.*/
   public Optional<Group> getGroupById(int id) {
+    log.info("Get Group with id {}.", id);
     String sql = "select id, name from groups where id = ?";
     Group group = null;
     try {
       group = jdbcTemplate.queryForObject(sql, new Object[]{id}, rowMapper);
     } catch (DataAccessException exception) {
-      log.error(String.format("Group with id %d not found.", id));
+      log.error("Group with id {} not found.", id);
     }
     return Optional.ofNullable(group);
   }
   
   /**Update group by existing id in table and group object for overwriting.
    * Return 1 if overwriting was successful*/
-  public int updateGroupById(Group group, int id) {
-    String sql = "update groups set name = ? where id = ?"; 
-    return jdbcTemplate.update(sql, group.getName(), id);
+  public int updateGroupById(Group group, int id){
+    log.info("Update Group with id {}.", id);
+    String sql = "update groups set name = ? where id = ?";
+    int result = jdbcTemplate.update(sql, group.getName(), id);
+    if (result == 0){
+      log.error("Group with id {} is not found.", id);
+      throw new NoSuchElementException(String.format("Group with id %d is not found.", id));
+    } else {
+      return result;
+    }
   }
   
   /**Delete group by id from table in DB.
    * Return 1 if deleting was successful*/
   public int deleteGroupById(int id) {
-    return jdbcTemplate.update("delete from groups where id = ?", id);
+    log.info("Delete Group with id {}.", id);
+    int result = jdbcTemplate.update("delete from groups where id = ?", id);
+    if (result == 0){
+      log.error("Group with id {} is not found.", id);
+      throw new NoSuchElementException(String.format("Group with id %d is not found.", id));
+    } else {
+      return result;
+    }
   }
 
 }
