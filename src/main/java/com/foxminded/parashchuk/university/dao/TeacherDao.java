@@ -38,6 +38,7 @@ public class TeacherDao {
   /**Save new teacher to table by Teacher object.*/
   public int createTeacher(Teacher teacher) {
     if (teacher == null) {
+      log.error("Teacher can not be a null");
       throw new IllegalArgumentException("Teacher can not be a null");
     } else {
       log.info("Create new Teacher with firstname {} and surname {}.", teacher.getFirstName(), teacher.getLastName());
@@ -61,7 +62,7 @@ public class TeacherDao {
     try {
       teacher = jdbcTemplate.queryForObject(sql, new Object[]{id}, rowMapper);
     } catch (DataAccessException exception) {
-      log.error(String.format("Teacher with id %d not found.", id));
+      log.error(String.format("Teacher with id %d is not found.", id));
     }
     return Optional.ofNullable(teacher);
   }

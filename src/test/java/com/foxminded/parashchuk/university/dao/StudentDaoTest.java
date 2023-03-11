@@ -8,6 +8,8 @@ import com.foxminded.parashchuk.university.config.TestConfig;
 import com.foxminded.parashchuk.university.models.Student;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -72,8 +74,9 @@ class StudentDaoTest {
   }
   
   @Test 
-  void updateStudentById_shouldReturnZero_whenProvidedIdDoesNotExists() {
-    assertEquals(0, dao.updateStudentById(new Student(0, "Updated", "Student", 2), 9));
+  void updateStudentById_shouldThrowException_whenStudentDoesNotExists() {
+    Student student = new Student(0, "Updated", "Student", 2);
+    assertThrows(NoSuchElementException.class, () -> dao.updateStudentById(student, 9));
   }
   
   @Test 
@@ -92,8 +95,8 @@ class StudentDaoTest {
   }
   
   @Test 
-  void deleteStudentById_shouldReturnZero_whenProvidedIdDoesNotExists() {
-    assertEquals(0, dao.deleteStudentById(12));
+  void deleteStudentById_shouldThrowException_whenStudentDoesNotExists() {
+    assertThrows(NoSuchElementException.class, () -> dao.deleteStudentById(12));
   }
   
 }

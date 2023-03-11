@@ -8,6 +8,8 @@ import com.foxminded.parashchuk.university.config.TestConfig;
 import com.foxminded.parashchuk.university.models.Group;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -74,8 +76,9 @@ class GroupDaoTest {
   }
   
   @Test 
-  void updateGroupById_shouldReturnZero_whenProvidedIdDoesNotExists() {
-    assertEquals(0, dao.updateGroupById(new Group(0, "Updated group"), 8));
+  void updateGroupById_shouldThrowException_whenGroupDoesNotExists() {
+    Group group = new Group(0, "Updated group");
+    assertThrows(NoSuchElementException.class, () -> dao.updateGroupById(group, 8));
   }
   
   @Test 
@@ -98,7 +101,7 @@ class GroupDaoTest {
   }
   
   @Test 
-  void deleteGroupById_shouldReturnZero_whenProvidedIdDoesNotExists() {
-    assertEquals(0, dao.deleteGroupById(12));
+  void deleteGroupById_shouldThrowException_whenGroupDoesNotExists() {
+    assertThrows(NoSuchElementException.class, () -> dao.deleteGroupById(12));
   }
 }

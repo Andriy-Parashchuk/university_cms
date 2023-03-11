@@ -8,6 +8,8 @@ import com.foxminded.parashchuk.university.config.TestConfig;
 import com.foxminded.parashchuk.university.models.Teacher;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -88,8 +90,9 @@ class TeacherDaoTest {
   }
   
   @Test 
-  void updateTeacherById_shouldReturnZero_whenProvidedIdDoesNotExists() {
-    assertEquals(0, dao.updateTeacherById(new Teacher(1, "updated", "teacher"), 9));
+  void updateTeacherById_shouldThrowException_whenTeacherDoesNotExists() {
+    Teacher teacher = new Teacher(1, "updated", "teacher");
+    assertThrows(NoSuchElementException.class, () -> dao.updateTeacherById(teacher, 9));
   }
   
   @Test 
@@ -115,7 +118,7 @@ class TeacherDaoTest {
   }
   
   @Test 
-  void deleteTeacherById_shouldReturnZero_whenProvidedIdDoesNotExists() {
-    assertEquals(0, dao.deleteTeacherById(12));
+  void deleteTeacherById_shouldThrowException_whenTeacherDoesNotExists() {
+    assertThrows(NoSuchElementException.class, () -> dao.deleteTeacherById(12));
   }
 }
