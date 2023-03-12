@@ -9,6 +9,8 @@ import com.foxminded.parashchuk.university.models.Lesson;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -79,9 +81,11 @@ class LessonDaoTest {
   }
   
   @Test 
-  void updateLessonById_shouldReturnZero_whenProvidedIdDoesNotExists() {
-    assertEquals(0, dao.updateLessonById(new Lesson(1, "updated", 1, 2, 
-        LocalDateTime.of(2023, 03, 12, 9, 00, 00), 403), 5));
+  void updateLessonById_shouldThrowException_whenLessonDoesNot_Exists() {
+
+    Lesson lesson = new Lesson(1, "updated", 1, 2,
+            LocalDateTime.of(2023, 03, 12, 9, 00, 00), 403);
+    assertThrows(NoSuchElementException.class, () -> dao.updateLessonById(lesson, 5));
   }
   
   @Test 
@@ -102,7 +106,7 @@ class LessonDaoTest {
   }
   
   @Test 
-  void deleteLessonById_shouldReturnZero_whenProvidedIdDoesNotExists() {
-    assertEquals(0, dao.deleteLessonById(12));
+  void deleteLessonById_shouldThrowException_whenLessonDoesNot_Exists() {
+    assertThrows(NoSuchElementException.class, () -> dao.deleteLessonById(12));
   }
 }

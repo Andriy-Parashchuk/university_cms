@@ -38,6 +38,7 @@ public class StudentDao {
   /**Save new student to table by Student object.*/
   public int createStudent(Student student) {
     if (student == null) {
+      log.error("Student can not be a null");
       throw new IllegalArgumentException("Student can not be a null");
     } else {
       log.info("Create new Student with firstname {} and surname {}.", student.getFirstName(), student.getLastName());

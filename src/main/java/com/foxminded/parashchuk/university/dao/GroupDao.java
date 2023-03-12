@@ -39,6 +39,7 @@ public class GroupDao {
   /**Save new Group to table by group object.*/
   public int createGroup(Group group) {
     if (group == null) {
+      log.error("Group can not be a null");
       throw new IllegalArgumentException("Group can not be a null");
     } else {
       log.info("Create new Group with name {}.", group.getName());
@@ -55,7 +56,7 @@ public class GroupDao {
     try {
       group = jdbcTemplate.queryForObject(sql, new Object[]{id}, rowMapper);
     } catch (DataAccessException exception) {
-      log.error("Group with id {} not found.", id);
+      log.error("Group with id {} is not found.", id);
     }
     return Optional.ofNullable(group);
   }

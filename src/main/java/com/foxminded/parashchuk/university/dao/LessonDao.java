@@ -39,6 +39,7 @@ public class LessonDao {
   /**Save new Lesson to table by lesson object.*/
   public int createLesson(Lesson lesson) {
     if (lesson == null) {
+      log.error("Teacher can not be a null");
       throw new IllegalArgumentException("Teacher can not be a null");
     } else {
       log.info("Create new Lesson with name {}.", lesson.getName());
@@ -63,7 +64,7 @@ public class LessonDao {
     try {
       lesson = jdbcTemplate.queryForObject(sql, new Object[]{id}, rowMapper);
     } catch (DataAccessException exception) {
-      log.error(String.format("Lesson with id %d not found.", id));
+      log.error(String.format("Lesson with id %d is not found.", id));
     }
     return Optional.ofNullable(lesson);
   }
