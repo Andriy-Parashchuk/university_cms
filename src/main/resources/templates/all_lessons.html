@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+    crossorigin="anonymous">
+  <title>Lessons</title>
+</head>
+<div th:include="header :: header"></div>
+<body class="text-center">
+<main class="cover-container mx-auto p-3 flex-column">
+  <h1>
+    <span th:if="${info}">All lessons for <span th:text="${info}"></span> </span>
+    <span th:unless="${info}">All lessons</span>
+  </h1>
+  <div class="container m-4 mx-auto">
+
+    <form method="post">
+      <a href="/lessons/new" class="btn btn-primary" role="button" aria-pressed="true">Create new Lesson</a>
+
+      <div class="form-group-row align-items-center m-4">
+        <label for="searchingId">Search lesson by id</label>
+        <input name="id" class="form mx-5" type="text" id="searchingId"  placeholder="ID">
+        <button type="submit" class="btn btn-outline-dark">Search</button>
+      </div>
+    </form>
+    <h3 class="text-danger" th:text="${danger_message}"></h3>
+    <h3 class="text-success" th:text="${success_message}"></h3>
+  </div>
+
+
+  <table class="table table-dark w-50 mx-auto table-striped table-sm">
+    <thead class="thead-light">
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Name</th>
+      <th scope="col">Teacher Id</th>
+      <th scope="col">Group Id</th>
+      <th scope="col">Time</th>
+      <th scope="col">Audience</th>
+      <th scope="col">Link</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="lesson:${lessons}">
+      <td th:text="${lesson.id}"></td>
+      <td th:text="${lesson.name}"></td>
+      <td th:text="${lesson.teacherId}"></td>
+      <td th:text="${lesson.groupId}"></td>
+      <td th:text="${lesson.time}"></td>
+      <td th:text="${lesson.audience}"></td>
+      <td><a th:href="@{/lessons/{lessonId}(lessonId=${lesson.id})}">More</a></td>
+
+    </tr>
+
+    </tbody>
+  </table>
+</main>
+
+</body>
+</html>

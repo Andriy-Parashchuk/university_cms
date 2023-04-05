@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+    <title>Edit student</title>
+</head>
+<div th:include="header :: header"></div>
+<body class="text-center">
+<main class="cover-container mx-auto p-3 flex-column">
+    <h2>Edit student with id <span th:text="${student.id}"></span></h2>
+    <form class="container w-50 mt-5" method="post">
+        <div class="form-row align-item-center">
+            <div class="form-group col">
+                <label for="studentFirstName">First Name</label>
+            </div>
+            <div class="form-group col">
+                <input name="firstName" type="text" th:value="${student.firstName}" id="studentFirstName"  placeholder="First Name">
+            </div>
+        </div>
+        <div class="form-row align-item-center">
+            <div class="form-group col">
+                <label for="studentLastName">Last Name</label>
+            </div>
+            <div class="form-group col">
+                <input name="lastName" type="text" th:value="${student.lastName}" id="studentLastName"  placeholder="Last Name">
+            </div>
+        </div>
+        <div class="form-row align-item-center">
+            <div class="form-group col">
+                <label for="studentsGroupId">Group id</label>
+            </div>
+            <div class="form-group col">
+                <input name="groupId" type="number" th:value="${student.groupId}" id="studentsGroupId"  placeholder="Group id">
+            </div>
+        </div>
+        <h4 class="text-danger" th:text="${danger_message}"></h4>
+        <button type="submit" class="btn btn-outline-success mx-3">Send changes</button>
+    </form>
+
+    <a th:href="@{/students/delete/{studentId}(studentId=${student.id})}" class="btn btn-outline-danger mx-3 mt-4" role="button" aria-pressed="true">Delete student</a>
+
+</main>
+
+</body>
+</html>
