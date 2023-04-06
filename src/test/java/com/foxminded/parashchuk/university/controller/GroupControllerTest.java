@@ -91,8 +91,7 @@ class GroupControllerTest {
 
   @Test
   void groupEdit_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
-    when(service.getGroupById(1)).thenReturn(new Group(1, "first"));
-    when(service.updateGroupById(new Group(1, "updated"), 1)).thenReturn(1);
+    when(service.updateGroupById("1", "first")).thenReturn(1);
 
     this.mockMvc.perform(post("/groups/1")
                     .param("name", "updated"))

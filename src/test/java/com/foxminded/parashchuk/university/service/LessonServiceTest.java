@@ -58,8 +58,10 @@ class LessonServiceTest {
   @Test
   void updateGroupById_shouldReturnResultOfUpdate_whenGetGroupAndExistingId() {
     Lesson lesson = new Lesson(1, "Bio", 1, 2, time1, 22);
+    when(dao.getLessonById(1)).thenReturn(Optional.of(new Lesson(1, "", 1, 1, time2, 0)));
     when(dao.updateLessonById(lesson, 1)).thenReturn(1);
-    assertEquals(1, lessonService.updateLessonById(lesson, 1));
+    assertEquals(1, lessonService.updateLessonById("1", "Bio", 1, 2,
+            "2023-02-12T15:40:00", 22));
     verify(dao, times(1)).updateLessonById(any(Lesson.class), anyInt());
   }
 

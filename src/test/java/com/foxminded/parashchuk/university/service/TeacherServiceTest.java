@@ -54,8 +54,9 @@ class TeacherServiceTest {
   @Test
   void updateTeacherById_shouldReturnResultOfUpdate_whenGetGroupAndExistingId(){
     Teacher teacher = new Teacher(1, "Mark", "Martin");
+    when(dao.getTeacherById(1)).thenReturn(Optional.of(new Teacher(1, "", "")));
     when(dao.updateTeacherById(teacher, 1)).thenReturn(1);
-    assertEquals(1, teacherService.updateTeacherById(teacher, 1));
+    assertEquals(1, teacherService.updateTeacherById("1", "Mark", "Martin", 0, null));
     verify(dao, times(1)).updateTeacherById(any(Teacher.class), anyInt());
   }
 

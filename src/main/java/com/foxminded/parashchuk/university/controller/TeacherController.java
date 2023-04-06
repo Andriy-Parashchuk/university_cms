@@ -68,12 +68,7 @@ public class TeacherController {
                             @RequestParam(defaultValue="") String department,
                             @PathVariable String teacherId, RedirectAttributes redirectAttributes){
 
-    Teacher teacher = service.getTeacherById(Integer.parseInt(teacherId));
-    teacher.setFirstName(firstName);
-    teacher.setLastName(lastName);
-    teacher.setAudience(audience);
-    teacher.setDepartment(department);
-    service.updateTeacherById(teacher, Integer.parseInt(teacherId));
+    service.updateTeacherById(teacherId, firstName, lastName, audience, department);
     log.info("Teacher with id {} was updated.", teacherId);
     redirectAttributes.addFlashAttribute("success_message",
             "Teacher with id " + teacherId + " was updated.");

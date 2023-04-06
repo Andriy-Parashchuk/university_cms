@@ -31,8 +31,11 @@ public class GroupService {
     return result.orElse(null);
   }
   
-  public int updateGroupById(Group group, int id) {
-    return dao.updateGroupById(group, id);
+  public int updateGroupById(String id, String name) {
+    int groupId = Integer.parseInt(id);
+    Group group = getGroupById(groupId);
+    group.setName(name);
+    return dao.updateGroupById(group, groupId);
   }
   
   public int deleteGroupById(int id) {

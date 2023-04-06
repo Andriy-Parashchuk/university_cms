@@ -27,8 +27,14 @@ public class TeacherService {
     return result.orElse(null);
   }
   
-  public int updateTeacherById(Teacher teacher, int id) {
-    return dao.updateTeacherById(teacher, id);
+  public int updateTeacherById(String id, String firstName, String lastName, int audience, String department) {
+    int teacherId = Integer.parseInt(id);
+    Teacher teacher = getTeacherById(teacherId);
+    teacher.setFirstName(firstName);
+    teacher.setLastName(lastName);
+    teacher.setAudience(audience);
+    teacher.setDepartment(department);
+    return dao.updateTeacherById(teacher, teacherId);
   }
   
   public int deleteTeacherById(int id) {

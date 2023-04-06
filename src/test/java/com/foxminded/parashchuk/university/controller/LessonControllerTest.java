@@ -98,8 +98,8 @@ class LessonControllerTest {
   void lessonEdit_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
     when(service.getLessonById(1)).thenReturn(new Lesson(1, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305));
-    when(service.updateLessonById(new Lesson(1, "Math", 3, 4,
-                    LocalDateTime.of(2023, 04, 15, 10, 30, 00), 333), 1))
+    when(service.updateLessonById("1", "Math", 3, 4,
+                    "2023-04-15T10:30:00", 333))
             .thenReturn(1);
 
     this.mockMvc.perform(post("/lessons/1")
@@ -118,8 +118,8 @@ class LessonControllerTest {
   void lessonEdit_shouldThrowExceptionAndRedirectToMainLessonPage_whenGetNotExistedGroupOrTeacher() throws Exception {
     when(service.getLessonById(1)).thenReturn(new Lesson(1, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305));
-    when(service.updateLessonById(new Lesson(1, "Math", 3, 4,
-            LocalDateTime.of(2023, 04, 15, 10, 30, 00), 333), 1))
+    when(service.updateLessonById("1", "Math", 3, 4,
+            "2023-04-15T10:30:00", 333))
             .thenThrow(DataIntegrityViolationException.class);
 
     this.mockMvc.perform(post("/lessons/1")
