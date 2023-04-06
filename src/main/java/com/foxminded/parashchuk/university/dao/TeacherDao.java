@@ -63,6 +63,7 @@ public class TeacherDao {
       teacher = jdbcTemplate.queryForObject(sql, new Object[]{id}, rowMapper);
     } catch (DataAccessException exception) {
       log.error(String.format("Teacher with id %d is not found.", id));
+      throw new NoSuchElementException(String.format("Teacher with id %d is not found.", id));
     }
     return Optional.ofNullable(teacher);
   }

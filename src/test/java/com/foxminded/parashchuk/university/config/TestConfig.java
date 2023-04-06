@@ -1,6 +1,9 @@
 package com.foxminded.parashchuk.university.config;
 
-import javax.sql.DataSource;
+import com.foxminded.parashchuk.university.dao.GroupDao;
+import com.foxminded.parashchuk.university.dao.LessonDao;
+import com.foxminded.parashchuk.university.dao.StudentDao;
+import com.foxminded.parashchuk.university.dao.TeacherDao;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,10 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import com.foxminded.parashchuk.university.dao.GroupDao;
-import com.foxminded.parashchuk.university.dao.LessonDao;
-import com.foxminded.parashchuk.university.dao.StudentDao;
-import com.foxminded.parashchuk.university.dao.TeacherDao;
+import javax.sql.DataSource;
 
 @Configuration
 public class TestConfig {

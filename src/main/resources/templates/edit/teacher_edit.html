@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+        crossorigin="anonymous">
+  <title>Edit teacher</title>
+</head>
+<div th:include="header :: header"></div>
+<body class="text-center">
+<main class="cover-container mx-auto p-3 flex-column">
+  <h2>Edit teacher with id <span th:text="${teacher.id}"></span></h2>
+  <form class="container w-50 mt-5" method="post">
+    <div class="form-row align-item-center">
+      <div class="form-group col">
+        <label for="teacherFirstName">First Name</label>
+      </div>
+      <div class="form-group col">
+        <input name="firstName" type="text" th:value="${teacher.firstName}" id="teacherFirstName"  placeholder="First Name">
+      </div>
+    </div>
+    <div class="form-row align-item-center">
+      <div class="form-group col">
+        <label for="teacherLastName">Last Name</label>
+      </div>
+      <div class="form-group col">
+        <input name="lastName" type="text" th:value="${teacher.lastName}" id="teacherLastName"  placeholder="Last Name">
+      </div>
+    </div>
+    <div class="form-row align-item-center">
+      <div class="form-group col">
+        <label for="audience">Audience</label>
+      </div>
+      <div class="form-group col">
+        <input name="audience" type="text" th:value="${teacher.audience}" id="audience"  placeholder="Audience">
+      </div>
+    </div>
+    <div class="form-row align-item-center">
+      <div class="form-group col">
+        <label for="department">Department</label>
+      </div>
+      <div class="form-group col">
+        <input name="department" type="text" th:value="${teacher.department}" id="department"  placeholder="Department">
+      </div>
+    </div>
+
+
+    <button type="submit" class="btn btn-outline-success mx-3">Send changes</button>
+  </form>
+  <a th:href="@{/teachers/delete/{teacherId}(teacherId=${teacher.id})}" class="btn btn-outline-danger mx-3 mt-4" role="button" aria-pressed="true">Delete teacher</a>
+</main>
+
+</body>
+</html>

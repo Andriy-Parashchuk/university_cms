@@ -65,6 +65,7 @@ public class LessonDao {
       lesson = jdbcTemplate.queryForObject(sql, new Object[]{id}, rowMapper);
     } catch (DataAccessException exception) {
       log.error(String.format("Lesson with id %d is not found.", id));
+      throw new NoSuchElementException(String.format("Lesson with id %d is not found.", id));
     }
     return Optional.ofNullable(lesson);
   }

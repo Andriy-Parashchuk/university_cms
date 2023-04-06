@@ -57,6 +57,7 @@ public class GroupDao {
       group = jdbcTemplate.queryForObject(sql, new Object[]{id}, rowMapper);
     } catch (DataAccessException exception) {
       log.error("Group with id {} is not found.", id);
+      throw new NoSuchElementException(String.format("Group with id %d is not found.", id));
     }
     return Optional.ofNullable(group);
   }

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+        crossorigin="anonymous">
+  <title>Students</title>
+</head>
+<div th:include="header :: header"></div>
+<body class="text-center">
+<main class="cover-container mx-auto p-3 flex-column">
+  <h1>All students</h1>
+
+  <div class="container m-4 mx-auto">
+    <form method="post">
+      <a href="/students/new" class="btn btn-primary" role="button" aria-pressed="true">Add new Student</a>
+      <div class="form-group-row align-items-center m-4">
+        <label for="searchingId">Search student by id</label>
+        <input name="id" class="form mx-5" type="text" id="searchingId"  placeholder="ID">
+        <button type="submit" class="btn btn-outline-dark">Search</button>
+      </div>
+    </form>
+    <h3 class="text-danger" th:text="${danger_message}"></h3>
+    <h3 class="text-success" th:text="${success_message}"></h3>
+  </div>
+
+  <table class="table table-dark w-50 mx-auto table-striped table-sm">
+    <thead class="thead-light">
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">First name</th>
+      <th scope="col">Last name</th>
+      <th scope="col">Group Id</th>
+      <th scope="col">Link</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="student:${students}" >
+      <td th:text="${student.id}"></td>
+      <td th:text="${student.firstName}"></td>
+      <td th:text="${student.lastName}"></td>
+      <td th:text="${student.groupId}"></td>
+      <td><a th:href="@{/students/{studentId}(studentId=${student.id})}">More</a></td>
+    </tr>
+
+    </tbody>
+  </table>
+</main>
+
+</body>
+</html>

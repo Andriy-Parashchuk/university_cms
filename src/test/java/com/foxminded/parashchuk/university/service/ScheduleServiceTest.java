@@ -54,14 +54,14 @@ class ScheduleServiceTest {
     when(lessonService.getAllLessons()).thenReturn(lessons);
     List<Lesson> expected = Arrays.asList(
             new Lesson(1, "Bio", teacher1.getId(), group1.getId(), time1, 22));
-    assertEquals(expected, schedule.getLessonsTeacherDay(teacher1, LocalDate.of(2023, 2, 12)));
+    assertEquals(expected, schedule.getLessonsTeacherDay(teacher1.getId(), LocalDate.of(2023, 2, 12)));
   }
 
   @Test
   void getLessonsTeacherDay_shouldThrowException_whenLessonsAreNotFound(){
     when(lessonService.getAllLessons()).thenReturn(lessons);
     assertThrows(LessonsNotFoundExceptions.class,
-            () -> schedule.getLessonsTeacherDay(teacher1, LocalDate.of(2023, 2, 14)));
+            () -> schedule.getLessonsTeacherDay(teacher1.getId(), LocalDate.of(2023, 2, 14)));
   }
   
   @Test
@@ -72,14 +72,14 @@ class ScheduleServiceTest {
     List<Lesson> expected = Arrays.asList(
             new Lesson(1,"Bio", teacher1.getId(), group1.getId(), time1, 22),
             new Lesson(3,"Physics", teacher1.getId(), group1.getId(), time3, 22));
-    assertEquals(expected, schedule.getLessonsTeacherMonth(teacher1, LocalDate.of(2023, 2, 12)));
+    assertEquals(expected, schedule.getLessonsTeacherMonth(teacher1.getId(), LocalDate.of(2023, 2, 12)));
   }
 
   @Test
   void getLessonsTeacherMonth_shouldThrowException_whenLessonsAreNotFound(){
     when(lessonService.getAllLessons()).thenReturn(lessons);
     assertThrows(LessonsNotFoundExceptions.class,
-            () -> schedule.getLessonsTeacherMonth(teacher2, LocalDate.of(2023, 5, 26)));
+            () -> schedule.getLessonsTeacherMonth(teacher2.getId(), LocalDate.of(2023, 5, 26)));
   }
 
   @Test
@@ -89,14 +89,14 @@ class ScheduleServiceTest {
     List<Lesson> expected = Arrays.asList(
         new Lesson(2, "Geo", teacher2.getId(), group2.getId(), time2, 22),
         new Lesson(5, "Chemistry", teacher1.getId(), group2.getId(), time2, 22));
-    assertEquals(expected, schedule.getLessonsStudentDay(student2, LocalDate.of(2023, 3, 11)));
+    assertEquals(expected, schedule.getLessonsStudentDay(student2.getId(), LocalDate.of(2023, 3, 11)));
   }
 
   @Test
   void getLessonsStudentDay_shouldThrowException_whenLessonsAreNotFound(){
     when(lessonService.getAllLessons()).thenReturn(lessons);
     assertThrows(LessonsNotFoundExceptions.class,
-            () -> schedule.getLessonsStudentDay(student2, LocalDate.of(2023, 3, 14)));
+            () -> schedule.getLessonsStudentDay(student2.getId(), LocalDate.of(2023, 3, 14)));
   }
 
   @Test
@@ -107,14 +107,14 @@ class ScheduleServiceTest {
         new Lesson(1, "Bio", teacher1.getId(), group1.getId(), time1, 22),
         new Lesson(3, "Physics", teacher1.getId(), group1.getId(), time3, 22),
         new Lesson(4, "Philosophy", teacher2.getId(), group1.getId(), time1, 22));
-    assertEquals(expected, schedule.getLessonsStudentMonth(student1, LocalDate.of(2023, 2, 12)));
+    assertEquals(expected, schedule.getLessonsStudentMonth(student1.getId(), LocalDate.of(2023, 2, 12)));
   }
 
   @Test
   void getLessonsStudentMonth_shouldThrowException_whenLessonsAreNotFound(){
     when(lessonService.getAllLessons()).thenReturn(lessons);
     assertThrows(LessonsNotFoundExceptions.class,
-            () -> schedule.getLessonsStudentMonth(student1, LocalDate.of(2023, 4, 12)));
+            () -> schedule.getLessonsStudentMonth(student1.getId(), LocalDate.of(2023, 4, 12)));
   }
 
 }
