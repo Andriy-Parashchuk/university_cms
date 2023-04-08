@@ -57,15 +57,11 @@ public class StudentController {
 
   /**Get new info from fields on the page for edit existing Lesson.*/
   @PostMapping("/{studentId}")
-  public String studentEdit(@RequestParam String firstName, @RequestParam String lastName,
-                            @RequestParam(defaultValue="0") int groupId, @PathVariable String studentId,
+  public String studentEdit(@PathVariable String studentId, @RequestParam String firstName,
+                            @RequestParam String lastName, @RequestParam(defaultValue="0") int groupId,
                             RedirectAttributes redirectAttributes){
     try {
-      Student student = service.getStudentById(Integer.parseInt(studentId));
-      student.setFirstName(firstName);
-      student.setLastName(lastName);
-      student.setGroupId(groupId);
-      service.updateStudentById(student, Integer.parseInt(studentId));
+      service.updateStudentById(studentId, firstName, lastName, groupId);
       log.info("Student with id {} was updated.", studentId);
       redirectAttributes.addFlashAttribute("success_message",
               "Student with id " + studentId + " was updated.");

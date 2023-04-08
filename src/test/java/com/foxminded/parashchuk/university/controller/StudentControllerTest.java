@@ -92,8 +92,7 @@ class StudentControllerTest {
 
   @Test
   void studentEdit_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
-    when(service.getStudentById(1)).thenReturn(new Student(1, "Chris", "Martin", 1));
-    when(service.updateStudentById(new Student(1, "Updated", "Student", 2), 1))
+    when(service.updateStudentById("1", "Updated", "Student", 2))
             .thenReturn(1);
 
     this.mockMvc.perform(post("/students/1")
@@ -109,7 +108,7 @@ class StudentControllerTest {
   @Test
   void studentEdit_shouldThrowExceptionAndRedirectToMainStudentPage_whenGetNotExistedGroup() throws Exception {
     when(service.getStudentById(1)).thenReturn(new Student(1, "Chris", "Martin", 1));
-    when(service.updateStudentById(new Student(1, "Updated", "Student", 2), 1))
+    when(service.updateStudentById("1", "Updated", "Student", 2))
             .thenThrow(DataIntegrityViolationException.class);
 
     this.mockMvc.perform(post("/students/1")

@@ -65,9 +65,7 @@ public class GroupController {
   @PostMapping("/{groupId}")
   public String groupEdit(@RequestParam String name, @PathVariable String groupId,
                           RedirectAttributes redirectAttributes){
-    Group group = service.getGroupById(Integer.parseInt(groupId));
-    group.setName(name);
-    service.updateGroupById(group, Integer.parseInt(groupId));
+    service.updateGroupById(groupId, name);
     log.info("Group with id {} was updated.", groupId);
     redirectAttributes.addFlashAttribute("success_message",
             "Group with id " + groupId +" was updated.");

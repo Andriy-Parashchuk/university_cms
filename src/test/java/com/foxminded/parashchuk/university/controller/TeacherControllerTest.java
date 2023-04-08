@@ -1,6 +1,5 @@
 package com.foxminded.parashchuk.university.controller;
 
-import com.foxminded.parashchuk.university.controller.TeacherController;
 import com.foxminded.parashchuk.university.models.Teacher;
 import com.foxminded.parashchuk.university.service.TeacherService;
 import org.junit.jupiter.api.Test;
@@ -93,7 +92,7 @@ class TeacherControllerTest {
   @Test
   void teacherEdit_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
     when(service.getTeacherById(1)).thenReturn(new Teacher(1, "Chris", "Martin"));
-    when(service.updateTeacherById(new Teacher(1, "Updated", "Teacher"), 1))
+    when(service.updateTeacherById("1", "Updated", "Teacher", 0, ""))
             .thenReturn(1);
 
     this.mockMvc.perform(post("/teachers/1")

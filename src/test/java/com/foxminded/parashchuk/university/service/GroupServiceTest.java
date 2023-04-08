@@ -52,8 +52,9 @@ class GroupServiceTest {
   @Test
   void updateGroupById_shouldReturnResultOfUpdate_whenGetGroupAndExistingId() {
     Group group = new Group(1, "first");
+    when(dao.getGroupById(1)).thenReturn(Optional.of(new Group(1, "")));
     when(dao.updateGroupById(group, 1)).thenReturn(1);
-    assertEquals(1, groupService.updateGroupById(group, 1));
+    assertEquals(1, groupService.updateGroupById("1", "first"));
     verify(dao, times(1)).updateGroupById(any(Group.class), anyInt());
   }
 

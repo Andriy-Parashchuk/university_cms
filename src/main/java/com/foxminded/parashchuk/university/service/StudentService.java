@@ -26,8 +26,13 @@ public class StudentService {
     return result.orElse(null);
   }
   
-  public int updateStudentById(Student student, int id) {
-    return dao.updateStudentById(student, id);
+  public int updateStudentById(String id, String firstName, String lastName, int groupId) {
+    int studentId = Integer.parseInt(id);
+    Student student = getStudentById(studentId);
+    student.setFirstName(firstName);
+    student.setLastName(lastName);
+    student.setGroupId(groupId);
+    return dao.updateStudentById(student, studentId);
   }
   
   public int deleteStudentById(int id) {

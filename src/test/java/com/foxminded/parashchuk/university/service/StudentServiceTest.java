@@ -54,8 +54,9 @@ class StudentServiceTest {
   @Test
   void updateStudentById_shouldReturnResultOfUpdate_whenGetStudentAndExistingId(){
     Student student = new Student(1, "Mark", "Martin", 1);
+    when(dao.getStudentById(1)).thenReturn(Optional.of(new Student(1, "", "", 1)));
     when(dao.updateStudentById(student, 1)).thenReturn(1);
-    assertEquals(1, studentService.updateStudentById(student, 1));
+    assertEquals(1, studentService.updateStudentById("1", "Mark", "Martin", 1));
     verify(dao, times(1)).updateStudentById(any(Student.class), anyInt());
   }
 

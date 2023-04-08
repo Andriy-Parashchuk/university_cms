@@ -64,15 +64,8 @@ public class LessonController {
                            @RequestParam(defaultValue="0") int audience,
                            @RequestParam String time, @PathVariable String lessonId,
                            RedirectAttributes redirectAttributes){
-
-    Lesson lesson = service.getLessonById(Integer.parseInt(lessonId));
-    lesson.setName(name);
-    lesson.setTeacherId(teacherId);
-    lesson.setAudience(audience);
-    lesson.setGroupId(groupId);
-    lesson.setTime(LocalDateTime.parse(time));
     try{
-      service.updateLessonById(lesson, Integer.parseInt(lessonId));
+      service.updateLessonById(lessonId, name, teacherId, groupId, time, audience);
       log.info("Lesson with id {} was updated.", lessonId);
       redirectAttributes.addFlashAttribute("success_message",
               "Lesson with id " + lessonId + " was updated.");
