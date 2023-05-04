@@ -1,14 +1,5 @@
 package com.foxminded.parashchuk.university.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-
 import com.foxminded.parashchuk.university.exceptions.LessonsNotFoundExceptions;
 import com.foxminded.parashchuk.university.models.Group;
 import com.foxminded.parashchuk.university.models.Lesson;
@@ -19,6 +10,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ScheduleServiceTest {
@@ -47,7 +47,10 @@ class ScheduleServiceTest {
 
   @Mock
   LessonService lessonService;
-  
+
+  @Mock
+  StudentService studentService;
+
   @Test
   void getLessonsTeacherDay_shouldReturnListWithLessons_whenTeacherSearchLessonsAtDay()
           throws LessonsNotFoundExceptions {
@@ -86,6 +89,7 @@ class ScheduleServiceTest {
   void getLessonsStudentDay_shouldReturnListWithLessons_whenStudentSearchLessonsAtDay()
           throws LessonsNotFoundExceptions {
     when(lessonService.getAllLessons()).thenReturn(lessons);
+    when(studentService.getStudentById(4)).thenReturn(student2);
     List<Lesson> expected = Arrays.asList(
         new Lesson(2, "Geo", teacher2.getId(), group2.getId(), time2, 22),
         new Lesson(5, "Chemistry", teacher1.getId(), group2.getId(), time2, 22));
@@ -95,6 +99,8 @@ class ScheduleServiceTest {
   @Test
   void getLessonsStudentDay_shouldThrowException_whenLessonsAreNotFound(){
     when(lessonService.getAllLessons()).thenReturn(lessons);
+    when(studentService.getStudentById(4)).thenReturn(student2);
+
     assertThrows(LessonsNotFoundExceptions.class,
             () -> schedule.getLessonsStudentDay(student2.getId(), LocalDate.of(2023, 3, 14)));
   }
@@ -103,6 +109,8 @@ class ScheduleServiceTest {
   void getLessonsStudentMonth_shouldReturnListWithLessons_whenStudentSearchLessonsAtMonth()
           throws LessonsNotFoundExceptions {
     when(lessonService.getAllLessons()).thenReturn(lessons);
+    when(studentService.getStudentById(3)).thenReturn(student1);
+
     List<Lesson> expected = Arrays.asList(
         new Lesson(1, "Bio", teacher1.getId(), group1.getId(), time1, 22),
         new Lesson(3, "Physics", teacher1.getId(), group1.getId(), time3, 22),
@@ -113,6 +121,8 @@ class ScheduleServiceTest {
   @Test
   void getLessonsStudentMonth_shouldThrowException_whenLessonsAreNotFound(){
     when(lessonService.getAllLessons()).thenReturn(lessons);
+    when(studentService.getStudentById(3)).thenReturn(student1);
+
     assertThrows(LessonsNotFoundExceptions.class,
             () -> schedule.getLessonsStudentMonth(student1.getId(), LocalDate.of(2023, 4, 12)));
   }

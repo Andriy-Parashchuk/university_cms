@@ -4,7 +4,6 @@ import com.foxminded.parashchuk.university.dao.GroupDao;
 import com.foxminded.parashchuk.university.dao.LessonDao;
 import com.foxminded.parashchuk.university.dao.StudentDao;
 import com.foxminded.parashchuk.university.dao.TeacherDao;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,22 +26,23 @@ public class TestConfig {
 
   @Bean
   GroupDao groupDao() {
-    return new GroupDao(jdbcTemplate());
+    return new GroupDao();
   }
-  
+
   @Bean
   TeacherDao teacherDao() {
-    return new TeacherDao(jdbcTemplate());
+    return new TeacherDao();
   }
   
   @Bean
   StudentDao studentDao() {
-    return new StudentDao(jdbcTemplate());
+    return new StudentDao();
   }
   
   @Bean
   LessonDao lessonDao() {
-    return new LessonDao(jdbcTemplate());
+    return new LessonDao();
   }
+
 
 }

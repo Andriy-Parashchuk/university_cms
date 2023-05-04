@@ -1,24 +1,24 @@
 package com.foxminded.parashchuk.university.dao;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import com.foxminded.parashchuk.university.config.TestConfig;
+import com.foxminded.parashchuk.university.config.TestPersistenceConfig;
 import com.foxminded.parashchuk.university.models.Teacher;
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 @SpringBootTest
-@ContextConfiguration(classes = {TestConfig.class})
+@ContextConfiguration(classes = {TestConfig.class, TestPersistenceConfig.class})
 @Sql(value = {"classpath:jdbc/teachers.sql"}, 
     executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class TeacherDaoTest {
@@ -53,7 +53,7 @@ class TeacherDaoTest {
     teacher2.setDepartment("Math");
     
     Teacher newTeacher = new Teacher(3, "new", "teacher");
- 
+
     List<Teacher> expected = Arrays.asList(teacher1, teacher2, newTeacher);
 
     dao.createTeacher(newTeacher);
@@ -71,28 +71,28 @@ class TeacherDaoTest {
     expected.setAudience(203);
     expected.setDepartment("Biology");
     
-    Teacher teacher = dao.getTeacherById(1).get();
+    Teacher teacher = dao.getTeacherById(1);
     
     assertEquals(expected, teacher);
   }
   
   @Test
-  void getTeacherById_shouldReturnNull_whenProvidedIdDoesNotExists() {
-    assertFalse(dao.getTeacherById(12).isPresent());
+  void getTeacherById_shouldThrowException_whenProvidedIdDoesNotExists() {
+    assertThrows(NoSuchElementException.class, () -> dao.getTeacherById(12));
   }
   
   @Test 
   void updateTeacherById_shouldUpdateTeacher_whenGetExistsTeacherIdAndParameters() {
     Teacher expected = new Teacher(1, "updated", "teacher");
  
-    assertEquals(1, dao.updateTeacherById(new Teacher(1, "updated", "teacher"), 1));
-    assertEquals(expected, dao.getTeacherById(1).get());
+    dao.updateTeacherById(new Teacher(1, "updated", "teacher"));
+    assertEquals(expected, dao.getTeacherById(1));
   }
   
   @Test 
   void updateTeacherById_shouldThrowException_whenTeacherDoesNotExists() {
-    Teacher teacher = new Teacher(1, "updated", "teacher");
-    assertThrows(NoSuchElementException.class, () -> dao.updateTeacherById(teacher, 9));
+    Teacher teacher = new Teacher(9, "updated", "teacher");
+    assertThrows(NoSuchElementException.class, () -> dao.updateTeacherById(teacher));
   }
   
   @Test 
@@ -111,7 +111,7 @@ class TeacherDaoTest {
     
     assertEquals(expected, teachers);
     
-    assertEquals(1, dao.deleteTeacherById(2));
+    dao.deleteTeacherById(2);
     
     teachers = dao.getAllTeachers();
     assertEquals(Arrays.asList(teacher1), teachers);

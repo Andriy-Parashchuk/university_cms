@@ -1,10 +1,5 @@
 package com.foxminded.parashchuk.university.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
-
 import com.foxminded.parashchuk.university.dao.LessonDao;
 import com.foxminded.parashchuk.university.models.Lesson;
 import org.junit.jupiter.api.Test;
@@ -12,10 +7,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -30,7 +30,7 @@ class LessonServiceTest {
   LocalDateTime time2 = LocalDateTime.of(2023, 3, 11, 10, 40);
 
   @Test
-  void getAllGroups_shouldCallToGroupDaoAndReturnList_whenDbIsNotEmpty() {
+  void getAllLessons_shouldCallToGroupDaoAndReturnList_whenDbIsNotEmpty() {
     List<Lesson> expected = Arrays.asList(
             new Lesson(1, "Bio", 1, 2, time1, 22),
             new Lesson(2, "Geo", 2, 2, time2, 22));
@@ -40,17 +40,16 @@ class LessonServiceTest {
   }
 
   @Test
-  void createGroup_shouldReturnResultOfInsert_whenGetGroup(){
+  void createLesson_shouldReturnResultOfInsert_whenGetGroup(){
     Lesson lesson = new Lesson(1, "Bio", 1, 2, time1, 22);
-    when(dao.createLesson(lesson)).thenReturn(1);
-    assertEquals(1, lessonService.createLesson(lesson));
+    lessonService.createLesson(lesson);
     verify(dao, times(1)).createLesson(any(Lesson.class));
   }
 
   @Test
   void getGroupById_shouldReturnGroup_whenGetExistingId() {
     Lesson lesson = new Lesson(1, "Bio", 1, 2, time1, 22);
-    when(dao.getLessonById(1)).thenReturn(Optional.of(lesson));
+    when(dao.getLessonById(1)).thenReturn(lesson);
     assertEquals(lesson, lessonService.getLessonById(1));
     verify(dao, times(1)).getLessonById(anyInt());
   }
@@ -58,17 +57,15 @@ class LessonServiceTest {
   @Test
   void updateGroupById_shouldReturnResultOfUpdate_whenGetGroupAndExistingId() {
     Lesson lesson = new Lesson(1, "Bio", 1, 2, time1, 22);
-    when(dao.getLessonById(1)).thenReturn(Optional.of(new Lesson(1, "", 1, 1, time2, 0)));
-    when(dao.updateLessonById(lesson, 1)).thenReturn(1);
-    assertEquals(1, lessonService.updateLessonById("1", "Bio", 1, 2,
-            "2023-02-12T15:40:00", 22));
-    verify(dao, times(1)).updateLessonById(any(Lesson.class), anyInt());
+    when(dao.getLessonById(1)).thenReturn(new Lesson(1, "", 1, 1, time2, 0));
+    lessonService.updateLessonById("1", "Bio", 1, 2,
+            "2023-02-12T15:40:00", 22);
+    verify(dao, times(1)).updateLessonById(any(Lesson.class));
   }
 
   @Test
   void deleteGroupById_shouldReturnResultOfDelete_whenGetId() {
-    when(dao.deleteLessonById(1)).thenReturn(1);
-    assertEquals(1, lessonService.deleteLessonById(1));
+    lessonService.deleteLessonById(1);
     verify(dao, times(1)).deleteLessonById(anyInt());
   }
 }

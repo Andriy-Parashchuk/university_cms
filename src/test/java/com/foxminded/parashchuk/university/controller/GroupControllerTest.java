@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -91,7 +92,6 @@ class GroupControllerTest {
 
   @Test
   void groupEdit_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
-    when(service.updateGroupById("1", "first")).thenReturn(1);
 
     this.mockMvc.perform(post("/groups/1")
                     .param("name", "updated"))
@@ -103,8 +103,6 @@ class GroupControllerTest {
 
   @Test
   void groupCreate_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
-    when(service.createGroup(new Group(0, "first"))).thenReturn(1);
-
     this.mockMvc.perform(post("/groups/new")
                     .param("name", "first"))
             .andDo(print())
@@ -115,7 +113,6 @@ class GroupControllerTest {
 
   @Test
   void deleteGroup_shouldRedirectToMainGroupPageWithSuccessMessage_whenGetExistedId() throws Exception {
-    when(service.deleteGroupById(1)).thenReturn(1);
     this.mockMvc.perform(get("/groups/delete/1"))
             .andDo(print())
             .andExpect(status().is3xxRedirection())
@@ -125,7 +122,7 @@ class GroupControllerTest {
 
   @Test
   void deleteGroup_shouldRedirectToMainGroupPageWithDangerMessage_whenGetNotExistedId() throws Exception {
-    when(service.deleteGroupById(1)).thenThrow(NoSuchElementException.class);
+    doThrow(NoSuchElementException.class).when(service).deleteGroupById(1);
     this.mockMvc.perform(get("/groups/delete/1"))
             .andDo(print())
             .andExpect(status().is3xxRedirection())
