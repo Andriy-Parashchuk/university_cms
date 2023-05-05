@@ -27,13 +27,14 @@ public class StudentDao {
   }
   
   /**Save new student to table by Student object.*/
-  public void createStudent(Student student) {
+  public Student createStudent(Student student) {
     if (student == null) {
       log.error("Student can not be a null");
       throw new IllegalArgumentException("Student can not be a null");
     } else {
       log.info("Create new Student with firstname {} and surname {}.", student.getFirstName(), student.getLastName());
       entityManager.persist(student);
+      return student;
     }
   }
   
@@ -49,14 +50,14 @@ public class StudentDao {
   }
   
   /**Update student by existing id in table and student object for overwriting.*/
-  public void updateStudentById(Student student) {
+  public Student updateStudentById(Student student) {
     log.info("Update Student with id {}.", student.getId());
     Student checkedStudent = entityManager.find(Student.class, student.getId());
     if (checkedStudent == null) {
       log.error("Student with id {} is not found.", student.getId());
       throw new NoSuchElementException(String.format("Student with id %d is not found.", student.getId()));
     }
-    entityManager.merge(student);
+    return entityManager.merge(student);
   }
   
   /**Delete student by id from table in DB.*/

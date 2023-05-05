@@ -17,21 +17,21 @@ public class StudentService {
     return dao.getAllStudents();
   }
   
-  public void createStudent(Student student) {
-    dao.createStudent(student);
+  public Student createStudent(Student student) {
+    return dao.createStudent(student);
   }
   
   public Student getStudentById(int id) {
     return dao.getStudentById(id);
   }
   
-  public void updateStudentById(String id, String firstName, String lastName, int groupId) {
+  public Student updateStudentById(String id, String firstName, String lastName, int groupId) {
     int studentId = Integer.parseInt(id);
     Student student = getStudentById(studentId);
     student.setFirstName(firstName);
     student.setLastName(lastName);
     student.setGroupId(groupId);
-    dao.updateStudentById(student);
+    return dao.updateStudentById(student);
   }
   
   public void deleteStudentById(int id) {

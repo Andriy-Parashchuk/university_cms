@@ -42,7 +42,8 @@ class LessonServiceTest {
   @Test
   void createLesson_shouldReturnResultOfInsert_whenGetGroup(){
     Lesson lesson = new Lesson(1, "Bio", 1, 2, time1, 22);
-    lessonService.createLesson(lesson);
+    when(dao.createLesson(lesson)).thenReturn(lesson);
+    assertEquals(lesson, lessonService.createLesson(lesson));
     verify(dao, times(1)).createLesson(any(Lesson.class));
   }
 
@@ -58,8 +59,9 @@ class LessonServiceTest {
   void updateGroupById_shouldReturnResultOfUpdate_whenGetGroupAndExistingId() {
     Lesson lesson = new Lesson(1, "Bio", 1, 2, time1, 22);
     when(dao.getLessonById(1)).thenReturn(new Lesson(1, "", 1, 1, time2, 0));
-    lessonService.updateLessonById("1", "Bio", 1, 2,
-            "2023-02-12T15:40:00", 22);
+    when(dao.updateLessonById(lesson)).thenReturn(lesson);
+    assertEquals(lesson, lessonService.updateLessonById("1", "Bio", 1, 2,
+            "2023-02-12T15:40:00", 22));
     verify(dao, times(1)).updateLessonById(any(Lesson.class));
   }
 

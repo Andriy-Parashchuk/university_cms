@@ -84,8 +84,8 @@ public class TeacherController {
     Teacher teacher = new Teacher(0, firstName, lastName);
     teacher.setAudience(audience);
     teacher.setDepartment(department);
-    service.createTeacher(teacher);
-    log.info("New teacher was created");
+    Teacher savedTeacher = service.createTeacher(teacher);
+    log.info("New teacher was created with name {} {}", savedTeacher.getFirstName(), savedTeacher.getLastName());
     redirectAttributes.addFlashAttribute("success_message",
             "New teacher was created");
     return "redirect:/teachers/all";

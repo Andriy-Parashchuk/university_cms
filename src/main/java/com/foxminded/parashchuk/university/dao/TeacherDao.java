@@ -27,13 +27,13 @@ public class TeacherDao {
   }
   
   /**Save new teacher to table by Teacher object.*/
-  public void createTeacher(Teacher teacher) {
+  public Teacher createTeacher(Teacher teacher) {
     if (teacher == null) {
       log.error("Teacher can not be a null");
       throw new IllegalArgumentException("Teacher can not be a null");
     } else {
       log.info("Create new Teacher with firstname {} and surname {}.", teacher.getFirstName(), teacher.getLastName());
-      entityManager.merge(teacher);
+      return entityManager.merge(teacher);
     }
   }
   
@@ -49,14 +49,14 @@ public class TeacherDao {
   }
   
   /**Update teacher by existing id in table and teacher object for overwriting.*/
-  public void updateTeacherById(Teacher teacher) {
+  public Teacher updateTeacherById(Teacher teacher) {
     log.info("Update Teacher with id {}.", teacher.getId());
     Teacher checkedTeacher = entityManager.find(Teacher.class, teacher.getId());
     if (checkedTeacher == null){
       log.error("Teacher with id {} is not found.", teacher.getId());
       throw new NoSuchElementException(String.format("Teacher with id %d is not found.", teacher.getId()));
     }
-    entityManager.merge(teacher);
+    return entityManager.merge(teacher);
   }
   
   /**Delete teacher by id from table in DB.*/

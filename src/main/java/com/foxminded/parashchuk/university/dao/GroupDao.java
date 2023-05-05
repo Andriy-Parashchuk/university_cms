@@ -29,13 +29,14 @@ public class GroupDao {
   }
   
   /**Save new Group to table by group object.*/
-  public void createGroup(Group group) {
+  public Group createGroup(Group group) {
     if (group == null) {
       log.error("Group can not be a null");
       throw new IllegalArgumentException("Group can not be a null");
     } else {
       log.info("Create new Group with name {}.", group.getName());
       entityManager.persist(group);
+      return group;
     }
   }
 
@@ -50,15 +51,17 @@ public class GroupDao {
     return group;
   }
 
-  /**Update group by existing id in table and group object for overwriting.*/
-  public void updateGroupById(Group group){
+  /**
+   * Update group by existing id in table and group object for overwriting.
+   */
+  public Group updateGroupById(Group group){
     log.info("Update Group with id {}.", group.getId());
     Group checkedGroup = entityManager.find(Group.class, group.getId());
     if (checkedGroup == null){
       log.error("Group with id {} is not found.", group.getId());
       throw new NoSuchElementException(String.format("Group with id %d is not found.", group.getId()));
     }
-    entityManager.merge(group);
+    return entityManager.merge(group);
 
   }
 

@@ -28,13 +28,13 @@ public class LessonDao {
   }
   
   /**Save new Lesson to table by lesson object.*/
-  public void createLesson(Lesson lesson) {
+  public Lesson createLesson(Lesson lesson) {
     if (lesson == null) {
       log.error("Teacher can not be a null");
       throw new IllegalArgumentException("Teacher can not be a null");
     } else {
       log.info("Create new Lesson with name {}.", lesson.getName());
-      entityManager.merge(lesson);
+      return entityManager.merge(lesson);
     }
   }
   
@@ -51,14 +51,14 @@ public class LessonDao {
   
   /**Update lesson by existing id in table and lesson object for overwriting.
    * Return 1 if overwriting was successful*/
-  public void updateLessonById(Lesson lesson) {
+  public Lesson updateLessonById(Lesson lesson) {
     log.info("Update Lesson with id {}.", lesson.getId());
     Lesson checkedLesson = entityManager.find(Lesson.class, lesson.getId());
     if (checkedLesson == null) {
       log.error("Lesson with id {} is not found.", lesson.getId());
       throw new NoSuchElementException(String.format("Lesson with id %d is not found.", lesson.getId()));
     }
-    entityManager.merge(lesson);
+    return entityManager.merge(lesson);
   }
   
   /**Delete lesson by id from table in DB.

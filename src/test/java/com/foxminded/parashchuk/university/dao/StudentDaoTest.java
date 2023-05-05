@@ -26,7 +26,7 @@ class StudentDaoTest {
   private StudentDao dao;
   
   @Test 
-  void getAllStdeunts_ReturnListWithStudents_whenDbIsNotEmpty() {
+  void getAllStudents_ReturnListWithStudents_whenDbIsNotEmpty() {
     List<Student> expected = Arrays.asList(
         new Student(1, "Chris", "Martin", 1), 
         new Student(2, "Mari", "Osvald", 2));
@@ -42,7 +42,7 @@ class StudentDaoTest {
         new Student(2, "Mari", "Osvald", 2),
         new Student(3, "New", "Student", 1));
     
-    dao.createStudent(student);
+    assertEquals(student, dao.createStudent(student));
     
     assertEquals(expected, dao.getAllStudents());
   }
@@ -69,7 +69,7 @@ class StudentDaoTest {
   void updateStudentById_shouldUpdateStudent_whenGetExistsStudentIdAndParameters() {
     Student expected = new Student(1, "Updated", "Student", 2);
  
-    dao.updateStudentById(new Student(1, "Updated", "Student", 2));
+    assertEquals(expected, dao.updateStudentById(new Student(1, "Updated", "Student", 2)));
     assertEquals(expected, dao.getStudentById(1));
   }
   

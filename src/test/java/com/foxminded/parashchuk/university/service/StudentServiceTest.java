@@ -37,7 +37,8 @@ class StudentServiceTest {
   @Test
   void createStudent_shouldReturnResultOfInsert_whenGetStudent(){
     Student student = new Student(1, "Mark", "Martin", 1);
-    studentService.createStudent(student);
+    when(dao.createStudent(student)).thenReturn(student);
+    assertEquals(student, studentService.createStudent(student));
     verify(dao, times(1)).createStudent(any(Student.class));
   }
 
@@ -53,7 +54,8 @@ class StudentServiceTest {
   void updateStudentById_shouldReturnResultOfUpdate_whenGetStudentAndExistingId(){
     Student student = new Student(1, "Mark", "Martin", 1);
     when(dao.getStudentById(1)).thenReturn(new Student(1, "", "", 1));
-    studentService.updateStudentById("1", "Mark", "Martin", 1);
+    when(dao.updateStudentById(student)).thenReturn(student);
+    assertEquals(student, studentService.updateStudentById("1", "Mark", "Martin", 1));
     verify(dao, times(1)).updateStudentById(any(Student.class));
   }
 

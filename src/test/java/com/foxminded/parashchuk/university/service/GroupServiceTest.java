@@ -36,7 +36,8 @@ class GroupServiceTest {
   @Test
   void createGroup_shouldReturnResultOfInsert_whenGetGroup() {
     Group group = new Group(1, "first");
-    dao.createGroup(group);
+    when(dao.createGroup(group)).thenReturn(group);
+    assertEquals(group, groupService.createGroup(group));
     verify(dao, times(1)).createGroup(any(Group.class));
   }
 
@@ -52,7 +53,8 @@ class GroupServiceTest {
   void updateGroupById_shouldReturnResultOfUpdate_whenGetGroupAndExistingId() {
     Group group = new Group(1, "first");
     when(dao.getGroupById(1)).thenReturn(new Group(1, ""));
-    groupService.updateGroupById("1", "first");
+    when(dao.updateGroupById(group)).thenReturn(group);
+    assertEquals(group, groupService.updateGroupById("1", "first"));
     verify(dao, times(1)).updateGroupById(any(Group.class));
   }
 

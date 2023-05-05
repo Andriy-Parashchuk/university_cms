@@ -37,7 +37,8 @@ class TeacherServiceTest {
   @Test
   void createTeacher_shouldReturnResultOfInsert_whenGetTeacher(){
     Teacher teacher = new Teacher(1, "Mark", "Martin");
-    teacherService.createTeacher(teacher);
+    when(dao.createTeacher(teacher)).thenReturn(teacher);
+    assertEquals(teacher, teacherService.createTeacher(teacher));
     verify(dao, times(1)).createTeacher(any(Teacher.class));
   }
 
@@ -53,7 +54,8 @@ class TeacherServiceTest {
   void updateTeacherById_shouldReturnResultOfUpdate_whenGetGroupAndExistingId(){
     Teacher teacher = new Teacher(1, "Mark", "Martin");
     when(dao.getTeacherById(1)).thenReturn(new Teacher(1, "", ""));
-    teacherService.updateTeacherById("1", "Mark", "Martin", 0, null);
+    when(dao.updateTeacherById(teacher)).thenReturn(teacher);
+    assertEquals(teacher, teacherService.updateTeacherById("1", "Mark", "Martin", 0, null));
     verify(dao, times(1)).updateTeacherById(any(Teacher.class));
   }
 

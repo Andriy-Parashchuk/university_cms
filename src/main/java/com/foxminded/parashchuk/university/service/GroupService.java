@@ -21,19 +21,19 @@ public class GroupService {
     return dao.getAllGroups();
   }
   
-  public void createGroup(Group group) {
-    dao.createGroup(group);
+  public Group createGroup(Group group) {
+    return dao.createGroup(group);
   }
   
   public Group getGroupById(int id) {
     return dao.getGroupById(id);
   }
   
-  public void updateGroupById(String id, String name) {
+  public Group updateGroupById(String id, String name) {
     int groupId = Integer.parseInt(id);
     Group group = getGroupById(groupId);
     group.setName(name);
-    dao.updateGroupById(group);
+    return dao.updateGroupById(group);
   }
   
   public void deleteGroupById(int id) {

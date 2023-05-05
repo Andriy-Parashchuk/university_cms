@@ -56,7 +56,7 @@ class TeacherDaoTest {
 
     List<Teacher> expected = Arrays.asList(teacher1, teacher2, newTeacher);
 
-    dao.createTeacher(newTeacher);
+    assertEquals(newTeacher, dao.createTeacher(newTeacher));
     assertEquals(expected, dao.getAllTeachers());
   }
   
@@ -85,7 +85,7 @@ class TeacherDaoTest {
   void updateTeacherById_shouldUpdateTeacher_whenGetExistsTeacherIdAndParameters() {
     Teacher expected = new Teacher(1, "updated", "teacher");
  
-    dao.updateTeacherById(new Teacher(1, "updated", "teacher"));
+    assertEquals(expected, dao.updateTeacherById(new Teacher(1, "updated", "teacher")));
     assertEquals(expected, dao.getTeacherById(1));
   }
   

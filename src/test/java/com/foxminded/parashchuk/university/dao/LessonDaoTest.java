@@ -47,7 +47,7 @@ class LessonDaoTest {
         new Lesson(2, "Biology", 1, 2, LocalDateTime.of(2023, 02, 11, 12, 00, 00), 203),
         newLesson);
 
-    dao.createLesson(newLesson);
+    assertEquals(newLesson, dao.createLesson(newLesson));
     assertEquals(expected, dao.getAllLessons());
   }
   
@@ -76,8 +76,8 @@ class LessonDaoTest {
     Lesson expected = new Lesson(1, "updated", 1, 2, 
         LocalDateTime.of(2023, 03, 12, 9, 00, 00), 403);
  
-    dao.updateLessonById(new Lesson(1, "updated", 1, 2,
-        LocalDateTime.of(2023, 03, 12, 9, 00, 00), 403));
+    assertEquals(expected, dao.updateLessonById(new Lesson(1, "updated", 1, 2,
+        LocalDateTime.of(2023, 03, 12, 9, 00, 00), 403)));
     assertEquals(expected, dao.getLessonById(1));
   }
   

@@ -18,22 +18,22 @@ public class TeacherService {
     return dao.getAllTeachers();
   }
   
-  public void createTeacher(Teacher teacher) {
-    dao.createTeacher(teacher);
+  public Teacher createTeacher(Teacher teacher) {
+    return dao.createTeacher(teacher);
   }
   
   public Teacher getTeacherById(int id) {
     return dao.getTeacherById(id);
   }
   
-  public void updateTeacherById(String id, String firstName, String lastName, int audience, String department) {
+  public Teacher updateTeacherById(String id, String firstName, String lastName, int audience, String department) {
     int teacherId = Integer.parseInt(id);
     Teacher teacher = getTeacherById(teacherId);
     teacher.setFirstName(firstName);
     teacher.setLastName(lastName);
     teacher.setAudience(audience);
     teacher.setDepartment(department);
-    dao.updateTeacherById(teacher);
+    return dao.updateTeacherById(teacher);
   }
   
   public void deleteTeacherById(int id) {

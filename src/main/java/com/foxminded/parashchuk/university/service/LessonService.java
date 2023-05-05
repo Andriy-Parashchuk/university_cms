@@ -19,15 +19,15 @@ public class LessonService {
     return dao.getAllLessons();
   }
   
-  public void createLesson(Lesson lesson) {
-    dao.createLesson(lesson);
+  public Lesson createLesson(Lesson lesson) {
+    return dao.createLesson(lesson);
   }
   
   public Lesson getLessonById(int id) {
     return dao.getLessonById(id);
   }
   
-  public void updateLessonById(String id, String name, int teacherId, int groupId,  String time, int audience) {
+  public Lesson updateLessonById(String id, String name, int teacherId, int groupId,  String time, int audience) {
     int lessonId = Integer.parseInt(id);
     Lesson lesson = getLessonById(lessonId);
     lesson.setName(name);
@@ -35,7 +35,7 @@ public class LessonService {
     lesson.setGroupId(groupId);
     lesson.setTime(LocalDateTime.parse(time));
     lesson.setAudience(audience);
-    dao.updateLessonById(lesson);
+    return dao.updateLessonById(lesson);
   }
   
   public void deleteLessonById(int id) {

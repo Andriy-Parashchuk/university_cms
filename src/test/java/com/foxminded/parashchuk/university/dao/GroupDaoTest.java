@@ -45,7 +45,7 @@ class GroupDaoTest {
         new Group(3, "third"),
         new Group(4, "New"));
     
-    dao.createGroup(group);
+    assertEquals(group, dao.createGroup(group));
     
     assertEquals(expected, dao.getAllGroups());
   }  
@@ -71,7 +71,7 @@ class GroupDaoTest {
   @Test 
   void updateGroupById_shouldUpdateGroup_whenGetExistsGroupIdAndParameters() {
     Group expected = new Group(1, "Updated group");
-    dao.updateGroupById(new Group(1, "Updated group"));
+    assertEquals(expected, dao.updateGroupById(new Group(1, "Updated group")));
     assertEquals(expected, dao.getGroupById(1));
   }
   
