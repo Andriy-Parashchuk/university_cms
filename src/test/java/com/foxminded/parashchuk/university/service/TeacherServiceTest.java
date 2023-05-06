@@ -10,7 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,15 +37,15 @@ class TeacherServiceTest {
   @Test
   void createTeacher_shouldReturnResultOfInsert_whenGetTeacher(){
     Teacher teacher = new Teacher(1, "Mark", "Martin");
-    when(dao.createTeacher(teacher)).thenReturn(1);
-    assertEquals(1, teacherService.createTeacher(teacher));
+    when(dao.createTeacher(teacher)).thenReturn(teacher);
+    assertEquals(teacher, teacherService.createTeacher(teacher));
     verify(dao, times(1)).createTeacher(any(Teacher.class));
   }
 
   @Test
   void getTeacherById_shouldReturnTeacher_whenGetExistingId(){
     Teacher teacher = new Teacher(1, "Mark", "Martin");
-    when(dao.getTeacherById(1)).thenReturn(Optional.of(teacher));
+    when(dao.getTeacherById(1)).thenReturn(teacher);
     assertEquals(teacher, teacherService.getTeacherById(1));
     verify(dao, times(1)).getTeacherById(anyInt());
   }
@@ -54,16 +53,15 @@ class TeacherServiceTest {
   @Test
   void updateTeacherById_shouldReturnResultOfUpdate_whenGetGroupAndExistingId(){
     Teacher teacher = new Teacher(1, "Mark", "Martin");
-    when(dao.getTeacherById(1)).thenReturn(Optional.of(new Teacher(1, "", "")));
-    when(dao.updateTeacherById(teacher, 1)).thenReturn(1);
-    assertEquals(1, teacherService.updateTeacherById("1", "Mark", "Martin", 0, null));
-    verify(dao, times(1)).updateTeacherById(any(Teacher.class), anyInt());
+    when(dao.getTeacherById(1)).thenReturn(new Teacher(1, "", ""));
+    when(dao.updateTeacherById(teacher)).thenReturn(teacher);
+    assertEquals(teacher, teacherService.updateTeacherById("1", "Mark", "Martin", 0, null));
+    verify(dao, times(1)).updateTeacherById(any(Teacher.class));
   }
 
   @Test
   void deleteTeacherById_shouldReturnResultOfDelete_whenGetId(){
-    when(dao.deleteTeacherById(1)).thenReturn(1);
-    assertEquals(1, teacherService.deleteTeacherById(1));
+    teacherService.deleteTeacherById(1);
     verify(dao, times(1)).deleteTeacherById(anyInt());
   }
 }

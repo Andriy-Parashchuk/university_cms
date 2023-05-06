@@ -3,90 +3,78 @@ package com.foxminded.parashchuk.university.dao;
 import com.foxminded.parashchuk.university.models.Group;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.*;
+import javax.transaction.Transactional;
 
 
 /**Class with call to groups table in DB. */
 @Repository
+@Transactional
 public class GroupDao {
   
   private static final Logger log = LoggerFactory.getLogger(GroupDao.class);
-  
-  private JdbcTemplate jdbcTemplate;
-  
-  @Autowired
-  public GroupDao(JdbcTemplate jdbcTemplate) {
-    this.jdbcTemplate = jdbcTemplate;
-  }
 
-  RowMapper<Group> rowMapper = BeanPropertyRowMapper.newInstance(Group.class);
+  @PersistenceContext
+  private EntityManager entityManager;
+
   
   /**Get all groups from table in DB.*/
   public List<Group> getAllGroups() {
     log.info("Get all data from Groups table.");
-    String sql = "select id, name from groups order by id";
-    return jdbcTemplate.query(sql, rowMapper);
+    return entityManager.createQuery("SELECT g FROM Group g order by g.id", Group.class).getResultList();
   }
   
   /**Save new Group to table by group object.*/
-  public int createGroup(Group group) {
+  public Group createGroup(Group group) {
     if (group == null) {
       log.error("Group can not be a null");
       throw new IllegalArgumentException("Group can not be a null");
     } else {
       log.info("Create new Group with name {}.", group.getName());
-      String sql = "insert into groups (name) values (?)";
-      return jdbcTemplate.update(sql, group.getName());
+      entityManager.persist(group);
+      return group;
     }
   }
-  
+
   /**Get one group from table in DB by id.*/
-  public Optional<Group> getGroupById(int id) {
+  public Group getGroupById(int id) {
     log.info("Get Group with id {}.", id);
-    String sql = "select id, name from groups where id = ?";
-    Group group = null;
-    try {
-      group = jdbcTemplate.queryForObject(sql, new Object[]{id}, rowMapper);
-    } catch (DataAccessException exception) {
+    Group group = entityManager.find(Group.class, id);
+    if (group == null){
       log.error("Group with id {} is not found.", id);
       throw new NoSuchElementException(String.format("Group with id %d is not found.", id));
     }
-    return Optional.ofNullable(group);
+    return group;
   }
-  
-  /**Update group by existing id in table and group object for overwriting.
-   * Return 1 if overwriting was successful*/
-  public int updateGroupById(Group group, int id){
-    log.info("Update Group with id {}.", id);
-    String sql = "update groups set name = ? where id = ?";
-    int result = jdbcTemplate.update(sql, group.getName(), id);
-    if (result == 0){
-      log.error("Group with id {} is not found.", id);
-      throw new NoSuchElementException(String.format("Group with id %d is not found.", id));
-    } else {
-      return result;
+
+  /**
+   * Update group by existing id in table and group object for overwriting.
+   */
+  public Group updateGroupById(Group group){
+    log.info("Update Group with id {}.", group.getId());
+    Group checkedGroup = entityManager.find(Group.class, group.getId());
+    if (checkedGroup == null){
+      log.error("Group with id {} is not found.", group.getId());
+      throw new NoSuchElementException(String.format("Group with id %d is not found.", group.getId()));
     }
+    return entityManager.merge(group);
+
   }
-  
+
   /**Delete group by id from table in DB.
    * Return 1 if deleting was successful*/
-  public int deleteGroupById(int id) {
+  public void deleteGroupById(int id) {
     log.info("Delete Group with id {}.", id);
-    int result = jdbcTemplate.update("delete from groups where id = ?", id);
-    if (result == 0){
+    Group group = entityManager.find(Group.class, id);
+    if (group == null){
       log.error("Group with id {} is not found.", id);
       throw new NoSuchElementException(String.format("Group with id %d is not found.", id));
-    } else {
-      return result;
     }
+    entityManager.remove(group);
   }
 
 }

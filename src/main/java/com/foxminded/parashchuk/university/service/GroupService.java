@@ -3,7 +3,6 @@ package com.foxminded.parashchuk.university.service;
 import com.foxminded.parashchuk.university.dao.GroupDao;
 import com.foxminded.parashchuk.university.models.Group;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,23 +21,22 @@ public class GroupService {
     return dao.getAllGroups();
   }
   
-  public int createGroup(Group group) {
+  public Group createGroup(Group group) {
     return dao.createGroup(group);
   }
   
   public Group getGroupById(int id) {
-    Optional<Group> result = dao.getGroupById(id);
-    return result.orElse(null);
+    return dao.getGroupById(id);
   }
   
-  public int updateGroupById(String id, String name) {
+  public Group updateGroupById(String id, String name) {
     int groupId = Integer.parseInt(id);
     Group group = getGroupById(groupId);
     group.setName(name);
-    return dao.updateGroupById(group, groupId);
+    return dao.updateGroupById(group);
   }
   
-  public int deleteGroupById(int id) {
-    return dao.deleteGroupById(id);
+  public void deleteGroupById(int id) {
+    dao.deleteGroupById(id);
   }
 }

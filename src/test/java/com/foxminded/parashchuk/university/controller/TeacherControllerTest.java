@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -92,8 +93,6 @@ class TeacherControllerTest {
   @Test
   void teacherEdit_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
     when(service.getTeacherById(1)).thenReturn(new Teacher(1, "Chris", "Martin"));
-    when(service.updateTeacherById("1", "Updated", "Teacher", 0, ""))
-            .thenReturn(1);
 
     this.mockMvc.perform(post("/teachers/1")
                     .param("firstName", "Updated")
@@ -106,7 +105,6 @@ class TeacherControllerTest {
 
   @Test
   void teacherCreate_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
-    when(service.createTeacher(new Teacher(1, "Chris", "Martin"))).thenReturn(1);
 
     this.mockMvc.perform(post("/teachers/new")
                     .param("firstName", "Chris")
@@ -119,7 +117,7 @@ class TeacherControllerTest {
 
   @Test
   void deleteTeacher_shouldRedirectToMainTeachersPageWithSuccessMessage_whenGetExistedId() throws Exception {
-    when(service.deleteTeacherById(1)).thenReturn(1);
+
     this.mockMvc.perform(get("/teachers/delete/1"))
             .andDo(print())
             .andExpect(status().is3xxRedirection())
@@ -129,7 +127,8 @@ class TeacherControllerTest {
 
   @Test
   void deleteTeacher_shouldRedirectToMainTeacherPageWithDangerMessage_whenGetNotExistedId() throws Exception {
-    when(service.deleteTeacherById(1)).thenThrow(NoSuchElementException.class);
+    doThrow(NoSuchElementException.class).when(service).deleteTeacherById(1);
+
     this.mockMvc.perform(get("/teachers/delete/1"))
             .andDo(print())
             .andExpect(status().is3xxRedirection())

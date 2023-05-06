@@ -1,23 +1,25 @@
 package com.foxminded.parashchuk.university.dao;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import com.foxminded.parashchuk.university.config.TestConfig;
+import com.foxminded.parashchuk.university.config.TestPersistenceConfig;
 import com.foxminded.parashchuk.university.models.Group;
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 
+import javax.transaction.Transactional;
+import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@Transactional
 @SpringBootTest
-@ContextConfiguration(classes = {TestConfig.class})
+@ContextConfiguration(classes = {TestConfig.class, TestPersistenceConfig.class})
 @Sql(value = {"classpath:jdbc/groups.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class GroupDaoTest {
 
@@ -43,7 +45,7 @@ class GroupDaoTest {
         new Group(3, "third"),
         new Group(4, "New"));
     
-    dao.createGroup(group);
+    assertEquals(group, dao.createGroup(group));
     
     assertEquals(expected, dao.getAllGroups());
   }  
@@ -55,30 +57,28 @@ class GroupDaoTest {
   
   @Test
   void getGroupById_shouldReturnGroup_whenGetGroupExistsId() {
-    Group group = dao.getGroupById(1).get();
+    Group group = dao.getGroupById(1);
     Group expected = new Group(1, "first");
     
     assertEquals(expected, group);
   }
   
   @Test
-  void getGroupById_shouldReturnNull_whenGroupWithProvidedIdDoesNotExists() {
-
-    assertFalse(dao.getGroupById(6).isPresent());
+  void getGroupById_shouldThrowException_whenGroupWithProvidedIdDoesNotExists() {
+    assertThrows(NoSuchElementException.class, () -> dao.getGroupById(8));
   }
   
   @Test 
   void updateGroupById_shouldUpdateGroup_whenGetExistsGroupIdAndParameters() {
     Group expected = new Group(1, "Updated group");
- 
-    assertEquals(1, dao.updateGroupById(new Group(0, "Updated group"), 1));
-    assertEquals(expected, dao.getGroupById(1).get());
+    assertEquals(expected, dao.updateGroupById(new Group(1, "Updated group")));
+    assertEquals(expected, dao.getGroupById(1));
   }
   
   @Test 
   void updateGroupById_shouldThrowException_whenGroupDoesNotExists() {
     Group group = new Group(0, "Updated group");
-    assertThrows(NoSuchElementException.class, () -> dao.updateGroupById(group, 8));
+    assertThrows(NoSuchElementException.class, () -> dao.updateGroupById(group));
   }
   
   @Test 
@@ -90,7 +90,7 @@ class GroupDaoTest {
     List<Group> groups = dao.getAllGroups();
     assertEquals(expected, groups);
     
-    assertEquals(1, dao.deleteGroupById(3));
+    dao.deleteGroupById(3);
     
     expected = Arrays.asList(
         new Group(1, "first"), 

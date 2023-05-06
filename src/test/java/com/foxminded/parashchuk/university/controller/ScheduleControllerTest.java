@@ -2,7 +2,6 @@ package com.foxminded.parashchuk.university.controller;
 
 import com.foxminded.parashchuk.university.exceptions.LessonsNotFoundExceptions;
 import com.foxminded.parashchuk.university.models.Lesson;
-import com.foxminded.parashchuk.university.service.LessonService;
 import com.foxminded.parashchuk.university.service.ScheduleService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +24,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(ScheduleController.class)

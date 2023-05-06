@@ -96,8 +96,8 @@ public class LessonController {
                              @RequestParam String time, RedirectAttributes redirectAttributes){
     try{
       Lesson lesson = new Lesson(0, name, teacherId, groupId, LocalDateTime.parse(time), audience);
-      service.createLesson(lesson);
-      log.info("New lesson was created");
+      Lesson savedLesson = service.createLesson(lesson);
+      log.info("New lesson was created with name {}", savedLesson.getName());
       redirectAttributes.addFlashAttribute("success_message",
               "New lesson was created.");
     } catch (DataIntegrityViolationException e){

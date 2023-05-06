@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -98,9 +99,7 @@ class LessonControllerTest {
   void lessonEdit_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
     when(service.getLessonById(1)).thenReturn(new Lesson(1, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305));
-    when(service.updateLessonById("1", "Math", 3, 4,
-                    "2023-04-15T10:30:00", 333))
-            .thenReturn(1);
+
 
     this.mockMvc.perform(post("/lessons/1")
                     .param("name", "Math")
@@ -118,9 +117,10 @@ class LessonControllerTest {
   void lessonEdit_shouldThrowExceptionAndRedirectToMainLessonPage_whenGetNotExistedGroupOrTeacher() throws Exception {
     when(service.getLessonById(1)).thenReturn(new Lesson(1, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305));
-    when(service.updateLessonById("1", "Math", 3, 4,
-            "2023-04-15T10:30:00", 333))
-            .thenThrow(DataIntegrityViolationException.class);
+
+    doThrow(DataIntegrityViolationException.class).when(service).updateLessonById(
+            "1", "Math", 3, 4,
+            "2023-04-15T10:30:00", 333);
 
     this.mockMvc.perform(post("/lessons/1")
                     .param("name", "Math")
@@ -138,9 +138,6 @@ class LessonControllerTest {
 
   @Test
   void lessonCreate_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
-    when(service.createLesson(new Lesson(1, "Math", 2, 1,
-            LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305)))
-            .thenReturn(1);
 
     this.mockMvc.perform(post("/lessons/new")
                     .param("name", "Math")
@@ -156,10 +153,9 @@ class LessonControllerTest {
 
   @Test
   void lessonCreate_shouldThrowExceptionAndRedirectToNewLessonPage_whenGetNotExistedGroupOrTeacher() throws Exception {
-    when(service.createLesson(new Lesson(0, "Math", 2, 1,
-            LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305)))
-            .thenThrow(DataIntegrityViolationException.class);
-
+    doThrow(DataIntegrityViolationException.class).when(service).createLesson(
+            new Lesson(0, "Math", 2, 1,
+            LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305));
     this.mockMvc.perform(post("/lessons/new")
                     .param("name", "Math")
                     .param("teacherId", "2")
@@ -175,7 +171,7 @@ class LessonControllerTest {
 
   @Test
   void deleteLesson_shouldRedirectToMainLessonsPageWithSuccessMessage_whenGetExistedId() throws Exception {
-    when(service.deleteLessonById(1)).thenReturn(1);
+
     this.mockMvc.perform(get("/lessons/delete/1"))
             .andDo(print())
             .andExpect(status().is3xxRedirection())
@@ -185,7 +181,7 @@ class LessonControllerTest {
 
   @Test
   void deleteStudent_shouldRedirectToMainStudentPageWithDangerMessage_whenGetNotExistedId() throws Exception {
-    when(service.deleteLessonById(1)).thenThrow(NoSuchElementException.class);
+    doThrow(NoSuchElementException.class).when(service).deleteLessonById(1);
     this.mockMvc.perform(get("/lessons/delete/1"))
             .andDo(print())
             .andExpect(status().is3xxRedirection())

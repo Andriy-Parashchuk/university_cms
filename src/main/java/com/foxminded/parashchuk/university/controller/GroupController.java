@@ -76,8 +76,8 @@ public class GroupController {
   @PostMapping("/new")
   public String groupCreate(@RequestParam String name, RedirectAttributes redirectAttributes){
     Group group = new Group(0, name);
-    service.createGroup(group);
-    log.info("New group was created");
+    Group savedGroup = service.createGroup(group);
+    log.info("New group was created with name {}", savedGroup.getName());
     redirectAttributes.addFlashAttribute("success_message",
             "New group was created");
     return "redirect:/groups/all";

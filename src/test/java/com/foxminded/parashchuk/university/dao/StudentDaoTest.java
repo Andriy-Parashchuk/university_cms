@@ -1,23 +1,23 @@
 package com.foxminded.parashchuk.university.dao;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import com.foxminded.parashchuk.university.config.TestConfig;
+import com.foxminded.parashchuk.university.config.TestPersistenceConfig;
 import com.foxminded.parashchuk.university.models.Student;
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 @SpringBootTest
-@ContextConfiguration(classes = {TestConfig.class})
+@ContextConfiguration(classes = {TestConfig.class, TestPersistenceConfig.class})
 @Sql(value = {"classpath:jdbc/groups.sql", "classpath:jdbc/students.sql"}, 
     executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class StudentDaoTest {
@@ -26,7 +26,7 @@ class StudentDaoTest {
   private StudentDao dao;
   
   @Test 
-  void getAllStdeunts_ReturnListWithStudents_whenDbIsNotEmpty() {
+  void getAllStudents_ReturnListWithStudents_whenDbIsNotEmpty() {
     List<Student> expected = Arrays.asList(
         new Student(1, "Chris", "Martin", 1), 
         new Student(2, "Mari", "Osvald", 2));
@@ -42,7 +42,7 @@ class StudentDaoTest {
         new Student(2, "Mari", "Osvald", 2),
         new Student(3, "New", "Student", 1));
     
-    dao.createStudent(student);
+    assertEquals(student, dao.createStudent(student));
     
     assertEquals(expected, dao.getAllStudents());
   }
@@ -54,29 +54,29 @@ class StudentDaoTest {
   
   @Test
   void getStudentById_shouldReturnStudent_whenGetStudentsExistsId() {
-    Student student = dao.getStudentById(1).get();
+    Student student = dao.getStudentById(1);
     Student expected = new Student(1, "Chris", "Martin", 1);
     
     assertEquals(expected, student);
   }
   
   @Test
-  void getStudentById_shouldReturnNull_whenProvidedIdDoesNotExists() {
-    assertFalse(dao.getStudentById(12).isPresent());
+  void getStudentById_shouldThrowException_whenProvidedIdDoesNotExists() {
+    assertThrows(NoSuchElementException.class, () -> dao.getStudentById(12));
   }
   
   @Test 
   void updateStudentById_shouldUpdateStudent_whenGetExistsStudentIdAndParameters() {
     Student expected = new Student(1, "Updated", "Student", 2);
  
-    assertEquals(1, dao.updateStudentById(new Student(0, "Updated", "Student", 2), 1));
-    assertEquals(expected, dao.getStudentById(1).get());
+    assertEquals(expected, dao.updateStudentById(new Student(1, "Updated", "Student", 2)));
+    assertEquals(expected, dao.getStudentById(1));
   }
   
   @Test 
   void updateStudentById_shouldThrowException_whenStudentDoesNotExists() {
     Student student = new Student(0, "Updated", "Student", 2);
-    assertThrows(NoSuchElementException.class, () -> dao.updateStudentById(student, 9));
+    assertThrows(NoSuchElementException.class, () -> dao.updateStudentById(student));
   }
   
   @Test 
@@ -88,7 +88,7 @@ class StudentDaoTest {
     List<Student> students = dao.getAllStudents();
     assertEquals(expected, students);
     
-    assertEquals(1, dao.deleteStudentById(2));
+    dao.deleteStudentById(2);
     
     students = dao.getAllStudents();
     assertEquals(Arrays.asList(new Student(1, "Chris", "Martin", 1)), students);

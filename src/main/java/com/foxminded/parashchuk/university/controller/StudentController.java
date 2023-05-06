@@ -89,8 +89,8 @@ public class StudentController {
                             RedirectAttributes redirectAttributes){
     try{
       Student student = new Student(0, firstName, lastName, groupId);
-      log.info("New student was created");
-      service.createStudent(student);
+      Student savedStudent = service.createStudent(student);
+      log.info("New student was created with name {} {}", savedStudent.getFirstName(), savedStudent.getLastName());
       redirectAttributes.addFlashAttribute("success_message",
               "New student was created.");
     } catch (DataIntegrityViolationException e){

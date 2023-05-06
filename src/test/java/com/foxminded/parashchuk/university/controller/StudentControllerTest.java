@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -92,9 +93,6 @@ class StudentControllerTest {
 
   @Test
   void studentEdit_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
-    when(service.updateStudentById("1", "Updated", "Student", 2))
-            .thenReturn(1);
-
     this.mockMvc.perform(post("/students/1")
                     .param("firstName", "Updated")
                     .param("lastName", "Student")
@@ -108,8 +106,8 @@ class StudentControllerTest {
   @Test
   void studentEdit_shouldThrowExceptionAndRedirectToMainStudentPage_whenGetNotExistedGroup() throws Exception {
     when(service.getStudentById(1)).thenReturn(new Student(1, "Chris", "Martin", 1));
-    when(service.updateStudentById("1", "Updated", "Student", 2))
-            .thenThrow(DataIntegrityViolationException.class);
+    doThrow(DataIntegrityViolationException.class).when(service).updateStudentById(
+            "1", "Updated", "Student", 2);
 
     this.mockMvc.perform(post("/students/1")
                     .param("firstName", "Updated")
@@ -123,7 +121,6 @@ class StudentControllerTest {
 
   @Test
   void studentCreate_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
-    when(service.createStudent(new Student(0, "Chris", "Martin", 1))).thenReturn(1);
 
     this.mockMvc.perform(post("/students/new")
                     .param("firstName", "Chris")
@@ -137,9 +134,8 @@ class StudentControllerTest {
 
   @Test
   void studentCreate_shouldThrowExceptionAndRedirectToNewStudentPage_whenGetNotExistedGroup() throws Exception {
-    when(service.createStudent(new Student(0, "Chris", "Martin", 1)))
-            .thenThrow(DataIntegrityViolationException.class);
-
+    doThrow(DataIntegrityViolationException.class).when(service).createStudent(
+            new Student(0, "Chris", "Martin", 1));
     this.mockMvc.perform(post("/students/new")
                     .param("firstName", "Chris")
                     .param("lastName", "Martin")
@@ -152,7 +148,6 @@ class StudentControllerTest {
 
   @Test
   void deleteStudent_shouldRedirectToMainStudentsPageWithSuccessMessage_whenGetExistedId() throws Exception {
-    when(service.deleteStudentById(1)).thenReturn(1);
     this.mockMvc.perform(get("/students/delete/1"))
             .andDo(print())
             .andExpect(status().is3xxRedirection())
@@ -162,7 +157,8 @@ class StudentControllerTest {
 
   @Test
   void deleteStudent_shouldRedirectToMainStudentPageWithDangerMessage_whenGetNotExistedId() throws Exception {
-    when(service.deleteStudentById(1)).thenThrow(NoSuchElementException.class);
+    doThrow(NoSuchElementException.class).when(service).deleteStudentById(1);
+
     this.mockMvc.perform(get("/students/delete/1"))
             .andDo(print())
             .andExpect(status().is3xxRedirection())
