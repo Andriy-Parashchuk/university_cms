@@ -5,6 +5,7 @@ import com.foxminded.parashchuk.university.service.GroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -93,7 +94,7 @@ public class GroupController {
               "Group with id "+ groupId +" was deleted.");
       log.info("Group with id {} was deleted.", groupId);
       return "redirect:/groups/all";
-    } catch (NoSuchElementException e){
+    } catch (EmptyResultDataAccessException e){
       log.error("Group with id {} does not exists.", groupId);
       redirectAttributes.addFlashAttribute("danger_message",
               "Group with id " + groupId + " does not exists.");

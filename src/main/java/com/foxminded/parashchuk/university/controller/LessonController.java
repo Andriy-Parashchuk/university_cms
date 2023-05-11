@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -120,7 +121,7 @@ public class LessonController {
               "Lesson with id " + lessonId + " was deleted.");
       log.info("Lesson with id {} was deleted.", lessonId);
       return "redirect:/lessons/all";
-    } catch (NoSuchElementException e){
+    } catch (EmptyResultDataAccessException e){
       log.error("Lesson with id {} does not exists.", lessonId);
       redirectAttributes.addFlashAttribute("danger_message",
               "Lesson with id " + lessonId + " does not exists.");

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -105,7 +106,10 @@ class TeacherControllerTest {
 
   @Test
   void teacherCreate_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
-
+    Teacher teacher =  new Teacher(0, "Chris", "Martin");
+    teacher.setDepartment("");
+    teacher.setAudience(0);
+    when(service.createTeacher(teacher)).thenReturn(teacher);
     this.mockMvc.perform(post("/teachers/new")
                     .param("firstName", "Chris")
                     .param("lastName", "Martin"))
@@ -127,7 +131,7 @@ class TeacherControllerTest {
 
   @Test
   void deleteTeacher_shouldRedirectToMainTeacherPageWithDangerMessage_whenGetNotExistedId() throws Exception {
-    doThrow(NoSuchElementException.class).when(service).deleteTeacherById(1);
+    doThrow(EmptyResultDataAccessException.class).when(service).deleteTeacherById(1);
 
     this.mockMvc.perform(get("/teachers/delete/1"))
             .andDo(print())
