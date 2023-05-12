@@ -1,38 +1,39 @@
 package com.foxminded.parashchuk.university.dao;
 
-import com.foxminded.parashchuk.university.config.TestConfig;
 import com.foxminded.parashchuk.university.config.TestPersistenceConfig;
 import com.foxminded.parashchuk.university.models.Group;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 
-import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Transactional
-@SpringBootTest
-@ContextConfiguration(classes = {TestConfig.class, TestPersistenceConfig.class})
+@ContextConfiguration(classes = {TestPersistenceConfig.class})
 @Sql(value = {"classpath:jdbc/groups.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-class GroupDaoTest {
+@DataJpaTest
+@EnableAutoConfiguration
+class GroupRepositoryTest {
 
   @Autowired
-  private GroupDao dao;
-  
+  private GroupRepository dao;
+
   @Test
   void getAllGroups_shouldReturnListWithGroups_whenTableGroupsIsNotEmpty() {
     List<Group> expected = Arrays.asList(
         new Group(1, "first"), 
         new Group(2, "second"),
         new Group(3, "third"));
-    List<Group> groups = dao.getAllGroups();
+    List<Group> groups = dao.findAllByOrderById();
     assertEquals(expected, groups);
   }
   
@@ -45,19 +46,19 @@ class GroupDaoTest {
         new Group(3, "third"),
         new Group(4, "New"));
     
-    assertEquals(group, dao.createGroup(group));
+    assertEquals(group, dao.save(group));
     
-    assertEquals(expected, dao.getAllGroups());
+    assertEquals(expected, dao.findAllByOrderById());
   }  
   
   @Test 
   void createGroup_shouldThrowIllegalArgsException_whenGetNull() {
-    assertThrows(IllegalArgumentException.class, () -> dao.createGroup(null));
+    assertThrows(InvalidDataAccessApiUsageException.class, () -> dao.save(null));
   }
   
   @Test
   void getGroupById_shouldReturnGroup_whenGetGroupExistsId() {
-    Group group = dao.getGroupById(1);
+    Group group = dao.findById(1).orElse(null);
     Group expected = new Group(1, "first");
     
     assertEquals(expected, group);
@@ -65,20 +66,14 @@ class GroupDaoTest {
   
   @Test
   void getGroupById_shouldThrowException_whenGroupWithProvidedIdDoesNotExists() {
-    assertThrows(NoSuchElementException.class, () -> dao.getGroupById(8));
+    assertEquals(Optional.empty(), dao.findById(8));
   }
   
   @Test 
   void updateGroupById_shouldUpdateGroup_whenGetExistsGroupIdAndParameters() {
     Group expected = new Group(1, "Updated group");
-    assertEquals(expected, dao.updateGroupById(new Group(1, "Updated group")));
-    assertEquals(expected, dao.getGroupById(1));
-  }
-  
-  @Test 
-  void updateGroupById_shouldThrowException_whenGroupDoesNotExists() {
-    Group group = new Group(0, "Updated group");
-    assertThrows(NoSuchElementException.class, () -> dao.updateGroupById(group));
+    assertEquals(expected, dao.save(new Group(1, "Updated group")));
+    assertEquals(expected, dao.findById(1).orElse(null));
   }
   
   @Test 
@@ -87,21 +82,21 @@ class GroupDaoTest {
         new Group(1, "first"), 
         new Group(2, "second"),
         new Group(3, "third"));
-    List<Group> groups = dao.getAllGroups();
+    List<Group> groups = dao.findAllByOrderById();
     assertEquals(expected, groups);
     
-    dao.deleteGroupById(3);
+    dao.deleteById(3);
     
     expected = Arrays.asList(
         new Group(1, "first"), 
         new Group(2, "second"));
     
-    groups = dao.getAllGroups();
+    groups = dao.findAllByOrderById();
     assertEquals(expected, groups);
   }
   
   @Test 
   void deleteGroupById_shouldThrowException_whenGroupDoesNotExists() {
-    assertThrows(NoSuchElementException.class, () -> dao.deleteGroupById(12));
+    assertThrows(EmptyResultDataAccessException.class, () -> dao.deleteById(12));
   }
 }

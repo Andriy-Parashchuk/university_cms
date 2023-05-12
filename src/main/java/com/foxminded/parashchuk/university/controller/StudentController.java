@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -111,7 +112,7 @@ public class StudentController {
               "Student with id " + studentId + " was deleted.");
       log.info("Student with id {} was deleted.", studentId);
       return "redirect:/students/all";
-    } catch (NoSuchElementException e){
+    } catch (EmptyResultDataAccessException e){
       log.error("Student with id {} does not exists.", studentId);
       redirectAttributes.addFlashAttribute("danger_message",
               "Student with id " + studentId + " does not exists.");

@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -121,7 +122,8 @@ class StudentControllerTest {
 
   @Test
   void studentCreate_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
-
+    Student student = new Student(0, "Chris", "Martin", 1);
+    when(service.createStudent(student)).thenReturn(student);
     this.mockMvc.perform(post("/students/new")
                     .param("firstName", "Chris")
                     .param("lastName", "Martin")
@@ -157,7 +159,7 @@ class StudentControllerTest {
 
   @Test
   void deleteStudent_shouldRedirectToMainStudentPageWithDangerMessage_whenGetNotExistedId() throws Exception {
-    doThrow(NoSuchElementException.class).when(service).deleteStudentById(1);
+    doThrow(EmptyResultDataAccessException.class).when(service).deleteStudentById(1);
 
     this.mockMvc.perform(get("/students/delete/1"))
             .andDo(print())

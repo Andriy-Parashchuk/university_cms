@@ -5,6 +5,7 @@ import com.foxminded.parashchuk.university.service.TeacherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -101,7 +102,7 @@ public class TeacherController {
               "Teacher with id "+ teacherId + " was deleted.");
       log.info("Teacher with id {} was deleted.", teacherId);
       return "redirect:/teachers/all";
-    } catch (NoSuchElementException e){
+    } catch (EmptyResultDataAccessException e){
       log.error("Teacher with id {} does not exists.", teacherId);
       redirectAttributes.addFlashAttribute("danger_message",
               "Teacher with id " + teacherId + " does not exists.");

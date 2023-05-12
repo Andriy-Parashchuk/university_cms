@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -67,7 +68,7 @@ class LessonControllerTest {
 
   @Test
   void lessonEditForm_shouldShowEditFormForLesson_whenGetIdFromPath() throws Exception {
-    Lesson lesson = new Lesson(1, "Math", 2, 1,
+    Lesson lesson = new Lesson(0, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305);
     when(service.getLessonById(1)).thenReturn(lesson);
     this.mockMvc.perform(get("/lessons/1"))
@@ -138,7 +139,10 @@ class LessonControllerTest {
 
   @Test
   void lessonCreate_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
+    Lesson lesson = new Lesson(0, "Math", 2, 1,
+            LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305);
 
+    when(service.createLesson(lesson)).thenReturn(lesson);
     this.mockMvc.perform(post("/lessons/new")
                     .param("name", "Math")
                     .param("teacherId", "2")
@@ -181,7 +185,7 @@ class LessonControllerTest {
 
   @Test
   void deleteStudent_shouldRedirectToMainStudentPageWithDangerMessage_whenGetNotExistedId() throws Exception {
-    doThrow(NoSuchElementException.class).when(service).deleteLessonById(1);
+    doThrow(EmptyResultDataAccessException.class).when(service).deleteLessonById(1);
     this.mockMvc.perform(get("/lessons/delete/1"))
             .andDo(print())
             .andExpect(status().is3xxRedirection())

@@ -10,12 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -103,6 +106,8 @@ class GroupControllerTest {
 
   @Test
   void groupCreate_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
+    Group group = new Group(0, "first");
+    when(service.createGroup(group)).thenReturn(group);
     this.mockMvc.perform(post("/groups/new")
                     .param("name", "first"))
             .andDo(print())
@@ -122,7 +127,7 @@ class GroupControllerTest {
 
   @Test
   void deleteGroup_shouldRedirectToMainGroupPageWithDangerMessage_whenGetNotExistedId() throws Exception {
-    doThrow(NoSuchElementException.class).when(service).deleteGroupById(1);
+    doThrow(EmptyResultDataAccessException.class).when(service).deleteGroupById(1);
     this.mockMvc.perform(get("/groups/delete/1"))
             .andDo(print())
             .andExpect(status().is3xxRedirection())
