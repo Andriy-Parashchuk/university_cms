@@ -12,13 +12,14 @@
 <body class="text-center">
 <main class="cover-container mx-auto p-3 flex-column">
     <h2>Edit page for group with id <span th:text="${group.id}"></span></h2>
-    <form class="container w-50 mt-5" method="post">
+    <form class="container w-50 mt-5" method="post" th:object="${group}">
         <div class="form-row align-item-center">
             <div class="form-group col">
                 <label for="groupName">Name</label>
             </div>
             <div class="form-group col">
-                <input name="name" type="text" th:value="${group.name}" id="groupName"  placeholder="Name">
+                <input name="name" type="text" th:value="${group.name}" id="groupName" th:field="*{name}"  placeholder="Name">
+                <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">firstName error</p>
             </div>
         </div>
         <button type="submit" class="btn btn-outline-success mx-3">Send changes</button>

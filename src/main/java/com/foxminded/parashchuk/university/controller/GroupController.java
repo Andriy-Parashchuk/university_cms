@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -57,16 +59,21 @@ public class GroupController {
 
   /**Show page for creating new Group.*/
   @GetMapping("/new")
-  public String groupCreateForm(){
+  public String groupCreateForm(Group group){
     log.info("Show form for creating new group.");
     return "create/group_new";
   }
 
   /**Get new info from fields on the page for edit existing Group.*/
   @PostMapping("/{groupId}")
-  public String groupEdit(@RequestParam String name, @PathVariable String groupId,
+  public String groupEdit(@Valid Group group, BindingResult bindingResult,  @PathVariable String groupId,
                           RedirectAttributes redirectAttributes){
-    service.updateGroupById(groupId, name);
+    group.setId(Integer.parseInt(groupId));
+    if (bindingResult.hasErrors()){
+      log.error("Some fields get errors: {}", bindingResult.getModel());
+      return "edit/group_edit";
+    }
+    service.updateGroupById(group);
     log.info("Group with id {} was updated.", groupId);
     redirectAttributes.addFlashAttribute("success_message",
             "Group with id " + groupId +" was updated.");
@@ -75,8 +82,11 @@ public class GroupController {
 
   /**Get info from fields on the page for creating new Group.*/
   @PostMapping("/new")
-  public String groupCreate(@RequestParam String name, RedirectAttributes redirectAttributes){
-    Group group = new Group(0, name);
+  public String groupCreate(@Valid Group group, BindingResult bindingResult, RedirectAttributes redirectAttributes){
+    if (bindingResult.hasErrors()){
+      log.error("Some fields get errors: {}", bindingResult.getModel());
+      return "create/group_new";
+    }
     Group savedGroup = service.createGroup(group);
     log.info("New group was created with name {}", savedGroup.getName());
     redirectAttributes.addFlashAttribute("success_message",

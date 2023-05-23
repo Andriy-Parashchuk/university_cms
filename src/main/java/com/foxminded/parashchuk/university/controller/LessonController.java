@@ -9,10 +9,11 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDateTime;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -60,23 +61,25 @@ public class LessonController {
 
   /**Get new info from fields on the page for edit existing Lesson.*/
   @PostMapping("/{lessonId}")
-  public String lessonEdit(@RequestParam String name, @RequestParam(defaultValue="0") int teacherId,
-                           @RequestParam(defaultValue="0") int groupId,
-                           @RequestParam(defaultValue="0") int audience,
-                           @RequestParam String time, @PathVariable String lessonId,
+  public String lessonEdit(@Valid Lesson lesson, BindingResult bindingResult, @PathVariable String lessonId,
                            RedirectAttributes redirectAttributes){
+    lesson.setId(Integer.parseInt(lessonId));
+    if (bindingResult.hasErrors()){
+      log.error("Some fields get errors: {}", bindingResult.getModel());
+      return "edit/lesson_edit";
+    }
     try{
-      service.updateLessonById(lessonId, name, teacherId, groupId, time, audience);
+      service.updateLessonById(lesson);
       log.info("Lesson with id {} was updated.", lessonId);
       redirectAttributes.addFlashAttribute("success_message",
               "Lesson with id " + lessonId + " was updated.");
       return "redirect:/lessons/all";
     } catch (DataIntegrityViolationException e){
       log.error("Group with id {} or teacher with id {} does not exists for changing reference for lesson.",
-              groupId, teacherId);
+              lesson.getGroupId(), lesson.getTeacherId());
       redirectAttributes.addFlashAttribute("danger_message",
-              "Group with this id (" + groupId + ") or teacher with id (" + teacherId +
-                      ") does not exists.");
+              "Group with this id (" + lesson.getGroupId() + ") or teacher with id (" +
+                      lesson.getTeacherId() + ") does not exists.");
       return "redirect:/lessons/" + lessonId;
     }
 
@@ -84,30 +87,31 @@ public class LessonController {
 
   /**Show page for creating new Lesson.*/
   @GetMapping("/new")
-  public String lessonCreateForm(Model model){
+  public String lessonCreateForm(Lesson lesson){
     log.info("Show form for add new lesson.");
     return "create/lesson_new";
   }
 
   /**Get info from fields on the page for creating new Lesson.*/
   @PostMapping("/new")
-  public String lessonCreate(@RequestParam String name, @RequestParam(defaultValue="0") int teacherId,
-                             @RequestParam(defaultValue="0") int groupId,
-                             @RequestParam(defaultValue="0") int audience,
-                             @RequestParam String time, RedirectAttributes redirectAttributes){
+  public String lessonCreate(@Valid Lesson lesson, BindingResult bindingResult, Model model,
+                             RedirectAttributes redirectAttributes){
+    if (bindingResult.hasErrors()) {
+      log.error("Some fields get errors: {}", bindingResult.getModel());
+      return "create/lesson_new";
+    }
     try{
-      Lesson lesson = new Lesson(0, name, teacherId, groupId, LocalDateTime.parse(time), audience);
       Lesson savedLesson = service.createLesson(lesson);
       log.info("New lesson was created with name {}", savedLesson.getName());
       redirectAttributes.addFlashAttribute("success_message",
               "New lesson was created.");
     } catch (DataIntegrityViolationException e){
       log.error("Group with id {} or teacher with id {} does not exists for changing reference for lesson.",
-              groupId, teacherId);
-      redirectAttributes.addFlashAttribute("danger_message",
-              "Group with this id (" + groupId + ") or teacher with id (" + teacherId +
-                      ") does not exists.");
-      return "redirect:/lessons/new";
+              lesson.getGroupId(), lesson.getTeacherId());
+      model.addAttribute("danger_message",
+              "Group with this id (" + lesson.getGroupId() + ") or teacher with id (" +
+                      lesson.getTeacherId() + ") does not exists.");
+      return "create/lesson_new";
     }
     return "redirect:/lessons/all";
   }

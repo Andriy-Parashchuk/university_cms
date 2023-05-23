@@ -28,8 +28,8 @@ class TeacherServiceTest {
   @Test
   void getAllTeachers_shouldCallToTeacherDaoAndReturnList_whenDbIsNotEmpty(){
     List<Teacher> expected = Arrays.asList(
-            new Teacher(1, "Mark", "Martin"),
-            new Teacher(2, "Lois", "Bread"));
+            new Teacher(1, "Mark", "Martin", "mark@testmail.com"),
+            new Teacher(2, "Lois", "Bread", "lois@testmail.com"));
     when(dao.findAllByOrderById()).thenReturn(expected);
     assertEquals(expected, teacherService.getAllTeachers());
     verify(dao, times(1)).findAllByOrderById();
@@ -37,7 +37,7 @@ class TeacherServiceTest {
 
   @Test
   void createTeacher_shouldReturnResultOfInsert_whenGetTeacher(){
-    Teacher teacher = new Teacher(1, "Mark", "Martin");
+    Teacher teacher = new Teacher(1, "Mark", "Martin", "mark@testmail.com");
     when(dao.save(teacher)).thenReturn(teacher);
     assertEquals(teacher, teacherService.createTeacher(teacher));
     verify(dao, times(1)).save(any(Teacher.class));
@@ -45,7 +45,7 @@ class TeacherServiceTest {
 
   @Test
   void getTeacherById_shouldReturnTeacher_whenGetExistingId(){
-    Teacher teacher = new Teacher(1, "Mark", "Martin");
+    Teacher teacher = new Teacher(1, "Mark", "Martin", "mark@testmail.com");
     when(dao.findById(1)).thenReturn(Optional.of(teacher));
     assertEquals(teacher, teacherService.getTeacherById(1));
     verify(dao, times(1)).findById(anyInt());
@@ -53,10 +53,10 @@ class TeacherServiceTest {
 
   @Test
   void updateTeacherById_shouldReturnResultOfUpdate_whenGetGroupAndExistingId(){
-    Teacher teacher = new Teacher(1, "Mark", "Martin");
-    when(dao.findById(1)).thenReturn(Optional.of(new Teacher(1, "", "")));
+    Teacher teacher = new Teacher(1, "Mark", "Martin", "mark@testmail.com");
+    when(dao.findById(1)).thenReturn(Optional.of(new Teacher(1, "", "", "")));
     when(dao.save(teacher)).thenReturn(teacher);
-    assertEquals(teacher, teacherService.updateTeacherById("1", "Mark", "Martin", 0, null));
+    assertEquals(teacher, teacherService.updateTeacherById(teacher));
     verify(dao, times(1)).save(any(Teacher.class));
   }
 

@@ -49,12 +49,7 @@ public class StudentService {
   }
 
   /**Update student by existing id in table.*/
-  public Student updateStudentById(String id, String firstName, String lastName, int groupId) {
-    int studentId = Integer.parseInt(id);
-    Student student = getStudentById(studentId);
-    student.setFirstName(firstName);
-    student.setLastName(lastName);
-    student.setGroupId(groupId);
+  public Student updateStudentById(Student student) {
     log.info("Update Student with id {}.", student.getId());
     Student checkedStudent = getStudentById(student.getId());
     if (checkedStudent == null){

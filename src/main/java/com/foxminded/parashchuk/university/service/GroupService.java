@@ -52,10 +52,7 @@ public class GroupService {
   }
 
 /**Update group by existing id in table.*/
-  public Group updateGroupById(String id, String name) {
-    int groupId = Integer.parseInt(id);
-    Group group = getGroupById(groupId);
-    group.setName(name);
+  public Group updateGroupById(Group group) {
     log.info("Update Group with id {}.", group.getId());
     Group checkedGroup = getGroupById(group.getId());
     if (checkedGroup == null){

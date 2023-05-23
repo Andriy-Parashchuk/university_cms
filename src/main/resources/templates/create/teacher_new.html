@@ -12,13 +12,14 @@
 <body class="text-center">
 <main class="cover-container mx-auto p-3 flex-column">
   <h2>Add new Teacher</h2>
-  <form class="container w-50 mt-5" method="post">
+  <form class="container w-50 mt-5" method="post" th:object="${teacher}">
     <div class="form-row align-item-center">
       <div class="form-group col">
         <label for="teacherFirstName">First Name</label>
       </div>
       <div class="form-group col">
-        <input name="firstName" type="text" id="teacherFirstName"  placeholder="First Name">
+        <input class="mb-3" name="firstName" type="text" id="teacherFirstName" th:field="*{firstName}" placeholder="First Name">
+        <p class="text-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">firstName error</p>
       </div>
     </div>
     <div class="form-row align-item-center">
@@ -26,7 +27,17 @@
         <label for="teacherLastName">Last Name</label>
       </div>
       <div class="form-group col">
-        <input name="lastName" type="text" id="teacherLastName"  placeholder="Last Name">
+        <input class="mb-3" name="lastName" type="text" id="teacherLastName" th:field="*{lastName}"  placeholder="Last Name">
+        <p class="text-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">lastName error</p>
+      </div>
+    </div>
+    <div class="form-row align-item-center">
+      <div class="form-group col">
+        <label for="email">Email</label>
+      </div>
+      <div class="form-group col">
+        <input class="mb-3" name="email" type="text" id="email" th:field="*{email}"  placeholder="Email">
+        <p class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</p>
       </div>
     </div>
     <div class="form-row align-item-center">
@@ -34,7 +45,8 @@
         <label for="audience">Audience</label>
       </div>
       <div class="form-group col">
-        <input name="audience" type="text" id="audience"  placeholder="Audience">
+        <input class="mb-3" name="audience" type="number" id="audience" th:field="*{audience}"  placeholder="Audience">
+        <p class="text-danger" th:if="${#fields.hasErrors('audience')}">Invalid Audience</p>
       </div>
     </div>
     <div class="form-row align-item-center">
@@ -42,7 +54,11 @@
         <label for="department">Department</label>
       </div>
       <div class="form-group col">
-        <input name="department" type="text" id="department"  placeholder="Department">
+        <input class="mb-3" name="department" type="text" id="department" th:field="*{department}" placeholder="Department">
+        <p class="text-danger" th:if="${#fields.hasErrors('department')}" th:errors="*{department}">
+          Invalid Department
+        </p>
+
       </div>
     </div>
 

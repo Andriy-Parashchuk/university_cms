@@ -28,8 +28,8 @@ class StudentServiceTest {
   @Test
   void getAllStudents_shouldCallToStudentDaoAndReturnList_whenDbIsNotEmpty(){
     List<Student> expected = Arrays.asList(
-            new Student(1, "Mark", "Martin", 1),
-            new Student(2, "Lois", "Bread", 2));
+            new Student(1, "Mark", "Martin", 1, "mark@testmail.com"),
+            new Student(2, "Lois", "Bread", 2, "lois@testmail.com"));
     when(dao.findAllByOrderById()).thenReturn(expected);
     assertEquals(expected, studentService.getAllStudents());
     verify(dao, times(1)).findAllByOrderById();
@@ -37,7 +37,7 @@ class StudentServiceTest {
 
   @Test
   void createStudent_shouldReturnResultOfInsert_whenGetStudent(){
-    Student student = new Student(1, "Mark", "Martin", 1);
+    Student student = new Student(1, "Mark", "Martin", 1, "mark@testmail.com");
     when(dao.save(student)).thenReturn(student);
     assertEquals(student, studentService.createStudent(student));
     verify(dao, times(1)).save(any(Student.class));
@@ -45,7 +45,7 @@ class StudentServiceTest {
 
   @Test
   void getStudentById_shouldReturnStudent_whenGetExistingId(){
-    Student student = new Student(1, "Mark", "Martin", 1);
+    Student student = new Student(1, "Mark", "Martin", 1, "mark@testmail.com");
     when(dao.findById(1)).thenReturn(Optional.of(student));
     assertEquals(student, studentService.getStudentById(1));
     verify(dao, times(1)).findById(anyInt());
@@ -53,10 +53,10 @@ class StudentServiceTest {
 
   @Test
   void updateStudentById_shouldReturnResultOfUpdate_whenGetStudentAndExistingId(){
-    Student student = new Student(1, "Mark", "Martin", 1);
-    when(dao.findById(1)).thenReturn(Optional.of(new Student(1, "", "", 1)));
+    Student student = new Student(1, "Mark", "Martin", 1, "mark@testmail.com");
+    when(dao.findById(1)).thenReturn(Optional.of(new Student(1, "", "", 1, "")));
     when(dao.save(student)).thenReturn(student);
-    assertEquals(student, studentService.updateStudentById("1", "Mark", "Martin", 1));
+    assertEquals(student, studentService.updateStudentById(student));
     verify(dao, times(1)).save(any(Student.class));
   }
 

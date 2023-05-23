@@ -31,8 +31,8 @@ class TeacherRepositoryTest {
   
   @Test 
   void getAllTeachers_ReturnListWithTeachers_whenDbIsNotEmpty() {
-    Teacher teacher1 = new Teacher(1, "Chris", "Martin");
-    Teacher teacher2 = new Teacher(2, "Mari", "Osvald");
+    Teacher teacher1 = new Teacher(1, "Chris", "Martin", null);
+    Teacher teacher2 = new Teacher(2, "Mari", "Osvald", null);
     teacher1.setAudience(203);
     teacher1.setDepartment("Biology");
     
@@ -47,15 +47,17 @@ class TeacherRepositoryTest {
   
   @Test 
   void createTeacher_shouldAddNewTeacherWithIncrementedIdToDb_whenGetTeacher() {
-    Teacher teacher1 = new Teacher(1, "Chris", "Martin");
-    Teacher teacher2 = new Teacher(2, "Mari", "Osvald");
+    Teacher teacher1 = new Teacher(1, "Chris", "Martin", null);
+    Teacher teacher2 = new Teacher(2, "Mari", "Osvald", null);
     teacher1.setAudience(203);
     teacher1.setDepartment("Biology");
     
     teacher2.setAudience(304);
     teacher2.setDepartment("Math");
     
-    Teacher newTeacher = new Teacher(3, "new", "teacher");
+    Teacher newTeacher = new Teacher(3, "new", "teacher", null);
+    newTeacher.setAudience(305);
+    newTeacher.setDepartment("Philosophy");
 
     List<Teacher> expected = Arrays.asList(teacher1, teacher2, newTeacher);
 
@@ -70,7 +72,7 @@ class TeacherRepositoryTest {
   
   @Test
   void getTeacherById_shouldReturnTeacher_whenGetTeachersExistsId() {
-    Teacher expected = new Teacher(1, "Chris", "Martin");
+    Teacher expected = new Teacher(1, "Chris", "Martin", null);
     expected.setAudience(203);
     expected.setDepartment("Biology");
     
@@ -86,16 +88,16 @@ class TeacherRepositoryTest {
   
   @Test 
   void updateTeacherById_shouldUpdateTeacher_whenGetExistsTeacherIdAndParameters() {
-    Teacher expected = new Teacher(1, "updated", "teacher");
+    Teacher expected = new Teacher(1, "updated", "teacher", null);
  
-    assertEquals(expected, dao.save(new Teacher(1, "updated", "teacher")));
+    assertEquals(expected, dao.save(new Teacher(1, "updated", "teacher", null)));
     assertEquals(Optional.of(expected), dao.findById(1));
   }
 
   @Test 
   void deleteTeacherById_shouldDeleteTeacher_whenGetExistsTeacherId() {
-    Teacher teacher1 = new Teacher(1, "Chris", "Martin");
-    Teacher teacher2 = new Teacher(2, "Mari", "Osvald");
+    Teacher teacher1 = new Teacher(1, "Chris", "Martin", null);
+    Teacher teacher2 = new Teacher(2, "Mari", "Osvald", null);
     teacher1.setAudience(203);
     teacher1.setDepartment("Biology");
     

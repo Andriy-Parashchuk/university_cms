@@ -61,8 +61,7 @@ class LessonServiceTest {
     Lesson lesson = new Lesson(1, "Bio", 1, 2, time1, 22);
     when(dao.findById(1)).thenReturn(Optional.of(new Lesson(1, "", 1, 1, time2, 0)));
     when(dao.save(lesson)).thenReturn(lesson);
-    assertEquals(lesson, lessonService.updateLessonById("1", "Bio", 1, 2,
-            "2023-02-12T15:40:00", 22));
+    assertEquals(lesson, lessonService.updateLessonById(lesson));
     verify(dao, times(1)).save(any(Lesson.class));
   }
 

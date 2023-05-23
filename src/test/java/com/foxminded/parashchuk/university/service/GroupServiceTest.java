@@ -55,7 +55,7 @@ class GroupServiceTest {
     Group group = new Group(1, "first");
     when(dao.findById(1)).thenReturn(Optional.of(new Group(1, "")));
     when(dao.save(group)).thenReturn(group);
-    assertEquals(group, groupService.updateGroupById("1", "first"));
+    assertEquals(group, groupService.updateGroupById(group));
     verify(dao, times(1)).save(any(Group.class));
   }
 

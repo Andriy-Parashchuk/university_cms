@@ -9,9 +9,11 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -58,18 +60,22 @@ public class StudentController {
 
   /**Get new info from fields on the page for edit existing Lesson.*/
   @PostMapping("/{studentId}")
-  public String studentEdit(@PathVariable String studentId, @RequestParam String firstName,
-                            @RequestParam String lastName, @RequestParam(defaultValue="0") int groupId,
+  public String studentEdit(@PathVariable String studentId, @Valid Student student, BindingResult bindingResult,
                             RedirectAttributes redirectAttributes){
+    if (bindingResult.hasErrors()){
+      log.error("Some fields get errors: {}", bindingResult.getModel());
+      return "edit/student_edit";
+    }
     try {
-      service.updateStudentById(studentId, firstName, lastName, groupId);
+      student.setId(Integer.parseInt(studentId));
+      service.updateStudentById(student);
       log.info("Student with id {} was updated.", studentId);
       redirectAttributes.addFlashAttribute("success_message",
               "Student with id " + studentId + " was updated.");
     } catch (DataIntegrityViolationException e){
-      log.error("Group with id {} does not exists for changing reference for student.", groupId);
+      log.error("Group with id {} does not exists for changing reference for student.", student.getGroupId());
       redirectAttributes.addFlashAttribute("danger_message",
-              "Group with this id (" + groupId + ") does not exists.");
+              "Group with this id (" + student.getGroupId() + ") does not exists.");
       return "redirect:/students/" + studentId;
     }
     return "redirect:/students/all";
@@ -78,27 +84,30 @@ public class StudentController {
 
   /**Show page for creating new Lesson.*/
   @GetMapping("/new")
-  public String studentCreateForm(){
+  public String studentCreateForm(Student student){
     log.info("Show form for add new student.");
     return "create/student_new";
   }
 
   /**Get info from fields on the page for creating new Lesson.*/
   @PostMapping("/new")
-  public String studentCreate(@RequestParam String firstName, @RequestParam String lastName,
-                            @RequestParam(defaultValue="0") int groupId,
+  public String studentCreate(@Valid Student student, BindingResult bindingResult,
+                            Model model,
                             RedirectAttributes redirectAttributes){
+    if (bindingResult.hasErrors()){
+      log.error("Some fields get errors: {}", bindingResult.getModel());
+      return "create/student_new";
+    }
     try{
-      Student student = new Student(0, firstName, lastName, groupId);
       Student savedStudent = service.createStudent(student);
       log.info("New student was created with name {} {}", savedStudent.getFirstName(), savedStudent.getLastName());
       redirectAttributes.addFlashAttribute("success_message",
               "New student was created.");
     } catch (DataIntegrityViolationException e){
-      log.error("Group with id {} does not exists for changing reference for student.", groupId);
-      redirectAttributes.addFlashAttribute("danger_message",
-              "Group with this id (" + groupId + ") does not exists.");
-      return "redirect:/students/new";
+      log.error("Group with id {} does not exists for changing reference for student.", student.getGroupId());
+      model.addAttribute("danger_message",
+              "Group with this id (" + student.getGroupId() + ") does not exists.");
+      return "create/student_new";
     }
     return "redirect:/students/all";
   }

@@ -50,14 +50,7 @@ public class LessonService {
   }
 
   /**Update lesson by existing id in table.*/
-  public Lesson updateLessonById(String id, String name, int teacherId, int groupId,  String time, int audience) {
-    int lessonId = Integer.parseInt(id);
-    Lesson lesson = getLessonById(lessonId);
-    lesson.setName(name);
-    lesson.setTeacherId(teacherId);
-    lesson.setGroupId(groupId);
-    lesson.setTime(LocalDateTime.parse(time));
-    lesson.setAudience(audience);
+  public Lesson updateLessonById(Lesson lesson) {
     log.info("Update Lesson with id {}.", lesson.getId());
     Lesson checkedLesson = getLessonById(lesson.getId());
     if (checkedLesson == null){

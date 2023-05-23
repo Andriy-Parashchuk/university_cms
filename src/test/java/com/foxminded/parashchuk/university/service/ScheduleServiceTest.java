@@ -22,14 +22,14 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ScheduleServiceTest {
-  Teacher teacher1 = new Teacher(1, "Mark", "Robinson");
-  Teacher teacher2 = new Teacher(2, "Elizabeth", "Miller"); 
+  Teacher teacher1 = new Teacher(1, "Mark", "Robinson", "mark_rob@testmail.com");
+  Teacher teacher2 = new Teacher(2, "Elizabeth", "Miller", "eliza_miller@testmail.com");
   
   Group group1 = new Group(1, "first");
   Group group2 = new Group(2, "second");
   
-  Student student1 = new Student(3, "Tony", "McMillan", group1.getId());
-  Student student2 = new Student(4, "Tomas", "Stivenson", group2.getId());
+  Student student1 = new Student(3, "Tony", "McMillan", group1.getId(), "tony@testmail.com");
+  Student student2 = new Student(4, "Tomas", "Stivenson", group2.getId(), "tom@testmail.com");
   
   LocalDateTime time1 = LocalDateTime.of(2023, 2, 12, 15, 40);
   LocalDateTime time2 = LocalDateTime.of(2023, 3, 11, 10, 40);

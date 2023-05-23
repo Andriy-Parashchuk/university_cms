@@ -50,13 +50,7 @@ public class TeacherService {
   }
 
   /**Update teacher by existing id in table.*/
-  public Teacher updateTeacherById(String id, String firstName, String lastName, int audience, String department) {
-    int teacherId = Integer.parseInt(id);
-    Teacher teacher = getTeacherById(teacherId);
-    teacher.setFirstName(firstName);
-    teacher.setLastName(lastName);
-    teacher.setAudience(audience);
-    teacher.setDepartment(department);
+  public Teacher updateTeacherById(Teacher teacher) {
     log.info("Update Teacher with id {}.", teacher.getId());
     Teacher checkedTeacher = getTeacherById(teacher.getId());
     if (checkedTeacher == null){
