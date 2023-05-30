@@ -1,6 +1,7 @@
 package com.foxminded.parashchuk.university.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -17,11 +18,17 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class TestPersistenceConfig {
 
-  @Autowired
-  private DataSource dataSource;
+  @Bean
+  public DataSource dataSource() {
+    return DataSourceBuilder.create()
+            .url("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE") // In-memory H2 database
+            .username("sa")
+            .password("")
+            .build();
+  }
 
   @Bean
-  public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+  public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
     LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
     emf.setDataSource(dataSource);
     emf.setPackagesToScan("com.foxminded.parashchuk.university.models");

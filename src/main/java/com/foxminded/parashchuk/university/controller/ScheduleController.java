@@ -1,7 +1,7 @@
 package com.foxminded.parashchuk.university.controller;
 
+import com.foxminded.parashchuk.university.dto.LessonDTO;
 import com.foxminded.parashchuk.university.exceptions.LessonsNotFoundExceptions;
-import com.foxminded.parashchuk.university.models.Lesson;
 import com.foxminded.parashchuk.university.service.ScheduleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,7 @@ public class ScheduleController {
                                   @RequestParam String period, @RequestParam String time,
                                   Model model, RedirectAttributes redirectAttributes)
           throws LessonsNotFoundExceptions {
-    List<Lesson> lessons;
+    List<LessonDTO> lessons;
     LocalDate date;
     try{
       date = LocalDateTime.parse(time).toLocalDate();

@@ -1,6 +1,6 @@
 package com.foxminded.parashchuk.university.controller;
 
-import com.foxminded.parashchuk.university.models.Lesson;
+import com.foxminded.parashchuk.university.dto.LessonDTO;
 import com.foxminded.parashchuk.university.service.LessonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**Class for connecting UI with Lesson model.*/
@@ -29,7 +30,7 @@ public class LessonController {
   /**Return all Lessons from database and show them to UI.*/
   @GetMapping("/all")
   public String getAllLessons(Model model){
-    List<Lesson> lessons = service.getAllLessons();
+    List<LessonDTO> lessons = service.getAllLessons();
     model.addAttribute("lessons", lessons);
     log.info("All data from lessons was transfer to web-page");
     return "all_lessons";
@@ -47,9 +48,9 @@ public class LessonController {
   @GetMapping("/{lessonId}")
   public String lessonEditForm(Model model, @PathVariable String lessonId, RedirectAttributes redirectAttributes){
     try{
-      Lesson lesson = service.getLessonById(Integer.parseInt(lessonId));
+      LessonDTO lessonDTO = service.getLessonById(Integer.parseInt(lessonId));
       log.info("Show edit form for lesson with id {}", lessonId);
-      model.addAttribute("lesson", lesson);
+      model.addAttribute("lesson", lessonDTO);
       return "edit/lesson_edit";
     } catch (NoSuchElementException exception) {
       log.error("Lesson with id {} does not exists.", lessonId);
@@ -61,25 +62,28 @@ public class LessonController {
 
   /**Get new info from fields on the page for edit existing Lesson.*/
   @PostMapping("/{lessonId}")
-  public String lessonEdit(@Valid Lesson lesson, BindingResult bindingResult, @PathVariable String lessonId,
-                           RedirectAttributes redirectAttributes){
-    lesson.setId(Integer.parseInt(lessonId));
+  public String lessonEdit(@Valid LessonDTO lessonDTO, BindingResult bindingResult, @PathVariable String lessonId,
+                           Model model, RedirectAttributes redirectAttributes){
+    lessonDTO.setId(Integer.parseInt(lessonId));
+    model.addAttribute("lesson", lessonDTO);
     if (bindingResult.hasErrors()){
+      Map<String, String> errorsMap = ControllerUtils.getErrors(bindingResult);
+      model.mergeAttributes(errorsMap);
       log.error("Some fields get errors: {}", bindingResult.getModel());
       return "edit/lesson_edit";
     }
     try{
-      service.updateLessonById(lesson);
+      service.updateLessonById(lessonDTO);
       log.info("Lesson with id {} was updated.", lessonId);
       redirectAttributes.addFlashAttribute("success_message",
               "Lesson with id " + lessonId + " was updated.");
       return "redirect:/lessons/all";
     } catch (DataIntegrityViolationException e){
       log.error("Group with id {} or teacher with id {} does not exists for changing reference for lesson.",
-              lesson.getGroupId(), lesson.getTeacherId());
+              lessonDTO.getGroupId(), lessonDTO.getTeacherId());
       redirectAttributes.addFlashAttribute("danger_message",
-              "Group with this id (" + lesson.getGroupId() + ") or teacher with id (" +
-                      lesson.getTeacherId() + ") does not exists.");
+              "Group with this id (" + lessonDTO.getGroupId() + ") or teacher with id (" +
+                      lessonDTO.getTeacherId() + ") does not exists.");
       return "redirect:/lessons/" + lessonId;
     }
 
@@ -87,30 +91,34 @@ public class LessonController {
 
   /**Show page for creating new Lesson.*/
   @GetMapping("/new")
-  public String lessonCreateForm(Lesson lesson){
+  public String lessonCreateForm(Model model){
+    model.addAttribute("lesson", new LessonDTO());
     log.info("Show form for add new lesson.");
     return "create/lesson_new";
   }
 
   /**Get info from fields on the page for creating new Lesson.*/
   @PostMapping("/new")
-  public String lessonCreate(@Valid Lesson lesson, BindingResult bindingResult, Model model,
+  public String lessonCreate(@Valid LessonDTO lessonDTO, BindingResult bindingResult, Model model,
                              RedirectAttributes redirectAttributes){
+    model.addAttribute("lesson", lessonDTO);
     if (bindingResult.hasErrors()) {
+      Map<String, String> errorsMap = ControllerUtils.getErrors(bindingResult);
+      model.mergeAttributes(errorsMap);
       log.error("Some fields get errors: {}", bindingResult.getModel());
       return "create/lesson_new";
     }
     try{
-      Lesson savedLesson = service.createLesson(lesson);
+      LessonDTO savedLesson = service.createLesson(lessonDTO);
       log.info("New lesson was created with name {}", savedLesson.getName());
       redirectAttributes.addFlashAttribute("success_message",
               "New lesson was created.");
     } catch (DataIntegrityViolationException e){
       log.error("Group with id {} or teacher with id {} does not exists for changing reference for lesson.",
-              lesson.getGroupId(), lesson.getTeacherId());
+              lessonDTO.getGroupId(), lessonDTO.getTeacherId());
       model.addAttribute("danger_message",
-              "Group with this id (" + lesson.getGroupId() + ") or teacher with id (" +
-                      lesson.getTeacherId() + ") does not exists.");
+              "Group with this id (" + lessonDTO.getGroupId() + ") or teacher with id (" +
+                      lessonDTO.getTeacherId() + ") does not exists.");
       return "create/lesson_new";
     }
     return "redirect:/lessons/all";

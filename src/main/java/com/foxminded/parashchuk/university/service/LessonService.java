@@ -1,15 +1,17 @@
 package com.foxminded.parashchuk.university.service;
 
 import com.foxminded.parashchuk.university.dao.LessonRepository;
+import com.foxminded.parashchuk.university.dto.LessonDTO;
+import com.foxminded.parashchuk.university.mappers.LessonMapper;
 import com.foxminded.parashchuk.university.models.Lesson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 /**Class contains requests for LessonDao class.*/
 
@@ -17,47 +19,51 @@ import java.util.NoSuchElementException;
 public class LessonService {
   @Autowired
   private LessonRepository dao;
+  @Autowired
+  private LessonMapper mapper;
 
   private static final Logger log = LoggerFactory.getLogger(LessonService.class);
 
 
   /**Get all lessons from table in DB.*/
-  public List<Lesson> getAllLessons() {
+  public List<LessonDTO> getAllLessons() {
     log.info("Get all data from Lessons table.");
-    return dao.findAllByOrderById();
+    return dao.findAllByOrderById().stream()
+            .map(mapper::toDto)
+            .collect(Collectors.toList());
   }
 
   /**Save new Lesson to table by lesson object.*/
-  public Lesson createLesson(Lesson lesson) {
-    if (lesson == null) {
+  public LessonDTO createLesson(LessonDTO lessonDTO) {
+    if (lessonDTO == null) {
       log.error("Lesson can not be a null");
       throw new IllegalArgumentException("Lesson can not be a null");
     } else {
-      log.info("Create new Lesson with name {}.", lesson.getName());
-      return dao.save(lesson);
+      log.info("Create new Lesson with name {}.", lessonDTO.getName());
+      return mapper.toDto(dao.save(mapper.toLesson(lessonDTO)));
     }
   }
 
   /**Get one lesson from table in DB by id.*/
-  public Lesson getLessonById(int id) {
+  public LessonDTO getLessonById(int id) {
     log.info("Get Lesson with id {}.", id);
     Lesson lesson = dao.findById(id).orElse(null);
     if (lesson == null) {
       log.error("Lesson with id {} is not found.", id);
       throw new NoSuchElementException(String.format("Lesson with id %d is not found.", id));
     }
-    return lesson;
+    return mapper.toDto(lesson);
   }
 
   /**Update lesson by existing id in table.*/
-  public Lesson updateLessonById(Lesson lesson) {
-    log.info("Update Lesson with id {}.", lesson.getId());
-    Lesson checkedLesson = getLessonById(lesson.getId());
+  public LessonDTO updateLessonById(LessonDTO lessonDTO) {
+    log.info("Update Lesson with id {}.", lessonDTO.getId());
+    LessonDTO checkedLesson = getLessonById(lessonDTO.getId());
     if (checkedLesson == null){
-      log.error("Lesson with id {} is not found.", lesson.getId());
-      throw new NoSuchElementException(String.format("Lesson with id %d is not found.", lesson.getId()));
+      log.error("Lesson with id {} is not found.", lessonDTO.getId());
+      throw new NoSuchElementException(String.format("Lesson with id %d is not found.", lessonDTO.getId()));
     }
-    return dao.save(lesson);
+    return  mapper.toDto(dao.save(mapper.toLesson(lessonDTO)));
   }
 
   /**Delete lesson by id from table in DB.*/

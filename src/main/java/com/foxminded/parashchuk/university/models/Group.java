@@ -5,8 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import java.util.List;
 
 
 @Entity
@@ -19,8 +18,17 @@ public class Group {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
-  @NotBlank(message = "Name is mandatory")
-  @Size(min = 2, max = 20, message = "Name size should be between 2 and 20")
   private String name;
+
+  @OneToMany(mappedBy = "groupId", cascade = CascadeType.ALL)
+  private List<Student> students;
+
+  @OneToMany(mappedBy = "groupId", cascade = CascadeType.ALL)
+  private List<Lesson> lessons;
+
+  public Group(int id, String name){
+    this.id = id;
+    this.name = name;
+  }
   
 }

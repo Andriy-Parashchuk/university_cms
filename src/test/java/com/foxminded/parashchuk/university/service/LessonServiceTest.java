@@ -1,11 +1,14 @@
 package com.foxminded.parashchuk.university.service;
 
 import com.foxminded.parashchuk.university.dao.LessonRepository;
+import com.foxminded.parashchuk.university.dto.LessonDTO;
+import com.foxminded.parashchuk.university.mappers.LessonMapper;
 import com.foxminded.parashchuk.university.models.Lesson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -26,42 +29,47 @@ class LessonServiceTest {
 
   @Mock
   LessonRepository dao;
+  @Spy
+  LessonMapper mapper;
 
   LocalDateTime time1 = LocalDateTime.of(2023, 2, 12, 15, 40);
   LocalDateTime time2 = LocalDateTime.of(2023, 3, 11, 10, 40);
+
+  Lesson lesson = new Lesson(1, "Bio", 1, 2, time1, 22);
+  LessonDTO lessonDTO = new LessonDTO(1, "Bio", 1, 2, time1, 22);
 
   @Test
   void getAllLessons_shouldCallToGroupDaoAndReturnList_whenDbIsNotEmpty() {
     List<Lesson> expected = Arrays.asList(
             new Lesson(1, "Bio", 1, 2, time1, 22),
             new Lesson(2, "Geo", 2, 2, time2, 22));
+    List<LessonDTO> expectedDTO = Arrays.asList(
+            new LessonDTO(1, "Bio", 1, 2, time1, 22),
+            new LessonDTO(2, "Geo", 2, 2, time2, 22));
     when(dao.findAllByOrderById()).thenReturn(expected);
-    assertEquals(expected, lessonService.getAllLessons());
+    assertEquals(expectedDTO, lessonService.getAllLessons());
     verify(dao, times(1)).findAllByOrderById();
   }
 
   @Test
   void createLesson_shouldReturnResultOfInsert_whenGetGroup(){
-    Lesson lesson = new Lesson(1, "Bio", 1, 2, time1, 22);
     when(dao.save(lesson)).thenReturn(lesson);
-    assertEquals(lesson, lessonService.createLesson(lesson));
+    assertEquals(lessonDTO, lessonService.createLesson(lessonDTO));
     verify(dao, times(1)).save(any(Lesson.class));
   }
 
   @Test
   void getGroupById_shouldReturnGroup_whenGetExistingId() {
-    Lesson lesson = new Lesson(1, "Bio", 1, 2, time1, 22);
     when(dao.findById(1)).thenReturn(Optional.of(lesson));
-    assertEquals(lesson, lessonService.getLessonById(1));
+    assertEquals(lessonDTO, lessonService.getLessonById(1));
     verify(dao, times(1)).findById(anyInt());
   }
 
   @Test
   void updateGroupById_shouldReturnResultOfUpdate_whenGetGroupAndExistingId() {
-    Lesson lesson = new Lesson(1, "Bio", 1, 2, time1, 22);
     when(dao.findById(1)).thenReturn(Optional.of(new Lesson(1, "", 1, 1, time2, 0)));
     when(dao.save(lesson)).thenReturn(lesson);
-    assertEquals(lesson, lessonService.updateLessonById(lesson));
+    assertEquals(lessonDTO, lessonService.updateLessonById(lessonDTO));
     verify(dao, times(1)).save(any(Lesson.class));
   }
 

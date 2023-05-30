@@ -1,6 +1,6 @@
 package com.foxminded.parashchuk.university.controller;
 
-import com.foxminded.parashchuk.university.models.Student;
+import com.foxminded.parashchuk.university.dto.StudentDTO;
 import com.foxminded.parashchuk.university.service.StudentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**Class for connecting UI with Student model.*/
@@ -28,7 +29,7 @@ public class StudentController {
   /**Return all Lessons from database and show them to UI.*/
   @GetMapping("/all")
   public String showAllStudents(Model model){
-    List<Student> students = service.getAllStudents();
+    List<StudentDTO> students = service.getAllStudents();
     model.addAttribute("students", students);
     log.info("All data from students was transfer to web-page");
     return "all_students";
@@ -46,9 +47,9 @@ public class StudentController {
   @GetMapping("/{studentId}")
   public String studentEditForm(Model model, @PathVariable String studentId, RedirectAttributes redirectAttributes){
     try{
-      Student student = service.getStudentById(Integer.parseInt(studentId));
+      StudentDTO studentDTO = service.getStudentById(Integer.parseInt(studentId));
       log.info("Show edit form for student with id {}", studentId);
-      model.addAttribute("student", student);
+      model.addAttribute("student", studentDTO);
       return "edit/student_edit";
     } catch (NoSuchElementException exception) {
       log.error("Student with id {} does not exists.", studentId);
@@ -60,22 +61,26 @@ public class StudentController {
 
   /**Get new info from fields on the page for edit existing Lesson.*/
   @PostMapping("/{studentId}")
-  public String studentEdit(@PathVariable String studentId, @Valid Student student, BindingResult bindingResult,
-                            RedirectAttributes redirectAttributes){
+  public String studentEdit(@PathVariable String studentId, @Valid StudentDTO studentDTO, BindingResult bindingResult,
+                            Model model, RedirectAttributes redirectAttributes){
+    studentDTO.setId(Integer.parseInt(studentId));
+    model.addAttribute("student", studentDTO);
     if (bindingResult.hasErrors()){
+      Map<String, String> errorsMap = ControllerUtils.getErrors(bindingResult);
+      model.mergeAttributes(errorsMap);
       log.error("Some fields get errors: {}", bindingResult.getModel());
       return "edit/student_edit";
     }
     try {
-      student.setId(Integer.parseInt(studentId));
-      service.updateStudentById(student);
+      studentDTO.setId(Integer.parseInt(studentId));
+      service.updateStudentById(studentDTO);
       log.info("Student with id {} was updated.", studentId);
       redirectAttributes.addFlashAttribute("success_message",
               "Student with id " + studentId + " was updated.");
     } catch (DataIntegrityViolationException e){
-      log.error("Group with id {} does not exists for changing reference for student.", student.getGroupId());
+      log.error("Group with id {} does not exists for changing reference for student.", studentDTO.getGroupId());
       redirectAttributes.addFlashAttribute("danger_message",
-              "Group with this id (" + student.getGroupId() + ") does not exists.");
+              "Group with this id (" + studentDTO.getGroupId() + ") does not exists.");
       return "redirect:/students/" + studentId;
     }
     return "redirect:/students/all";
@@ -84,29 +89,33 @@ public class StudentController {
 
   /**Show page for creating new Lesson.*/
   @GetMapping("/new")
-  public String studentCreateForm(Student student){
+  public String studentCreateForm(Model model){
+    model.addAttribute("student", new StudentDTO());
     log.info("Show form for add new student.");
     return "create/student_new";
   }
 
   /**Get info from fields on the page for creating new Lesson.*/
   @PostMapping("/new")
-  public String studentCreate(@Valid Student student, BindingResult bindingResult,
+  public String studentCreate(@Valid StudentDTO studentDTO, BindingResult bindingResult,
                             Model model,
                             RedirectAttributes redirectAttributes){
+    model.addAttribute("student", studentDTO);
     if (bindingResult.hasErrors()){
+      Map<String, String> errorsMap = ControllerUtils.getErrors(bindingResult);
+      model.mergeAttributes(errorsMap);
       log.error("Some fields get errors: {}", bindingResult.getModel());
       return "create/student_new";
     }
     try{
-      Student savedStudent = service.createStudent(student);
+      StudentDTO savedStudent = service.createStudent(studentDTO);
       log.info("New student was created with name {} {}", savedStudent.getFirstName(), savedStudent.getLastName());
       redirectAttributes.addFlashAttribute("success_message",
               "New student was created.");
     } catch (DataIntegrityViolationException e){
-      log.error("Group with id {} does not exists for changing reference for student.", student.getGroupId());
+      log.error("Group with id {} does not exists for changing reference for student.", studentDTO.getGroupId());
       model.addAttribute("danger_message",
-              "Group with this id (" + student.getGroupId() + ") does not exists.");
+              "Group with this id (" + studentDTO.getGroupId() + ") does not exists.");
       return "create/student_new";
     }
     return "redirect:/students/all";

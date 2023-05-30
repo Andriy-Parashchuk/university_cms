@@ -21,7 +21,7 @@
         </div>
         <div class="form-group col">
           <input type="text" name="name" id="groupName" th:field="*{name}" placeholder="Name">
-          <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">firstName error</p>
+          <p class="text-danger" th:text="${name}">firstName error</p>
         </div>
       </div>
       <button type="submit" class="btn btn-outline-success mx-3">Create</button>

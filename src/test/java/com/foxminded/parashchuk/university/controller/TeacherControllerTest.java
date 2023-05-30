@@ -1,6 +1,6 @@
 package com.foxminded.parashchuk.university.controller;
 
-import com.foxminded.parashchuk.university.models.Teacher;
+import com.foxminded.parashchuk.university.dto.TeacherDTO;
 import com.foxminded.parashchuk.university.service.TeacherService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,9 +43,9 @@ class TeacherControllerTest {
 
   @Test
   void showAllTeachers_shouldTransferAllDataToTemplate_whenGetDataFromService() throws Exception {
-    List<Teacher> expected = Arrays.asList(
-            new Teacher(1, "Chris", "Martin", "test@test.test"),
-            new Teacher(2, "Mari", "Oswald", "test@test.test"));
+    List<TeacherDTO> expected = Arrays.asList(
+            new TeacherDTO(1, "Chris", "Martin", "test@test.test"),
+            new TeacherDTO(2, "Mari", "Oswald", "test@test.test"));
     when(service.getAllTeachers()).thenReturn(expected);
     this.mockMvc.perform(get("/teachers/all"))
             .andDo(print())
@@ -65,7 +65,7 @@ class TeacherControllerTest {
 
   @Test
   void teacherEditForm_shouldShowEditFormForTeacher_whenGetIdFromPath() throws Exception {
-    Teacher teacher =  new Teacher(2, "Mari", "Oswald", "test@test.test");
+    TeacherDTO teacher =  new TeacherDTO(2, "Mari", "Oswald", "test@test.test");
     when(service.getTeacherById(2)).thenReturn(teacher);
     this.mockMvc.perform(get("/teachers/2"))
             .andDo(print())
@@ -86,7 +86,7 @@ class TeacherControllerTest {
 
   @Test
   void teacherEditForm_shouldShowErrorsMessage_whenGetInValidParameters() throws Exception {
-    Teacher teacher = new Teacher(1, "Chris", "Martin", "test@test.test");
+    TeacherDTO teacher = new TeacherDTO(1, "Chris", "Martin", "test@test.test");
     teacher.setDepartment("bio");
     teacher.setAudience(1);
     when(service.getTeacherById(1)).thenReturn(teacher);
@@ -95,16 +95,13 @@ class TeacherControllerTest {
                     .param("firstName", "")
                     .param("lastName", "")
                     .param("department", "")
-                    .param("audience", "")
+                    .param("audience", "0")
                     .param("email", ""))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(content().string(containsString("Firstname is mandatory")))
             .andExpect(content().string(containsString("Firstname size should be between 2 and 20")))
-            .andExpect(content().string(containsString("Lastname is mandatory")))
             .andExpect(content().string(containsString("Lastname size should be between 2 and 20")))
             .andExpect(content().string(containsString("Please enter a valid email")))
-            .andExpect(content().string(containsString("Email size should be greater then 5")))
             .andExpect(content().string(containsString("Department is mandatory")))
             .andExpect(view().name("edit/teacher_edit"));
   }
@@ -133,7 +130,7 @@ class TeacherControllerTest {
 
   @Test
   void teacherCreate_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
-    Teacher teacher =  new Teacher(0, "Chris", "Martin", "test@test.test");
+    TeacherDTO teacher =  new TeacherDTO(0, "Chris", "Martin", "test@test.test");
     teacher.setDepartment("bio");
     teacher.setAudience(1);
     when(service.createTeacher(teacher)).thenReturn(teacher);
@@ -155,16 +152,13 @@ class TeacherControllerTest {
                     .param("firstName", "")
                     .param("lastName", "")
                     .param("department", "")
-                    .param("audience", "")
+                    .param("audience", "0")
                     .param("email", ""))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(content().string(containsString("Firstname is mandatory")))
             .andExpect(content().string(containsString("Firstname size should be between 2 and 20")))
-            .andExpect(content().string(containsString("Lastname is mandatory")))
             .andExpect(content().string(containsString("Lastname size should be between 2 and 20")))
             .andExpect(content().string(containsString("Please enter a valid email")))
-            .andExpect(content().string(containsString("Email size should be greater then 5")))
             .andExpect(content().string(containsString("Department is mandatory")))
             .andExpect(view().name("create/teacher_new"));
   }

@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.foxminded.parashchuk.university.dto.LessonDTO;
+import com.foxminded.parashchuk.university.dto.StudentDTO;
 import com.foxminded.parashchuk.university.exceptions.LessonsNotFoundExceptions;
 import com.foxminded.parashchuk.university.models.Student;
 import org.slf4j.Logger;
@@ -25,11 +27,11 @@ public class ScheduleService {
   private StudentService studentService;
 
   /**Check all Lessons for teacher for one day.*/
-  public List<Lesson> getLessonsTeacherDay(int teacherId, LocalDate date) throws LessonsNotFoundExceptions {
+  public List<LessonDTO> getLessonsTeacherDay(int teacherId, LocalDate date) throws LessonsNotFoundExceptions {
     log.info("Get all lessons for teacher with id {} for day by LocalDate {}.", teacherId, date);
-    List<Lesson> lessons = lessonService.getAllLessons();
-    List<Lesson> result = new ArrayList<>();
-    for (Lesson l : lessons) {
+    List<LessonDTO> lessons = lessonService.getAllLessons();
+    List<LessonDTO> result = new ArrayList<>();
+    for (LessonDTO l : lessons) {
       if (l.getTeacherId() == teacherId && l.getTime().toLocalDate().equals(date)) {
         result.add(l);
       }
@@ -45,11 +47,11 @@ public class ScheduleService {
   }
 
   /**Check all Lessons for teacher by the end of the month.*/
-  public List<Lesson> getLessonsTeacherMonth(int teacherId, LocalDate date) throws LessonsNotFoundExceptions {
+  public List<LessonDTO> getLessonsTeacherMonth(int teacherId, LocalDate date) throws LessonsNotFoundExceptions {
     log.info("Get all lessons for teacher with id {} for month by LocalDate {}.", teacherId, date);
-    List<Lesson> lessons = lessonService.getAllLessons();
-    List<Lesson> result = new ArrayList<>();
-    for (Lesson l : lessons) {
+    List<LessonDTO> lessons = lessonService.getAllLessons();
+    List<LessonDTO> result = new ArrayList<>();
+    for (LessonDTO l : lessons) {
       if (l.getTeacherId() == teacherId
           && l.getTime().toLocalDate().getYear() == (date.getYear())
           && l.getTime().toLocalDate().getMonth() == (date.getMonth())) {
@@ -67,12 +69,12 @@ public class ScheduleService {
   }
 
   /**Check all Lessons for student for one day.*/
-  public List<Lesson> getLessonsStudentDay(int studentId, LocalDate date) throws LessonsNotFoundExceptions {
+  public List<LessonDTO> getLessonsStudentDay(int studentId, LocalDate date) throws LessonsNotFoundExceptions {
     log.info("Get all lessons for student with id {} for day by LocalDate {}.", studentId, date);
-    Student student = studentService.getStudentById(studentId);
-    List<Lesson> lessons = lessonService.getAllLessons();
-    List<Lesson> result = new ArrayList<>();
-    for (Lesson l : lessons) {
+    StudentDTO student = studentService.getStudentById(studentId);
+    List<LessonDTO> lessons = lessonService.getAllLessons();
+    List<LessonDTO> result = new ArrayList<>();
+    for (LessonDTO l : lessons) {
       if (l.getGroupId() == student.getGroupId() && l.getTime().toLocalDate().equals(date)) {
         result.add(l);
       }
@@ -88,12 +90,12 @@ public class ScheduleService {
   }
 
   /**Check all Lessons for student by the end of the month.*/
-  public List<Lesson> getLessonsStudentMonth(int studentId, LocalDate date) throws LessonsNotFoundExceptions {
+  public List<LessonDTO> getLessonsStudentMonth(int studentId, LocalDate date) throws LessonsNotFoundExceptions {
     log.info("Get all lessons for student with id {} for month by LocalDate {}.", studentId, date);
-    Student student = studentService.getStudentById(studentId);
-    List<Lesson> lessons = lessonService.getAllLessons();
-    List<Lesson> result = new ArrayList<>();
-    for (Lesson l : lessons) {
+    StudentDTO student = studentService.getStudentById(studentId);
+    List<LessonDTO> lessons = lessonService.getAllLessons();
+    List<LessonDTO> result = new ArrayList<>();
+    for (LessonDTO l : lessons) {
       if (l.getGroupId() == student.getGroupId()
           && l.getTime().toLocalDate().getYear() == (date.getYear())
           && l.getTime().toLocalDate().getMonth() == (date.getMonth())) {

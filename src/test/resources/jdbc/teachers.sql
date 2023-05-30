@@ -8,13 +8,14 @@ CREATE TABLE IF NOT EXISTS public.teachers
     first_name character varying NOT NULL,
     last_name character varying NOT NULL,
     audience integer,
-    department character varying, 
+    department character varying,
+    email character varying,
     CONSTRAINT teachers_pkey PRIMARY KEY (id)
 );
 
  
-INSERT INTO public.teachers (first_name, last_name, audience , department) 
-values ('Chris', 'Martin', 203, 'Biology');
+INSERT INTO public.teachers (first_name, last_name, audience, department, email)
+values ('Chris', 'Martin', 203, 'Biology', 'test@test.test');
 
-INSERT INTO public.teachers (first_name, last_name, audience , department) 
-values ('Mari', 'Osvald', 304, 'Math');
+INSERT INTO public.teachers (first_name, last_name, audience, department, email)
+values ('Mari', 'Osvald', 304, 'Math', 'test@test.test');

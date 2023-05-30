@@ -1,5 +1,6 @@
 package com.foxminded.parashchuk.university.controller;
 
+import com.foxminded.parashchuk.university.dto.LessonDTO;
 import com.foxminded.parashchuk.university.models.Lesson;
 import com.foxminded.parashchuk.university.service.LessonService;
 import org.junit.jupiter.api.Test;
@@ -44,10 +45,10 @@ class LessonControllerTest {
 
   @Test
   void showAllLessons_shouldTransferAllDataToTemplate_whenGetDataFromService() throws Exception {
-    List<Lesson> expected = Arrays.asList(
-            new Lesson(1, "Math", 2, 1,
+    List<LessonDTO> expected = Arrays.asList(
+            new LessonDTO(1, "Math", 2, 1,
                     LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305),
-            new Lesson(2, "Biology", 1, 2,
+            new LessonDTO(2, "Biology", 1, 2,
                     LocalDateTime.of(2023, 02, 11, 12, 00, 00), 203));
 
     when(service.getAllLessons()).thenReturn(expected);
@@ -69,7 +70,7 @@ class LessonControllerTest {
 
   @Test
   void lessonEditForm_shouldShowEditFormForLesson_whenGetIdFromPath() throws Exception {
-    Lesson lesson = new Lesson(0, "Math", 2, 1,
+    LessonDTO lesson = new LessonDTO(0, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305);
     when(service.getLessonById(1)).thenReturn(lesson);
     this.mockMvc.perform(get("/lessons/1"))
@@ -99,7 +100,7 @@ class LessonControllerTest {
 
   @Test
   void lessonEdit_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
-    when(service.getLessonById(1)).thenReturn(new Lesson(1, "Math", 2, 1,
+    when(service.getLessonById(1)).thenReturn(new LessonDTO(1, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305));
 
 
@@ -117,7 +118,7 @@ class LessonControllerTest {
 
   @Test
   void lessonEdit_shouldShowErrors_whenGetInValidParameters() throws Exception {
-    when(service.getLessonById(1)).thenReturn(new Lesson(1, "Math", 2, 1,
+    when(service.getLessonById(1)).thenReturn(new LessonDTO(1, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305));
 
 
@@ -129,7 +130,6 @@ class LessonControllerTest {
                     .param("audience", "0"))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(content().string(containsString("Name is mandatory")))
             .andExpect(content().string(containsString("Name size should be between 2 and 20")))
             .andExpect(content().string(containsString("Time is mandatory")))
             .andExpect(view().name("edit/lesson_edit"));
@@ -137,7 +137,7 @@ class LessonControllerTest {
 
   @Test
   void lessonEdit_shouldThrowExceptionAndRedirectToMainLessonPage_whenGetNotExistedGroupOrTeacher() throws Exception {
-    Lesson lesson = new Lesson(1, "Math", 2, 1,
+    LessonDTO lesson = new LessonDTO(1, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305);
     when(service.getLessonById(1)).thenReturn(lesson);
     lesson.setTeacherId(3);
@@ -163,7 +163,7 @@ class LessonControllerTest {
 
   @Test
   void lessonCreate_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
-    Lesson lesson = new Lesson(0, "Math", 2, 1,
+    LessonDTO lesson = new LessonDTO(0, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305);
 
     when(service.createLesson(lesson)).thenReturn(lesson);
@@ -189,7 +189,6 @@ class LessonControllerTest {
                     .param("audience", "0"))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(content().string(containsString("Name is mandatory")))
             .andExpect(content().string(containsString("Name size should be between 2 and 20")))
             .andExpect(content().string(containsString("Time is mandatory")))
             .andExpect(view().name("create/lesson_new"));
@@ -198,7 +197,7 @@ class LessonControllerTest {
   @Test
   void lessonCreate_shouldThrowExceptionAndRedirectToNewLessonPage_whenGetNotExistedGroupOrTeacher() throws Exception {
     doThrow(DataIntegrityViolationException.class).when(service).createLesson(
-            new Lesson(0, "Math", 2, 1,
+            new LessonDTO(0, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305));
     this.mockMvc.perform(post("/lessons/new")
                     .param("name", "Math")

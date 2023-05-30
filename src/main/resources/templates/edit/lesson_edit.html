@@ -19,7 +19,7 @@
       </div>
       <div class="form-group col">
         <input name="name" type="text" th:value="${lesson.name}" id="lessonName" th:field="*{name}" placeholder="Name">
-        <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">firstName error</p>
+        <p class="text-danger" th:text="${name}">name error</p>
       </div>
     </div>
     <div class="form-row align-item-center">
@@ -28,7 +28,7 @@
       </div>
       <div class="form-group col">
         <input name="teacherId" type="number" th:value="${lesson.teacherId}" id="teacherId" th:field="*{teacherId}" placeholder="Teacher Id">
-        <p class="text-danger" th:if="${#fields.hasErrors('teacherId')}" th:errors="*{teacherId}">teacher error</p>
+        <p class="text-danger" th:text="${teacherId}">teacherId error</p>
       </div>
     </div>
     <div class="form-row align-item-center">
@@ -37,7 +37,7 @@
       </div>
       <div class="form-group col">
         <input name="groupId" type="number" th:value="${lesson.groupId}" id="lessonGroupId" th:field="*{groupId}" placeholder="Group id">
-        <p class="text-danger" th:if="${#fields.hasErrors('groupId')}" th:errors="*{groupId}">group error</p>
+        <p class="text-danger" th:text="${groupId}">groupId error</p>
       </div>
     </div>
     <div class="form-row align-item-center">
@@ -46,7 +46,7 @@
       </div>
       <div class="form-group col">
         <input name="time" type="datetime-local" th:value="${lesson.time}" th:field="*{time}" id="time">
-        <p class="text-danger" th:if="${#fields.hasErrors('time')}" th:errors="*{time}">time error</p>
+        <p class="text-danger" th:text="${time}">time error</p>
       </div>
     </div>
     <div class="form-row align-item-center">
@@ -55,14 +55,15 @@
       </div>
       <div class="form-group col">
         <input name="audience" type="text" th:value="${lesson.audience}" id="audience" th:field="*{audience}" placeholder="Audience">
-        <p class="text-danger" th:if="${#fields.hasErrors('audience')}" th:errors="*{audience}">audience error</p>
+        <p class="text-danger" th:text="${audience}">audience error</p>
       </div>
     </div>
     <h6 class="text-danger" th:text="${danger_message}"></h6>
     <button type="submit" class="btn btn-outline-success mx-3">Send changes</button>
   </form>
 
-  <a th:href="@{/lessons/delete/{lessonId}(lessonId=${lesson.id})}" class="btn btn-outline-danger mx-3 mt-4" role="button" aria-pressed="true">Delete lesson</a>
+  <a th:href="@{/lessons/delete/{lessonId}(lessonId=${lesson.id})}" class="btn btn-outline-danger mx-3 mt-4"
+     role="button" aria-pressed="true">Delete lesson</a>
 
 </main>
 

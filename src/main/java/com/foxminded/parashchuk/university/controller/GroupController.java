@@ -1,5 +1,6 @@
 package com.foxminded.parashchuk.university.controller;
 
+import com.foxminded.parashchuk.university.dto.GroupDTO;
 import com.foxminded.parashchuk.university.models.Group;
 import com.foxminded.parashchuk.university.service.GroupService;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**Class for connecting UI with Group model.*/
@@ -27,7 +29,7 @@ public class GroupController {
   /**Return all Groups from database and show them to UI.*/
   @GetMapping("/all")
   public String showAllGroups(Model model){
-    List<Group> groups = service.getAllGroups();
+    List<GroupDTO> groups = service.getAllGroups();
     model.addAttribute("groups", groups);
     log.info("All data from groups was transfer to web-page");
     return "all_groups";
@@ -45,7 +47,7 @@ public class GroupController {
   @GetMapping("/{groupId}")
   public String groupEditForm(Model model, @PathVariable String groupId, RedirectAttributes redirectAttributes){
     try{
-      Group group = service.getGroupById(Integer.parseInt(groupId));
+      GroupDTO group = service.getGroupById(Integer.parseInt(groupId));
       model.addAttribute("group", group);
       log.info("Show edit form for group with id {}", groupId);
       return "edit/group_edit";
@@ -59,17 +61,22 @@ public class GroupController {
 
   /**Show page for creating new Group.*/
   @GetMapping("/new")
-  public String groupCreateForm(Group group){
+  public String groupCreateForm(Model model){
+    model.addAttribute("group", new GroupDTO());
     log.info("Show form for creating new group.");
     return "create/group_new";
   }
 
   /**Get new info from fields on the page for edit existing Group.*/
   @PostMapping("/{groupId}")
-  public String groupEdit(@Valid Group group, BindingResult bindingResult,  @PathVariable String groupId,
+  public String groupEdit(@Valid GroupDTO group, BindingResult bindingResult, Model model,
+                          @PathVariable String groupId,
                           RedirectAttributes redirectAttributes){
     group.setId(Integer.parseInt(groupId));
     if (bindingResult.hasErrors()){
+      Map<String, String> errorsMap = ControllerUtils.getErrors(bindingResult);
+      model.addAttribute("group", group);
+      model.mergeAttributes(errorsMap);
       log.error("Some fields get errors: {}", bindingResult.getModel());
       return "edit/group_edit";
     }
@@ -82,12 +89,16 @@ public class GroupController {
 
   /**Get info from fields on the page for creating new Group.*/
   @PostMapping("/new")
-  public String groupCreate(@Valid Group group, BindingResult bindingResult, RedirectAttributes redirectAttributes){
+  public String groupCreate(@Valid GroupDTO group, BindingResult bindingResult,
+                            Model model, RedirectAttributes redirectAttributes){
     if (bindingResult.hasErrors()){
       log.error("Some fields get errors: {}", bindingResult.getModel());
+      Map<String, String> errorsMap = ControllerUtils.getErrors(bindingResult);
+      model.addAttribute("group", group);
+      model.mergeAttributes(errorsMap);
       return "create/group_new";
     }
-    Group savedGroup = service.createGroup(group);
+    GroupDTO savedGroup = service.createGroup(group);
     log.info("New group was created with name {}", savedGroup.getName());
     redirectAttributes.addFlashAttribute("success_message",
             "New group was created");

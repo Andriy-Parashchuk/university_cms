@@ -1,6 +1,7 @@
 package com.foxminded.parashchuk.university.dao;
 
 import com.foxminded.parashchuk.university.config.TestPersistenceConfig;
+import com.foxminded.parashchuk.university.models.Lesson;
 import com.foxminded.parashchuk.university.models.Teacher;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -31,14 +33,16 @@ class TeacherRepositoryTest {
   
   @Test 
   void getAllTeachers_ReturnListWithTeachers_whenDbIsNotEmpty() {
-    Teacher teacher1 = new Teacher(1, "Chris", "Martin", null);
-    Teacher teacher2 = new Teacher(2, "Mari", "Osvald", null);
+    Teacher teacher1 = new Teacher(1, "Chris", "Martin", "test@test.test");
+    Teacher teacher2 = new Teacher(2, "Mari", "Osvald", "test@test.test");
     teacher1.setAudience(203);
     teacher1.setDepartment("Biology");
-    
+    teacher1.setLessons(new ArrayList<Lesson>());
+
     teacher2.setAudience(304);
     teacher2.setDepartment("Math");
-    
+    teacher2.setLessons(new ArrayList<Lesson>());
+
     List<Teacher> expected = Arrays.asList(teacher1, teacher2);
 
     List<Teacher> teachers = dao.findAllByOrderById();
@@ -47,17 +51,20 @@ class TeacherRepositoryTest {
   
   @Test 
   void createTeacher_shouldAddNewTeacherWithIncrementedIdToDb_whenGetTeacher() {
-    Teacher teacher1 = new Teacher(1, "Chris", "Martin", null);
-    Teacher teacher2 = new Teacher(2, "Mari", "Osvald", null);
+    Teacher teacher1 = new Teacher(1, "Chris", "Martin", "test@test.test");
+    Teacher teacher2 = new Teacher(2, "Mari", "Osvald", "test@test.test");
     teacher1.setAudience(203);
     teacher1.setDepartment("Biology");
-    
+    teacher1.setLessons(new ArrayList<Lesson>());
+
     teacher2.setAudience(304);
     teacher2.setDepartment("Math");
+    teacher2.setLessons(new ArrayList<Lesson>());
     
-    Teacher newTeacher = new Teacher(3, "new", "teacher", null);
+    Teacher newTeacher = new Teacher(3, "new", "teacher", "test@test.test");
     newTeacher.setAudience(305);
     newTeacher.setDepartment("Philosophy");
+    newTeacher.setLessons(new ArrayList<Lesson>());
 
     List<Teacher> expected = Arrays.asList(teacher1, teacher2, newTeacher);
 
@@ -72,10 +79,11 @@ class TeacherRepositoryTest {
   
   @Test
   void getTeacherById_shouldReturnTeacher_whenGetTeachersExistsId() {
-    Teacher expected = new Teacher(1, "Chris", "Martin", null);
+    Teacher expected = new Teacher(1, "Chris", "Martin", "test@test.test");
     expected.setAudience(203);
     expected.setDepartment("Biology");
-    
+    expected.setLessons(new ArrayList<Lesson>());
+
     Teacher teacher = dao.findById(1).orElse(null);
     
     assertEquals(expected, teacher);
@@ -88,22 +96,24 @@ class TeacherRepositoryTest {
   
   @Test 
   void updateTeacherById_shouldUpdateTeacher_whenGetExistsTeacherIdAndParameters() {
-    Teacher expected = new Teacher(1, "updated", "teacher", null);
+    Teacher expected = new Teacher(1, "updated", "teacher", "test@test.test");
  
-    assertEquals(expected, dao.save(new Teacher(1, "updated", "teacher", null)));
+    assertEquals(expected, dao.save(new Teacher(1, "updated", "teacher", "test@test.test")));
     assertEquals(Optional.of(expected), dao.findById(1));
   }
 
   @Test 
   void deleteTeacherById_shouldDeleteTeacher_whenGetExistsTeacherId() {
-    Teacher teacher1 = new Teacher(1, "Chris", "Martin", null);
-    Teacher teacher2 = new Teacher(2, "Mari", "Osvald", null);
+    Teacher teacher1 = new Teacher(1, "Chris", "Martin", "test@test.test");
+    Teacher teacher2 = new Teacher(2, "Mari", "Osvald", "test@test.test");
     teacher1.setAudience(203);
     teacher1.setDepartment("Biology");
-    
+    teacher1.setLessons(new ArrayList<Lesson>());
+
     teacher2.setAudience(304);
     teacher2.setDepartment("Math");
-    
+    teacher2.setLessons(new ArrayList<Lesson>());
+
     List<Teacher> expected = Arrays.asList(teacher1, teacher2);
         
     List<Teacher> teachers = dao.findAllByOrderById();

@@ -1,6 +1,6 @@
 package com.foxminded.parashchuk.university.controller;
 
-import com.foxminded.parashchuk.university.models.Group;
+import com.foxminded.parashchuk.university.dto.GroupDTO;
 import com.foxminded.parashchuk.university.service.GroupService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -42,10 +41,10 @@ class GroupControllerTest {
 
   @Test
   void showAllGroups_shouldTransferAllDataToTemplate_whenGetDataFromService() throws Exception {
-    List<Group> expected = Arrays.asList(
-            new Group(1, "first"),
-            new Group(2, "second"),
-            new Group(3, "third"));
+    List<GroupDTO> expected = Arrays.asList(
+            new GroupDTO(1, "first"),
+            new GroupDTO(2, "second"),
+            new GroupDTO(3, "third"));
     when(service.getAllGroups()).thenReturn(expected);
     this.mockMvc.perform(get("/groups/all"))
             .andDo(print())
@@ -65,7 +64,7 @@ class GroupControllerTest {
 
   @Test
   void groupEditForm_shouldShowEditFormForGroup_whenGetIdFromPath() throws Exception {
-    Group group = new Group(1, "first");
+    GroupDTO group = new GroupDTO(1, "first");
     when(service.getGroupById(1)).thenReturn(group);
     this.mockMvc.perform(get("/groups/1"))
             .andDo(print())
@@ -111,14 +110,13 @@ class GroupControllerTest {
                     .param("name", ""))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(content().string(containsString("Name is mandatory")))
             .andExpect(content().string(containsString("Name size should be between 2 and 20")))
             .andExpect(view().name("edit/group_edit"));
   }
 
   @Test
   void groupCreate_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
-    Group group = new Group(0, "first");
+    GroupDTO group = new GroupDTO(0, "first");
     when(service.createGroup(group)).thenReturn(group);
     this.mockMvc.perform(post("/groups/new")
                     .param("name", "first"))
@@ -130,13 +128,12 @@ class GroupControllerTest {
 
   @Test
   void groupCreate_shouldShowErrors_whenGetInValidParameters() throws Exception {
-    Group group = new Group(0, "");
+    GroupDTO group = new GroupDTO(0, "");
     when(service.createGroup(group)).thenReturn(group);
     this.mockMvc.perform(post("/groups/new")
                     .param("name", ""))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(content().string(containsString("Name is mandatory")))
             .andExpect(content().string(containsString("Name size should be between 2 and 20")))
             .andExpect(view().name("create/group_new"));
   }
