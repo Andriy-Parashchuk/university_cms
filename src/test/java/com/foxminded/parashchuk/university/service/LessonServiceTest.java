@@ -2,7 +2,6 @@ package com.foxminded.parashchuk.university.service;
 
 import com.foxminded.parashchuk.university.dao.LessonRepository;
 import com.foxminded.parashchuk.university.dto.LessonDTO;
-import com.foxminded.parashchuk.university.mappers.LessonMapper;
 import com.foxminded.parashchuk.university.models.Lesson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -30,7 +30,7 @@ class LessonServiceTest {
   @Mock
   LessonRepository dao;
   @Spy
-  LessonMapper mapper;
+  ModelMapper mapper;
 
   LocalDateTime time1 = LocalDateTime.of(2023, 2, 12, 15, 40);
   LocalDateTime time2 = LocalDateTime.of(2023, 3, 11, 10, 40);

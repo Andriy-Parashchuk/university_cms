@@ -2,8 +2,8 @@ package com.foxminded.parashchuk.university.service;
 
 import com.foxminded.parashchuk.university.dao.LessonRepository;
 import com.foxminded.parashchuk.university.dto.LessonDTO;
-import com.foxminded.parashchuk.university.mappers.LessonMapper;
 import com.foxminded.parashchuk.university.models.Lesson;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class LessonService {
   @Autowired
   private LessonRepository dao;
   @Autowired
-  private LessonMapper mapper;
+  private ModelMapper mapper;
 
   private static final Logger log = LoggerFactory.getLogger(LessonService.class);
 
@@ -29,7 +29,7 @@ public class LessonService {
   public List<LessonDTO> getAllLessons() {
     log.info("Get all data from Lessons table.");
     return dao.findAllByOrderById().stream()
-            .map(mapper::toDto)
+            .map(lesson -> mapper.map(lesson, LessonDTO.class))
             .collect(Collectors.toList());
   }
 
@@ -40,7 +40,7 @@ public class LessonService {
       throw new IllegalArgumentException("Lesson can not be a null");
     } else {
       log.info("Create new Lesson with name {}.", lessonDTO.getName());
-      return mapper.toDto(dao.save(mapper.toLesson(lessonDTO)));
+      return mapper.map(dao.save(mapper.map(lessonDTO, Lesson.class)), LessonDTO.class);
     }
   }
 
@@ -52,7 +52,7 @@ public class LessonService {
       log.error("Lesson with id {} is not found.", id);
       throw new NoSuchElementException(String.format("Lesson with id %d is not found.", id));
     }
-    return mapper.toDto(lesson);
+    return mapper.map(lesson, LessonDTO.class);
   }
 
   /**Update lesson by existing id in table.*/
@@ -63,7 +63,7 @@ public class LessonService {
       log.error("Lesson with id {} is not found.", lessonDTO.getId());
       throw new NoSuchElementException(String.format("Lesson with id %d is not found.", lessonDTO.getId()));
     }
-    return  mapper.toDto(dao.save(mapper.toLesson(lessonDTO)));
+    return  mapper.map(dao.save(mapper.map(lessonDTO, Lesson.class)), LessonDTO.class);
   }
 
   /**Delete lesson by id from table in DB.*/

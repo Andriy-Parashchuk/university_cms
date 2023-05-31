@@ -2,8 +2,8 @@ package com.foxminded.parashchuk.university.service;
 
 import com.foxminded.parashchuk.university.dao.StudentRepository;
 import com.foxminded.parashchuk.university.dto.StudentDTO;
-import com.foxminded.parashchuk.university.mappers.StudentMapper;
 import com.foxminded.parashchuk.university.models.Student;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class StudentService {
   @Autowired
   private StudentRepository dao;
   @Autowired
-  private StudentMapper mapper;
+  private ModelMapper mapper;
 
   private static final Logger log = LoggerFactory.getLogger(StudentService.class);
 
@@ -28,7 +28,7 @@ public class StudentService {
   public List<StudentDTO> getAllStudents() {
     log.info("Get all data from Student table.");
     return dao.findAllByOrderById().stream()
-            .map(mapper::toDto)
+            .map(student -> mapper.map(student, StudentDTO.class))
             .collect(Collectors.toList());
   }
 
@@ -38,10 +38,10 @@ public class StudentService {
       log.error("Student can not be a null");
       throw new IllegalArgumentException("Student can not be a null");
     } else {
-      Student student = mapper.toStudent(studentDTO);
+      Student student = mapper.map(studentDTO, Student.class);
       log.info("Create new Student with firstname {} and surname {}.",
               student.getFirstName(), student.getLastName());
-      return mapper.toDto(dao.save(student));
+      return mapper.map(dao.save(student), StudentDTO.class);
     }
   }
 
@@ -53,7 +53,7 @@ public class StudentService {
       log.error("Student with id {} is not found.", id);
       throw new NoSuchElementException(String.format("Student with id %d is not found.", id));
     }
-    return mapper.toDto(student);
+    return mapper.map(student, StudentDTO.class);
   }
 
   /**Update student by existing id in table.*/
@@ -64,7 +64,7 @@ public class StudentService {
       log.error("Student with id {} is not found.", studentDTO.getId());
       throw new NoSuchElementException(String.format("Student with id %d is not found.", studentDTO.getId()));
     }
-    return mapper.toDto(dao.save(mapper.toStudent(studentDTO)));
+    return mapper.map(dao.save(mapper.map(checkedStudent, Student.class)), StudentDTO.class);
   }
 
   /**Delete student by id from table in DB.*/

@@ -1,7 +1,6 @@
 package com.foxminded.parashchuk.university.controller;
 
 import com.foxminded.parashchuk.university.dto.GroupDTO;
-import com.foxminded.parashchuk.university.models.Group;
 import com.foxminded.parashchuk.university.service.GroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

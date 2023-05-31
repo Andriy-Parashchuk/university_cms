@@ -2,7 +2,6 @@ package com.foxminded.parashchuk.university.service;
 
 import com.foxminded.parashchuk.university.dao.TeacherRepository;
 import com.foxminded.parashchuk.university.dto.TeacherDTO;
-import com.foxminded.parashchuk.university.mappers.TeacherMapper;
 import com.foxminded.parashchuk.university.models.Teacher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +28,7 @@ class TeacherServiceTest {
   @Mock
   TeacherRepository dao;
   @Spy
-  TeacherMapper mapper;
+  ModelMapper mapper;
   
   Teacher teacher = new Teacher(1, "Mark", "Martin", "mark@testmail.com");
   TeacherDTO teacherDTO = new TeacherDTO(1, "Mark", "Martin", "mark@testmail.com");

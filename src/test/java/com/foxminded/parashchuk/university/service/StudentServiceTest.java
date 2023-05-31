@@ -2,7 +2,6 @@ package com.foxminded.parashchuk.university.service;
 
 import com.foxminded.parashchuk.university.dao.StudentRepository;
 import com.foxminded.parashchuk.university.dto.StudentDTO;
-import com.foxminded.parashchuk.university.mappers.StudentMapper;
 import com.foxminded.parashchuk.university.models.Student;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +28,7 @@ class StudentServiceTest {
   @Mock
   StudentRepository dao;
   @Spy
-  StudentMapper mapper;
+  ModelMapper mapper;
 
   Student student = new Student(1, "Mark", "Martin", 1, "mark@testmail.com");
   StudentDTO studentDTO = new StudentDTO(1, "Mark", "Martin", 1, "mark@testmail.com");
@@ -63,7 +63,7 @@ class StudentServiceTest {
 
   @Test
   void updateStudentById_shouldReturnResultOfUpdate_whenGetStudentAndExistingId(){
-    when(dao.findById(1)).thenReturn(Optional.of(new Student(1, "", "", 1, "")));
+    when(dao.findById(1)).thenReturn(Optional.of(student));
     when(dao.save(student)).thenReturn(student);
     assertEquals(studentDTO, studentService.updateStudentById(studentDTO));
     verify(dao, times(1)).save(any(Student.class));

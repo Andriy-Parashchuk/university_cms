@@ -2,8 +2,8 @@ package com.foxminded.parashchuk.university.service;
 
 import com.foxminded.parashchuk.university.dao.GroupRepository;
 import com.foxminded.parashchuk.university.dto.GroupDTO;
-import com.foxminded.parashchuk.university.mappers.GroupMapper;
 import com.foxminded.parashchuk.university.models.Group;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +18,13 @@ import java.util.stream.Collectors;
 public class GroupService {
 
   private final GroupRepository dao;
-  private final GroupMapper mapper;
+
+  private final ModelMapper mapper;
 
   private static final Logger log = LoggerFactory.getLogger(GroupService.class);
 
   @Autowired
-  public GroupService(GroupRepository dao, GroupMapper mapper) {
+  public GroupService(GroupRepository dao, ModelMapper mapper) {
     this.dao = dao;
     this.mapper = mapper;
   }
@@ -32,7 +33,7 @@ public class GroupService {
   public List<GroupDTO> getAllGroups() {
     log.info("Get all data from Groups table.");
     return dao.findAllByOrderById().stream()
-            .map(mapper::toDto)
+            .map(group -> mapper.map(group, GroupDTO.class))
             .collect(Collectors.toList());
   }
 
@@ -42,9 +43,9 @@ public class GroupService {
       log.error("Group can not be a null");
       throw new IllegalArgumentException("Group can not be a null");
     } else {
-      Group group = mapper.toGroup(groupDto);
+      Group group = mapper.map(groupDto, Group.class);
       log.info("Create new Group with name {}.", group.getName());
-      return mapper.toDto(dao.save(group));
+      return mapper.map(dao.save(group), GroupDTO.class);
     }
   }
 
@@ -56,7 +57,7 @@ public class GroupService {
       log.error("Group with id {} is not found.", id);
       throw new NoSuchElementException(String.format("Group with id %d is not found.", id));
     }
-    return mapper.toDto(group);
+    return mapper.map(group, GroupDTO.class);
   }
 
 /**Update group by existing id in table.*/
@@ -67,7 +68,7 @@ public class GroupService {
       log.error("Group with id {} is not found.", groupDto.getId());
       throw new NoSuchElementException(String.format("Group with id %d is not found.", groupDto.getId()));
     }
-    return mapper.toDto(dao.save(mapper.toGroup(groupDto)));
+    return mapper.map(dao.save(mapper.map(groupDto, Group.class)), GroupDTO.class);
   }
 
   /**Delete group by id from table in DB.*/
