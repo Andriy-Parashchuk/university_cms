@@ -1,6 +1,6 @@
 package com.foxminded.parashchuk.university.controller;
 
-import com.foxminded.parashchuk.university.models.Teacher;
+import com.foxminded.parashchuk.university.dto.TeacherDTO;
 import com.foxminded.parashchuk.university.service.TeacherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,10 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**Class for connecting UI with Teacher model.*/
@@ -25,7 +28,7 @@ public class TeacherController {
   /**Return all Teacher from database and show them to UI.*/
   @GetMapping("/all")
   public String showAllTeachers(Model model){
-    List<Teacher> teachers = service.getAllTeachers();
+    List<TeacherDTO> teachers = service.getAllTeachers();
     model.addAttribute("teachers", teachers);
     log.info("All data from teachers was transfer to web-page");
     return "all_teachers";
@@ -43,9 +46,9 @@ public class TeacherController {
   @GetMapping("/{teacherId}")
   public String teacherEditForm(Model model, @PathVariable String teacherId, RedirectAttributes redirectAttributes){
     try{
-      Teacher teacher = service.getTeacherById(Integer.parseInt(teacherId));
+      TeacherDTO teacherDTO = service.getTeacherById(Integer.parseInt(teacherId));
       log.info("Show edit form for teacher with id {}", teacherId);
-      model.addAttribute("teacher", teacher);
+      model.addAttribute("teacher", teacherDTO);
       return "edit/teacher_edit";
     } catch (NoSuchElementException exception) {
       log.error("Teacher with id {} does not exists.", teacherId);
@@ -57,19 +60,25 @@ public class TeacherController {
 
   /**Show page for creating new Teacher.*/
   @GetMapping("/new")
-  public String teacherCreateForm(){
+  public String teacherCreateForm(Model model){
+    model.addAttribute("teacher", new TeacherDTO());
     log.info("Show form for add new teacher.");
     return "create/teacher_new";
   }
 
   /**Get new info from fields on the page for edit existing Teacher.*/
   @PostMapping("/{teacherId}")
-  public String teacherEdit(@RequestParam String firstName, @RequestParam String lastName,
-                            @RequestParam(defaultValue="0") int audience,
-                            @RequestParam(defaultValue="") String department,
+  public String teacherEdit(@Valid TeacherDTO teacher, BindingResult bindingResult, Model model,
                             @PathVariable String teacherId, RedirectAttributes redirectAttributes){
-
-    service.updateTeacherById(teacherId, firstName, lastName, audience, department);
+    teacher.setId(Integer.parseInt(teacherId));
+    if (bindingResult.hasErrors()){
+      Map<String, String> errorsMap = ControllerUtils.getErrors(bindingResult);
+      model.addAttribute("teacher", teacher);
+      model.mergeAttributes(errorsMap);
+      log.error("Some fields get errors: {}", bindingResult.getModel());
+      return "edit/teacher_edit";
+    }
+    service.updateTeacherById(teacher);
     log.info("Teacher with id {} was updated.", teacherId);
     redirectAttributes.addFlashAttribute("success_message",
             "Teacher with id " + teacherId + " was updated.");
@@ -78,18 +87,21 @@ public class TeacherController {
 
   /**Get info from fields on the page for creating new Teacher.*/
   @PostMapping("/new")
-  public String teacherCreate(@RequestParam String firstName, @RequestParam String lastName,
-                              @RequestParam(defaultValue="0") int audience,
-                              @RequestParam(defaultValue="") String department,
+  public String teacherCreate(@Valid TeacherDTO teacherDTO, BindingResult bindingResult, Model model,
                               RedirectAttributes redirectAttributes){
-    Teacher teacher = new Teacher(0, firstName, lastName);
-    teacher.setAudience(audience);
-    teacher.setDepartment(department);
-    Teacher savedTeacher = service.createTeacher(teacher);
+    if (bindingResult.hasErrors()) {
+      Map<String, String> errorsMap = ControllerUtils.getErrors(bindingResult);
+      model.addAttribute("teacher", teacherDTO);
+      model.mergeAttributes(errorsMap);
+      log.error("Some fields get errors: {}", bindingResult.getModel());
+      return "create/teacher_new";
+    }
+    TeacherDTO savedTeacher = service.createTeacher(teacherDTO);
     log.info("New teacher was created with name {} {}", savedTeacher.getFirstName(), savedTeacher.getLastName());
     redirectAttributes.addFlashAttribute("success_message",
             "New teacher was created");
     return "redirect:/teachers/all";
+
   }
 
 

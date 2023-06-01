@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Entity
@@ -18,5 +19,16 @@ public class Group {
   private int id;
 
   private String name;
+
+  @OneToMany(mappedBy = "groupId", cascade = CascadeType.ALL)
+  private List<Student> students;
+
+  @OneToMany(mappedBy = "groupId", cascade = CascadeType.ALL)
+  private List<Lesson> lessons;
+
+  public Group(int id, String name){
+    this.id = id;
+    this.name = name;
+  }
   
 }

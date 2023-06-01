@@ -12,13 +12,14 @@
 <body class="text-center">
 <main class="cover-container mx-auto p-3 flex-column">
     <h2>Edit student with id <span th:text="${student.id}"></span></h2>
-    <form class="container w-50 mt-5" method="post">
+    <form class="container w-50 mt-5" method="post" th:object="${student}">
         <div class="form-row align-item-center">
             <div class="form-group col">
                 <label for="studentFirstName">First Name</label>
             </div>
             <div class="form-group col">
-                <input name="firstName" type="text" th:value="${student.firstName}" id="studentFirstName"  placeholder="First Name">
+                <input name="firstName" type="text" th:value="${student.firstName}" id="studentFirstName" th:field="*{firstName}" placeholder="First Name">
+                <p class="text-danger" th:text="${firstName}">firstName error</p>
             </div>
         </div>
         <div class="form-row align-item-center">
@@ -26,7 +27,17 @@
                 <label for="studentLastName">Last Name</label>
             </div>
             <div class="form-group col">
-                <input name="lastName" type="text" th:value="${student.lastName}" id="studentLastName"  placeholder="Last Name">
+                <input name="lastName" type="text" th:value="${student.lastName}" id="studentLastName" th:field="*{lastName}" placeholder="Last Name">
+                <p class="text-danger" th:text="${lastName}">lastName error</p>
+            </div>
+        </div>
+        <div class="form-row align-item-center">
+            <div class="form-group col">
+                <label for="email">Email</label>
+            </div>
+            <div class="form-group col">
+                <input class="mb-3" name="email" type="text" id="email" th:field="*{email}"  placeholder="Email">
+                <p class="text-danger" th:text="${email}">email error</p>
             </div>
         </div>
         <div class="form-row align-item-center">
@@ -34,10 +45,11 @@
                 <label for="studentsGroupId">Group id</label>
             </div>
             <div class="form-group col">
-                <input name="groupId" type="number" th:value="${student.groupId}" id="studentsGroupId"  placeholder="Group id">
+                <input name="groupId" type="number" th:value="${student.groupId}" id="studentsGroupId" th:field="*{groupId}" placeholder="Group id">
+                <p class="text-danger" th:text="${groupId}">groupId error</p>
+                <p class="text-danger" th:text="${danger_message}"></p>
             </div>
         </div>
-        <h4 class="text-danger" th:text="${danger_message}"></h4>
         <button type="submit" class="btn btn-outline-success mx-3">Send changes</button>
     </form>
 

@@ -32,6 +32,7 @@
       <th scope="col">Id</th>
       <th scope="col">First name</th>
       <th scope="col">Last name</th>
+      <th scope="col">Email</th>
       <th scope="col">Audience</th>
       <th scope="col">Department</th>
       <th scope="col">Link</th>
@@ -42,6 +43,7 @@
       <td th:text="${teacher.id}"></td>
       <td th:text="${teacher.firstName}"></td>
       <td th:text="${teacher.lastName}"></td>
+      <td th:text="${teacher.email}"></td>
       <td th:text="${teacher.audience}"></td>
       <td th:text="${teacher.department}"></td>
       <td><a th:href="@{/teachers/{teacherId}(teacherId=${teacher.id})}">More</a></td>

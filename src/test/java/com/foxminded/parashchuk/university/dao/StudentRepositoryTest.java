@@ -31,19 +31,19 @@ class StudentRepositoryTest {
   @Test 
   void getAllStudents_ReturnListWithStudents_whenDbIsNotEmpty() {
     List<Student> expected = Arrays.asList(
-        new Student(1, "Chris", "Martin", 1), 
-        new Student(2, "Mari", "Osvald", 2));
+        new Student(1, "Chris", "Martin", 1, "test@test.test"),
+        new Student(2, "Mari", "Osvald", 2, "test@test.test"));
     List<Student> students = dao.findAllByOrderById();
     assertEquals(expected, students);
   }
   
   @Test 
   void createStudent_shouldAddNewStudentWithIncrementedIdToDb_whenGetStudent() {
-    Student student = new Student(0, "New", "Student", 1);
+    Student student = new Student(0, "New", "Student", 1, "test@test.test");
     List<Student> expected = Arrays.asList(
-        new Student(1, "Chris", "Martin", 1), 
-        new Student(2, "Mari", "Osvald", 2),
-        new Student(3, "New", "Student", 1));
+        new Student(1, "Chris", "Martin", 1, "test@test.test"),
+        new Student(2, "Mari", "Osvald", 2, "test@test.test"),
+        new Student(3, "New", "Student", 1, "test@test.test"));
     
     assertEquals(student, dao.save(student));
     assertEquals(expected, dao.findAllByOrderById());
@@ -57,7 +57,7 @@ class StudentRepositoryTest {
   @Test
   void getStudentById_shouldReturnStudent_whenGetStudentsExistsId() {
     Student student = dao.findById(1).orElse(null);
-    Student expected = new Student(1, "Chris", "Martin", 1);
+    Student expected = new Student(1, "Chris", "Martin", 1, "test@test.test");
     
     assertEquals(expected, student);
   }
@@ -69,17 +69,17 @@ class StudentRepositoryTest {
   
   @Test 
   void updateStudentById_shouldUpdateStudent_whenGetExistsStudentIdAndParameters() {
-    Student expected = new Student(1, "Updated", "Student", 2);
+    Student expected = new Student(1, "Updated", "Student", 2, "test@test.test");
  
-    assertEquals(expected, dao.save(new Student(1, "Updated", "Student", 2)));
+    assertEquals(expected, dao.save(new Student(1, "Updated", "Student", 2, "test@test.test")));
     assertEquals(Optional.of(expected), dao.findById(1));
   }
   
   @Test 
   void deleteStudentById_shouldDeleteStudent_whenGetExistsStudentId() {
     List<Student> expected = Arrays.asList(
-        new Student(1, "Chris", "Martin", 1), 
-        new Student(2, "Mari", "Osvald", 2));
+        new Student(1, "Chris", "Martin", 1, "test@test.test"),
+        new Student(2, "Mari", "Osvald", 2, "test@test.test"));
         
     List<Student> students = dao.findAllByOrderById();
     assertEquals(expected, students);
@@ -87,7 +87,7 @@ class StudentRepositoryTest {
     dao.deleteById(2);
     
     students = dao.findAllByOrderById();
-    assertEquals(Arrays.asList(new Student(1, "Chris", "Martin", 1)), students);
+    assertEquals(Arrays.asList(new Student(1, "Chris", "Martin", 1, "test@test.test")), students);
   }
   
   @Test 

@@ -1,12 +1,9 @@
 package com.foxminded.parashchuk.university.models;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "teachers")
@@ -27,15 +24,21 @@ public class Teacher extends User {
   @Column(name = "last_name")
   private String lastName;
 
+  private String email;
+
   private int audience;
 
   private String department;
+
+  @OneToMany(mappedBy = "teacherId", cascade = CascadeType.ALL)
+  private List<Lesson> lessons;
   
-  public Teacher(int id, String firstName, String lastName) {
-    super(id, firstName, lastName);
+  public Teacher(int id, String firstName, String lastName, String email) {
+    super(id, firstName, lastName, email);
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
+    this.email = email;
   }
   
 }

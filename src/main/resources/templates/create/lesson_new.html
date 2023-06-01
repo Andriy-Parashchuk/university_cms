@@ -12,13 +12,14 @@
 <body class="text-center">
 <main class="cover-container mx-auto p-3 flex-column">
   <h2>Create new Lesson</h2>
-  <form class="container w-50 mt-5" method="post">
+  <form class="container w-50 mt-5" method="post" th:object="${lesson}">
     <div class="form-row align-item-center">
       <div class="form-group col">
         <label for="lessonName">Name</label>
       </div>
       <div class="form-group col">
-        <input type="text" name="name" id="lessonName"  placeholder="Name">
+        <input type="text" name="name" id="lessonName" th:field="*{name}" placeholder="Name">
+        <p class="text-danger" th:text="${name}">name error</p>
       </div>
     </div>
     <div class="form-row align-item-center">
@@ -26,7 +27,8 @@
         <label for="teacherId">Teacher Id</label>
       </div>
       <div class="form-group col">
-        <input type="number" name="teacherId" id="teacherId"  placeholder="Teacher Id">
+        <input type="number" name="teacherId" id="teacherId" th:field="*{teacherId}" placeholder="Teacher Id">
+        <p class="text-danger" th:text="${teacherId}">teacherId error</p>
       </div>
     </div>
     <div class="form-row align-item-center">
@@ -34,7 +36,8 @@
         <label for="lessonGroupId">Group id</label>
       </div>
       <div class="form-group col">
-        <input type="number" name="groupId" id="lessonGroupId"  placeholder="Group id">
+        <input type="number" name="groupId" id="lessonGroupId" th:field="*{groupId}" placeholder="Group id">
+        <p class="text-danger" th:text="${groupId}">groupId error</p>
       </div>
     </div>
     <div class="form-row align-item-center">
@@ -42,7 +45,8 @@
         <label for="time">Time</label>
       </div>
       <div class="form-group col">
-        <input name="time" type="datetime-local" id="time">
+        <input name="time" type="datetime-local" th:field="*{time}" id="time">
+        <p class="text-danger" th:text="${time}">time error</p>
       </div>
     </div>
     <div class="form-row align-item-center">
@@ -50,10 +54,11 @@
         <label for="audience">Audience</label>
       </div>
       <div class="form-group col">
-        <input name="audience" type="number" id="audience"  placeholder="Audience">
+        <input name="audience" type="number" id="audience" th:field="*{audience}" placeholder="Audience">
+        <p class="text-danger" th:text="${audience}">audience error</p>
       </div>
     </div>
-    <h4 class="text-danger" th:text="${danger_message}"></h4>
+    <h6 class="text-danger" th:text="${danger_message}"></h6>
 
 
     <button type="submit" class="btn btn-outline-success mx-3">Create new</button>

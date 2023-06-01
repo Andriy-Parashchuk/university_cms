@@ -1,6 +1,6 @@
 package com.foxminded.parashchuk.university.controller;
 
-import com.foxminded.parashchuk.university.models.Teacher;
+import com.foxminded.parashchuk.university.dto.TeacherDTO;
 import com.foxminded.parashchuk.university.service.TeacherService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -42,9 +43,9 @@ class TeacherControllerTest {
 
   @Test
   void showAllTeachers_shouldTransferAllDataToTemplate_whenGetDataFromService() throws Exception {
-    List<Teacher> expected = Arrays.asList(
-            new Teacher(1, "Chris", "Martin"),
-            new Teacher(2, "Mari", "Oswald"));
+    List<TeacherDTO> expected = Arrays.asList(
+            new TeacherDTO(1, "Chris", "Martin", "test@test.test"),
+            new TeacherDTO(2, "Mari", "Oswald", "test@test.test"));
     when(service.getAllTeachers()).thenReturn(expected);
     this.mockMvc.perform(get("/teachers/all"))
             .andDo(print())
@@ -64,7 +65,7 @@ class TeacherControllerTest {
 
   @Test
   void teacherEditForm_shouldShowEditFormForTeacher_whenGetIdFromPath() throws Exception {
-    Teacher teacher =  new Teacher(2, "Mari", "Oswald");
+    TeacherDTO teacher =  new TeacherDTO(2, "Mari", "Oswald", "test@test.test");
     when(service.getTeacherById(2)).thenReturn(teacher);
     this.mockMvc.perform(get("/teachers/2"))
             .andDo(print())
@@ -84,6 +85,28 @@ class TeacherControllerTest {
   }
 
   @Test
+  void teacherEditForm_shouldShowErrorsMessage_whenGetInValidParameters() throws Exception {
+    TeacherDTO teacher = new TeacherDTO(1, "Chris", "Martin", "test@test.test");
+    teacher.setDepartment("bio");
+    teacher.setAudience(1);
+    when(service.getTeacherById(1)).thenReturn(teacher);
+
+    this.mockMvc.perform(post("/teachers/1")
+                    .param("firstName", "")
+                    .param("lastName", "")
+                    .param("department", "")
+                    .param("audience", "0")
+                    .param("email", ""))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Firstname size should be between 2 and 20")))
+            .andExpect(content().string(containsString("Lastname size should be between 2 and 20")))
+            .andExpect(content().string(containsString("Please enter a valid email")))
+            .andExpect(content().string(containsString("Department is mandatory")))
+            .andExpect(view().name("edit/teacher_edit"));
+  }
+
+  @Test
   void teacherCreateForm_shouldShowFormForCreateNewTeacher() throws Exception {
     this.mockMvc.perform(get("/teachers/new"))
             .andDo(print())
@@ -93,11 +116,12 @@ class TeacherControllerTest {
 
   @Test
   void teacherEdit_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
-    when(service.getTeacherById(1)).thenReturn(new Teacher(1, "Chris", "Martin"));
-
     this.mockMvc.perform(post("/teachers/1")
                     .param("firstName", "Updated")
-                    .param("lastName", "Teacher"))
+                    .param("lastName", "Teacher")
+                    .param("department", "bio")
+                    .param("audience", "1")
+                    .param("email", "test@test.test"))
             .andDo(print())
             .andExpect(status().is3xxRedirection())
             .andExpect(flash().attribute("success_message", "Teacher with id 1 was updated."))
@@ -106,17 +130,37 @@ class TeacherControllerTest {
 
   @Test
   void teacherCreate_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
-    Teacher teacher =  new Teacher(0, "Chris", "Martin");
-    teacher.setDepartment("");
-    teacher.setAudience(0);
+    TeacherDTO teacher =  new TeacherDTO(0, "Chris", "Martin", "test@test.test");
+    teacher.setDepartment("bio");
+    teacher.setAudience(1);
     when(service.createTeacher(teacher)).thenReturn(teacher);
     this.mockMvc.perform(post("/teachers/new")
                     .param("firstName", "Chris")
-                    .param("lastName", "Martin"))
+                    .param("lastName", "Martin")
+                    .param("department", "bio")
+                    .param("audience", "1")
+                    .param("email", "test@test.test"))
             .andDo(print())
             .andExpect(status().is3xxRedirection())
             .andExpect(flash().attribute("success_message", "New teacher was created"))
             .andExpect(redirectedUrl("/teachers/all"));
+  }
+
+  @Test
+  void teacherCreate_shouldShowErrors_whenGetInValidParameters() throws Exception {
+    this.mockMvc.perform(post("/teachers/new")
+                    .param("firstName", "")
+                    .param("lastName", "")
+                    .param("department", "")
+                    .param("audience", "0")
+                    .param("email", ""))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Firstname size should be between 2 and 20")))
+            .andExpect(content().string(containsString("Lastname size should be between 2 and 20")))
+            .andExpect(content().string(containsString("Please enter a valid email")))
+            .andExpect(content().string(containsString("Department is mandatory")))
+            .andExpect(view().name("create/teacher_new"));
   }
 
   @Test

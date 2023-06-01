@@ -1,5 +1,6 @@
 package com.foxminded.parashchuk.university.controller;
 
+import com.foxminded.parashchuk.university.dto.LessonDTO;
 import com.foxminded.parashchuk.university.models.Lesson;
 import com.foxminded.parashchuk.university.service.LessonService;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -43,10 +45,10 @@ class LessonControllerTest {
 
   @Test
   void showAllLessons_shouldTransferAllDataToTemplate_whenGetDataFromService() throws Exception {
-    List<Lesson> expected = Arrays.asList(
-            new Lesson(1, "Math", 2, 1,
+    List<LessonDTO> expected = Arrays.asList(
+            new LessonDTO(1, "Math", 2, 1,
                     LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305),
-            new Lesson(2, "Biology", 1, 2,
+            new LessonDTO(2, "Biology", 1, 2,
                     LocalDateTime.of(2023, 02, 11, 12, 00, 00), 203));
 
     when(service.getAllLessons()).thenReturn(expected);
@@ -68,7 +70,7 @@ class LessonControllerTest {
 
   @Test
   void lessonEditForm_shouldShowEditFormForLesson_whenGetIdFromPath() throws Exception {
-    Lesson lesson = new Lesson(0, "Math", 2, 1,
+    LessonDTO lesson = new LessonDTO(0, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305);
     when(service.getLessonById(1)).thenReturn(lesson);
     this.mockMvc.perform(get("/lessons/1"))
@@ -98,7 +100,7 @@ class LessonControllerTest {
 
   @Test
   void lessonEdit_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
-    when(service.getLessonById(1)).thenReturn(new Lesson(1, "Math", 2, 1,
+    when(service.getLessonById(1)).thenReturn(new LessonDTO(1, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305));
 
 
@@ -115,13 +117,35 @@ class LessonControllerTest {
   }
 
   @Test
-  void lessonEdit_shouldThrowExceptionAndRedirectToMainLessonPage_whenGetNotExistedGroupOrTeacher() throws Exception {
-    when(service.getLessonById(1)).thenReturn(new Lesson(1, "Math", 2, 1,
+  void lessonEdit_shouldShowErrors_whenGetInValidParameters() throws Exception {
+    when(service.getLessonById(1)).thenReturn(new LessonDTO(1, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305));
 
-    doThrow(DataIntegrityViolationException.class).when(service).updateLessonById(
-            "1", "Math", 3, 4,
-            "2023-04-15T10:30:00", 333);
+
+    this.mockMvc.perform(post("/lessons/1")
+                    .param("name", "")
+                    .param("teacherId", "0")
+                    .param("groupId", "0")
+                    .param("time", "")
+                    .param("audience", "0"))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Name size should be between 2 and 20")))
+            .andExpect(content().string(containsString("Time is mandatory")))
+            .andExpect(view().name("edit/lesson_edit"));
+  }
+
+  @Test
+  void lessonEdit_shouldThrowExceptionAndRedirectToMainLessonPage_whenGetNotExistedGroupOrTeacher() throws Exception {
+    LessonDTO lesson = new LessonDTO(1, "Math", 2, 1,
+            LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305);
+    when(service.getLessonById(1)).thenReturn(lesson);
+    lesson.setTeacherId(3);
+    lesson.setGroupId(4);
+    lesson.setTime(LocalDateTime.of(2023, 04, 15, 10, 30, 00));
+    lesson.setAudience(333);
+
+    doThrow(DataIntegrityViolationException.class).when(service).updateLessonById(lesson);
 
     this.mockMvc.perform(post("/lessons/1")
                     .param("name", "Math")
@@ -139,7 +163,7 @@ class LessonControllerTest {
 
   @Test
   void lessonCreate_shouldTransferDataToService_whenGetNeededParameters() throws Exception {
-    Lesson lesson = new Lesson(0, "Math", 2, 1,
+    LessonDTO lesson = new LessonDTO(0, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305);
 
     when(service.createLesson(lesson)).thenReturn(lesson);
@@ -156,9 +180,24 @@ class LessonControllerTest {
   }
 
   @Test
+  void lessonCreate_shouldShowErrors_whenGetInValidParameters() throws Exception {
+    this.mockMvc.perform(post("/lessons/new")
+                    .param("name", "")
+                    .param("teacherId", "0")
+                    .param("groupId", "0")
+                    .param("time", "")
+                    .param("audience", "0"))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Name size should be between 2 and 20")))
+            .andExpect(content().string(containsString("Time is mandatory")))
+            .andExpect(view().name("create/lesson_new"));
+  }
+
+  @Test
   void lessonCreate_shouldThrowExceptionAndRedirectToNewLessonPage_whenGetNotExistedGroupOrTeacher() throws Exception {
     doThrow(DataIntegrityViolationException.class).when(service).createLesson(
-            new Lesson(0, "Math", 2, 1,
+            new LessonDTO(0, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305));
     this.mockMvc.perform(post("/lessons/new")
                     .param("name", "Math")
@@ -167,10 +206,10 @@ class LessonControllerTest {
                     .param("time", "2023-02-10T10:30:00")
                     .param("audience", "305"))
             .andDo(print())
-            .andExpect(status().is3xxRedirection())
-            .andExpect(flash().attribute("danger_message",
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("danger_message",
                     "Group with this id (1) or teacher with id (2) does not exists."))
-            .andExpect(redirectedUrl("/lessons/new"));
+            .andExpect(view().name("create/lesson_new"));
   }
 
   @Test

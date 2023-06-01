@@ -1,5 +1,6 @@
 package com.foxminded.parashchuk.university.controller;
 
+import com.foxminded.parashchuk.university.dto.LessonDTO;
 import com.foxminded.parashchuk.university.exceptions.LessonsNotFoundExceptions;
 import com.foxminded.parashchuk.university.models.Lesson;
 import com.foxminded.parashchuk.university.service.ScheduleService;
@@ -98,7 +99,7 @@ class ScheduleControllerTest {
 
   @Test
   void getChosenSchedule_shouldShowLessonsForStudentAtDay_whenSearchStudentDayLessons() throws Exception {
-    List<Lesson> lessons = Arrays.asList(new Lesson(1, "Math", 2, 1,
+    List<LessonDTO> lessons = Arrays.asList(new LessonDTO(1, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305));
     when(service.getLessonsStudentDay(1, LocalDate.parse("2023-02-10")))
             .thenReturn(lessons);
@@ -117,7 +118,7 @@ class ScheduleControllerTest {
 
   @Test
   void getChosenSchedule_shouldShowLessonsForStudentAtMonth_whenSearchStudentDayMonth() throws Exception {
-    List<Lesson> lessons = Arrays.asList(new Lesson(1, "Math", 2, 1,
+    List<LessonDTO> lessons = Arrays.asList(new LessonDTO(1, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305));
     when(service.getLessonsStudentMonth(1, LocalDate.parse("2023-02-10")))
             .thenReturn(lessons);
@@ -136,7 +137,7 @@ class ScheduleControllerTest {
 
   @Test
   void getChosenSchedule_shouldShowLessonsForTeacherAtDay_whenSearchTeacherDayLessons() throws Exception {
-    List<Lesson> lessons = Arrays.asList(new Lesson(1, "Math", 2, 1,
+    List<LessonDTO> lessons = Arrays.asList(new LessonDTO(1, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305));
     when(service.getLessonsTeacherDay(1, LocalDate.parse("2023-02-10")))
             .thenReturn(lessons);
@@ -155,7 +156,7 @@ class ScheduleControllerTest {
 
   @Test
   void getChosenSchedule_shouldShowLessonsForTeacherAtMonth_whenSearchTeacherDayMonth() throws Exception {
-    List<Lesson> lessons = Arrays.asList(new Lesson(1, "Math", 2, 1,
+    List<LessonDTO> lessons = Arrays.asList(new LessonDTO(1, "Math", 2, 1,
             LocalDateTime.of(2023, 02, 10, 10, 30, 00), 305));
     when(service.getLessonsTeacherMonth(1, LocalDate.parse("2023-02-10")))
             .thenReturn(lessons);
