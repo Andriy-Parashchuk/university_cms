@@ -36,16 +36,8 @@ public class LessonApiController {
     return service.getAllLessons();
   }
 
-
-  /**Get id from field on the page and show edit page for this Lesson.*/
-  @PostMapping()
-  public LessonDTO findLessonById(@RequestParam(defaultValue = "0") int id){
-    log.info("Request for finding lesson by id {} for REST api", id);
-    return service.getLessonById(id);
-  }
-
   /**Get info from fields on the page for creating new Lesson.*/
-  @PostMapping("/new")
+  @PostMapping()
   public ResponseEntity<LessonDTO> lessonCreate(@Valid @RequestBody LessonDTO lessonDTO){
     LessonDTO savedLesson = service.createLesson(lessonDTO);
     log.info("New lesson was created with name {}", savedLesson.getName());

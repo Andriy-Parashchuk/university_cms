@@ -71,35 +71,6 @@ class TeacherApiControllerTest {
   }
 
   @Test
-  void findTeacherById_shouldReturnGroup_whenTeacherIsExists() throws Exception {
-    when(service.getTeacherById(1)).thenReturn(firstTeacher);
-    this.mockMvc.perform(post("/api/teachers")
-                    .param("id", "1"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.id", is(1)))
-            .andExpect(jsonPath("$.firstName", is("first")))
-            .andExpect(jsonPath("$.lastName", is("teacher")))
-            .andExpect(jsonPath("$.email", is("test@test.test")))
-            .andDo(print());
-
-    verify(service, times(1)).getTeacherById(1);
-  }
-
-  @Test
-  void findTeacherById_shouldReturnError_whenTeacherDoesNotExists() throws Exception {
-    when(service.getTeacherById(1)).thenThrow(NoSuchElementException.class);
-    this.mockMvc.perform(post("/api/teachers")
-                    .param("id", "1"))
-            .andExpect(status().isBadRequest())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.error", is("This teacher does not exists.")))
-            .andDo(print());
-
-    verify(service, times(1)).getTeacherById(1);
-  }
-
-  @Test
   void teacherEditForm_shouldReturnTeacher_whenTeacherIsExists() throws Exception {
     when(service.getTeacherById(1)).thenReturn(firstTeacher);
     this.mockMvc.perform(get("/api/teachers/1"))
@@ -132,7 +103,7 @@ class TeacherApiControllerTest {
     firstTeacher.setAudience(1);
 
     when(service.createTeacher(firstTeacher)).thenReturn(firstTeacher);
-    this.mockMvc.perform(post("/api/teachers/new").contentType("application/json")
+    this.mockMvc.perform(post("/api/teachers").contentType("application/json")
                     .content(objectMapper.writeValueAsString(firstTeacher)))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.id", is(1)))
@@ -151,7 +122,7 @@ class TeacherApiControllerTest {
     TeacherDTO teacherDTO = new TeacherDTO(0, "", "", "");
     teacherDTO.setDepartment("");
     teacherDTO.setAudience(1);
-    this.mockMvc.perform(post("/api/teachers/new").contentType("application/json")
+    this.mockMvc.perform(post("/api/teachers").contentType("application/json")
                     .content(objectMapper.writeValueAsString(teacherDTO)))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.firstName", is("Firstname size should be between 2 and 20.")))

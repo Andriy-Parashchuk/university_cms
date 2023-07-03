@@ -36,13 +36,6 @@ public class GroupApiController {
     return service.getAllGroups();
   }
 
-  /**Get id from field on the page and show edit page for this Group.*/
-  @PostMapping()
-  public GroupDTO findGroupById(@RequestParam(defaultValue = "0") int id){
-    log.info("Request for finding group by id {} for REST api", id);
-    return service.getGroupById(id);
-  }
-
   /**Return Group with id in path from database and show it to edit page.*/
   @GetMapping("/{groupId}")
   public GroupDTO groupEditForm(@PathVariable String groupId){
@@ -51,7 +44,7 @@ public class GroupApiController {
   }
 
   /**Get info from fields on the page for creating new Group.*/
-  @PostMapping("/new")
+  @PostMapping()
   public ResponseEntity<GroupDTO> groupCreate(@Valid @RequestBody GroupDTO groupDTO){
     GroupDTO savedGroup = service.createGroup(groupDTO);
     log.info("New group was created with name {}", savedGroup.getName());

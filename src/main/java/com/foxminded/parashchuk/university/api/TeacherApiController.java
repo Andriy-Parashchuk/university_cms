@@ -36,13 +36,6 @@ public class TeacherApiController {
     return service.getAllTeachers();
   }
 
-  /**Get id from field on the page and show edit page for this Teacher.*/
-  @PostMapping()
-  public TeacherDTO findTeacherById(@RequestParam(defaultValue = "0") int id){
-    log.info("Request for finding teacher by id {} for REST api", id);
-    return service.getTeacherById(id);
-  }
-
   /**Return Teacher with id in path from database and show it to edit page.*/
   @GetMapping("/{teacherId}")
   public TeacherDTO teacherEditForm(@PathVariable String teacherId){
@@ -51,7 +44,7 @@ public class TeacherApiController {
   }
 
   /**Get info from fields on the page for creating new Teacher.*/
-  @PostMapping("/new")
+  @PostMapping()
   public ResponseEntity<TeacherDTO> teacherCreate(@Valid @RequestBody TeacherDTO teacherDTO){
     TeacherDTO savedTeacher = service.createTeacher(teacherDTO);
     log.info("New teacher was created with firstname {}, lastname {}",

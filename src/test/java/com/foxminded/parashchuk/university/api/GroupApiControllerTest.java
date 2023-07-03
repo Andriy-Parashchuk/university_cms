@@ -62,33 +62,6 @@ class GroupApiControllerTest {
   }
 
   @Test
-  void findGroupById_shouldReturnGroup_whenGroupIsExists() throws Exception {
-    when(service.getGroupById(1)).thenReturn(firstGroup);
-    this.mockMvc.perform(post("/api/groups")
-                    .param("id", "1"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.id", is(1)))
-            .andExpect(jsonPath("$.name", is("first")))
-            .andDo(print());
-
-    verify(service, times(1)).getGroupById(1);
-  }
-
-  @Test
-  void findGroupById_shouldReturnError_whenGroupDoesNotExists() throws Exception {
-    when(service.getGroupById(1)).thenThrow(NoSuchElementException.class);
-    this.mockMvc.perform(post("/api/groups")
-                    .param("id", "1"))
-            .andExpect(status().isBadRequest())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.error", is("This group does not exists.")))
-            .andDo(print());
-
-    verify(service, times(1)).getGroupById(1);
-  }
-
-  @Test
   void groupEditForm_shouldReturnGroup_whenGroupIsExists() throws Exception {
     when(service.getGroupById(1)).thenReturn(firstGroup);
     this.mockMvc.perform(get("/api/groups/1"))
@@ -117,7 +90,7 @@ class GroupApiControllerTest {
   void groupCreate_shouldReturnSavedGroup_whenGetRequiredData() throws Exception {
     GroupDTO groupDTO = new GroupDTO(0, "new");
     when(service.createGroup(groupDTO)).thenReturn(new GroupDTO(3, "new"));
-    this.mockMvc.perform(post("/api/groups/new").contentType("application/json")
+    this.mockMvc.perform(post("/api/groups").contentType("application/json")
                     .content(objectMapper.writeValueAsString(groupDTO)))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.id", is(3)))
@@ -130,7 +103,7 @@ class GroupApiControllerTest {
   @Test
   void groupCreate_shouldReturnValidationError_whenGetNotCorrectData() throws Exception {
     GroupDTO groupDTO = new GroupDTO(0, "");
-    this.mockMvc.perform(post("/api/groups/new").contentType("application/json")
+    this.mockMvc.perform(post("/api/groups").contentType("application/json")
                     .content(objectMapper.writeValueAsString(groupDTO)))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.name", is("Name size should be between 2 and 20.")))

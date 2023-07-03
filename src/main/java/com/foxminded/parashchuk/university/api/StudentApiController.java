@@ -35,13 +35,6 @@ public class StudentApiController {
     return service.getAllStudents();
   }
 
-  /**Get id from field on the page and show edit page for this Student.*/
-  @PostMapping()
-  public StudentDTO findStudentById(@RequestParam(defaultValue = "0") int id){
-    log.info("Request for finding student by id {} for REST api", id);
-    return service.getStudentById(id);
-  }
-
   /**Return Student with id in path from database and show it to edit page.*/
   @GetMapping("/{studentId}")
   public StudentDTO studentEditForm(@PathVariable String studentId){
@@ -50,7 +43,7 @@ public class StudentApiController {
   }
 
   /**Get info from fields on the page for creating new Student.*/
-  @PostMapping("/new")
+  @PostMapping()
   public ResponseEntity<StudentDTO> studentCreate(@Valid @RequestBody StudentDTO studentDTO){
     StudentDTO savedStudent = service.createStudent(studentDTO);
     log.info("New student was created with firstname {}, lastname {}",

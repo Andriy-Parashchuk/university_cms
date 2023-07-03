@@ -79,38 +79,6 @@ class LessonApiControllerTest {
 
 
   @Test
-  void findLessonById_shouldReturnLesson_whenLessonIsExists() throws Exception {
-    when(service.getLessonById(1)).thenReturn(firstLesson);
-    this.mockMvc.perform(post("/api/lessons")
-                    .param("id", "1"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.id", is(1)))
-            .andExpect(jsonPath("$.name", is("Math")))
-            .andExpect(jsonPath("$.teacherId", is(2)))
-            .andExpect(jsonPath("$.groupId", is(1)))
-            .andExpect(jsonPath("$.time", is("2023-02-10T10:30:00")))
-            .andExpect(jsonPath("$.audience", is(305)))
-            .andDo(print());
-
-    verify(service, times(1)).getLessonById(1);
-  }
-
-
-  @Test
-  void findLessonById_shouldReturnError_whenLessonDoesNotExists() throws Exception {
-    when(service.getLessonById(1)).thenThrow(NoSuchElementException.class);
-    this.mockMvc.perform(post("/api/lessons")
-                    .param("id", "1"))
-            .andExpect(status().isBadRequest())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.error", is("This lesson does not exists.")))
-            .andDo(print());
-
-    verify(service, times(1)).getLessonById(1);
-  }
-
-  @Test
   void lessonEditForm_shouldReturnLesson_whenLessonIsExists() throws Exception {
     when(service.getLessonById(1)).thenReturn(firstLesson);
     this.mockMvc.perform(get("/api/lessons/1"))
@@ -142,7 +110,7 @@ class LessonApiControllerTest {
   @Test
   void lessonCreate_shouldReturnCreatedLesson_whenGetRequiredData() throws Exception {
     when(service.createLesson(firstLesson)).thenReturn(firstLesson);
-    this.mockMvc.perform(post("/api/lessons/new").contentType("application/json")
+    this.mockMvc.perform(post("/api/lessons").contentType("application/json")
                     .content(objectMapper.writeValueAsString(firstLesson)))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.id", is(1)))
@@ -159,7 +127,7 @@ class LessonApiControllerTest {
   @Test
   void lessonCreate_shouldReturnIntegrityError_whenGetNotCorrectDataForGroup() throws Exception {
     when(service.createLesson(firstLesson)).thenThrow(DataIntegrityViolationException.class);
-    this.mockMvc.perform(post("/api/lessons/new").contentType("application/json")
+    this.mockMvc.perform(post("/api/lessons").contentType("application/json")
                     .content(objectMapper.writeValueAsString(firstLesson)))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.error",
@@ -172,7 +140,7 @@ class LessonApiControllerTest {
     LessonDTO lessonDTO = new LessonDTO(1, "", 0, 0,
             null, 0);
 
-    this.mockMvc.perform(post("/api/lessons/new").contentType("application/json")
+    this.mockMvc.perform(post("/api/lessons").contentType("application/json")
                     .content(objectMapper.writeValueAsString(lessonDTO)))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.name", is("Name size should be between 2 and 20")))

@@ -73,37 +73,6 @@ class StudentApiControllerTest {
 
 
   @Test
-  void findStudentById_shouldReturnStudent_whenStudentIsExists() throws Exception {
-    when(service.getStudentById(1)).thenReturn(firstStudent);
-    this.mockMvc.perform(post("/api/students")
-                    .param("id", "1"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.id", is(1)))
-            .andExpect(jsonPath("$.firstName", is("first")))
-            .andExpect(jsonPath("$.lastName", is("student")))
-            .andExpect(jsonPath("$.groupId", is(1)))
-            .andExpect(jsonPath("$.email", is("test@test.test")))
-            .andDo(print());
-
-    verify(service, times(1)).getStudentById(1);
-  }
-
-
-  @Test
-  void findStudentById_shouldReturnError_whenStudentDoesNotExists() throws Exception {
-    when(service.getStudentById(1)).thenThrow(NoSuchElementException.class);
-    this.mockMvc.perform(post("/api/students")
-                    .param("id", "1"))
-            .andExpect(status().isBadRequest())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.error", is("This student does not exists.")))
-            .andDo(print());
-
-    verify(service, times(1)).getStudentById(1);
-  }
-
-  @Test
   void studentEditForm_shouldReturnStudent_whenStudentIsExists() throws Exception {
     when(service.getStudentById(1)).thenReturn(firstStudent);
     this.mockMvc.perform(get("/api/students/1"))
@@ -134,7 +103,7 @@ class StudentApiControllerTest {
   @Test
   void studentCreate_shouldReturnSavedStudent_whenGetRequiredData() throws Exception {
     when(service.createStudent(firstStudent)).thenReturn(firstStudent);
-    this.mockMvc.perform(post("/api/students/new").contentType("application/json")
+    this.mockMvc.perform(post("/api/students").contentType("application/json")
                     .content(objectMapper.writeValueAsString(firstStudent)))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.id", is(1)))
@@ -150,7 +119,7 @@ class StudentApiControllerTest {
   @Test
   void studentCreate_shouldReturnIntegrityError_whenGetNotCorrectDataForGroup() throws Exception {
     when(service.createStudent(firstStudent)).thenThrow(DataIntegrityViolationException.class);
-    this.mockMvc.perform(post("/api/students/new").contentType("application/json")
+    this.mockMvc.perform(post("/api/students").contentType("application/json")
                     .content(objectMapper.writeValueAsString(firstStudent)))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.error", is("This group does not exists for set reference for student.")))
@@ -161,7 +130,7 @@ class StudentApiControllerTest {
   void studentCreate_shouldReturnValidationError_whenGetNotCorrectData() throws Exception {
     StudentDTO studentDTO = new StudentDTO(0, "", "", 0, "");
 
-    this.mockMvc.perform(post("/api/students/new").contentType("application/json")
+    this.mockMvc.perform(post("/api/students").contentType("application/json")
                     .content(objectMapper.writeValueAsString(studentDTO)))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.firstName", is("Firstname size should be between 2 and 20.")))
