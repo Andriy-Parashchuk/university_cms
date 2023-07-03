@@ -3,7 +3,6 @@ package com.foxminded.parashchuk.university.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foxminded.parashchuk.university.dto.LessonDTO;
 import com.foxminded.parashchuk.university.exceptions.LessonsNotFoundExceptions;
-import com.foxminded.parashchuk.university.service.LessonService;
 import com.foxminded.parashchuk.university.service.ScheduleService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,7 +44,7 @@ class ScheduleApiControllerTest {
 
   @Test
   void getChosenSchedule_shouldRedirectToChooseScheduleWithDangerMessage_whenGetNotCorrectTime() throws Exception {
-    this.mockMvc.perform(post("/schedule_api/")
+    this.mockMvc.perform(post("/api/schedule")
                     .param("type", "group")
                     .param("id", "3")
                     .param("period", "day")
@@ -61,7 +60,7 @@ class ScheduleApiControllerTest {
     when(service.getLessonsStudentDay(1, LocalDate.parse("2023-02-10")))
             .thenThrow(NoSuchElementException.class);
 
-    this.mockMvc.perform(post("/schedule_api/")
+    this.mockMvc.perform(post("/api/schedule")
                     .param("type", "student")
                     .param("id", "1")
                     .param("period", "day")
@@ -77,7 +76,7 @@ class ScheduleApiControllerTest {
     when(service.getLessonsStudentDay(1, LocalDate.parse("2023-02-10")))
             .thenThrow(LessonsNotFoundExceptions.class);
 
-    this.mockMvc.perform(post("/schedule_api/")
+    this.mockMvc.perform(post("/api/schedule")
                     .param("type", "student")
                     .param("id", "1")
                     .param("period", "day")
@@ -95,7 +94,7 @@ class ScheduleApiControllerTest {
     when(service.getLessonsStudentDay(1, LocalDate.parse("2023-02-10")))
             .thenReturn(lessons);
 
-    this.mockMvc.perform(post("/schedule_api/")
+    this.mockMvc.perform(post("/api/schedule")
                     .param("type", "student")
                     .param("id", "1")
                     .param("period", "day")
@@ -117,7 +116,7 @@ class ScheduleApiControllerTest {
     when(service.getLessonsStudentMonth(1, LocalDate.parse("2023-02-10")))
             .thenReturn(lessons);
 
-    this.mockMvc.perform(post("/schedule_api/")
+    this.mockMvc.perform(post("/api/schedule")
                     .param("type", "student")
                     .param("id", "1")
                     .param("period", "month")
@@ -139,7 +138,7 @@ class ScheduleApiControllerTest {
     when(service.getLessonsTeacherDay(1, LocalDate.parse("2023-02-10")))
             .thenReturn(lessons);
 
-    this.mockMvc.perform(post("/schedule_api/")
+    this.mockMvc.perform(post("/api/schedule")
                     .param("type", "teacher")
                     .param("id", "1")
                     .param("period", "day")
@@ -161,7 +160,7 @@ class ScheduleApiControllerTest {
     when(service.getLessonsTeacherMonth(1, LocalDate.parse("2023-02-10")))
             .thenReturn(lessons);
 
-    this.mockMvc.perform(post("/schedule_api/")
+    this.mockMvc.perform(post("/api/schedule")
                     .param("type", "teacher")
                     .param("id", "1")
                     .param("period", "month")

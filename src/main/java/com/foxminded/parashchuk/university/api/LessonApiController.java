@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 
 /**Class for connecting UI with Lesson model via REST api.*/
 @RestController
-@RequestMapping("/lessons_api")
+@RequestMapping("/api/lessons")
 public class LessonApiController {
 
   @Autowired
@@ -30,7 +30,7 @@ public class LessonApiController {
   private static final Logger log = LoggerFactory.getLogger(LessonApiController.class);
 
   /**Return all Students from database and transfer via REST.*/
-  @GetMapping("/all")
+  @GetMapping()
   public List<LessonDTO> showAllLessons(){
     log.info("All data from lessons was transfer to REST");
     return service.getAllLessons();
@@ -38,7 +38,7 @@ public class LessonApiController {
 
 
   /**Get id from field on the page and show edit page for this Lesson.*/
-  @PostMapping("/all")
+  @PostMapping()
   public LessonDTO findLessonById(@RequestParam(defaultValue = "0") int id){
     log.info("Request for finding lesson by id {} for REST api", id);
     return service.getLessonById(id);
@@ -46,10 +46,10 @@ public class LessonApiController {
 
   /**Get info from fields on the page for creating new Lesson.*/
   @PostMapping("/new")
-  public ResponseEntity<String> lessonCreate(@Valid @RequestBody LessonDTO lessonDTO){
+  public ResponseEntity<LessonDTO> lessonCreate(@Valid @RequestBody LessonDTO lessonDTO){
     LessonDTO savedLesson = service.createLesson(lessonDTO);
     log.info("New lesson was created with name {}", savedLesson.getName());
-    return ResponseEntity.ok("New lesson was created successfully.");
+    return new ResponseEntity<>(savedLesson, HttpStatus.CREATED);
   }
 
   /**Return Lesson with id in path from database and show it to edit page.*/
@@ -61,11 +61,11 @@ public class LessonApiController {
 
   /**Get new info from fields on the page for update existing Lesson.*/
   @PutMapping("/{lessonId}")
-  public ResponseEntity<String> lessonUpdate(@PathVariable String lessonId, @Valid @RequestBody LessonDTO lessonDTO){
+  public ResponseEntity<LessonDTO> lessonUpdate(@PathVariable String lessonId, @Valid @RequestBody LessonDTO lessonDTO){
     lessonDTO.setId(Integer.parseInt(lessonId));
-    service.updateLessonById(lessonDTO);
+    LessonDTO updatedLesson = service.updateLessonById(lessonDTO);
     log.info("Lesson with id {} was updated via REST.", lessonId);
-    return ResponseEntity.ok("Lesson was updated successfully.");
+    return ResponseEntity.ok(updatedLesson);
   }
 
   /**Delete Lesson by existing id.*/
@@ -73,7 +73,7 @@ public class LessonApiController {
   public ResponseEntity<String> deleteLesson(@PathVariable String lessonId){
       service.deleteLessonById(Integer.parseInt(lessonId));
       log.info("Lesson with id {} was deleted via REST.", lessonId);
-      return ResponseEntity.ok("Lesson was deleted successfully.");
+      return ResponseEntity.noContent().build();
   }
 
   /**Handler for Validation Exception.*/

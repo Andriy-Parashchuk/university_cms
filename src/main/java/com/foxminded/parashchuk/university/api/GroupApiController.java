@@ -22,7 +22,7 @@ import java.util.NoSuchElementException;
 /**Class for connecting UI with Group model via REST api.*/
 
 @RestController
-@RequestMapping("/groups_api")
+@RequestMapping("/api/groups")
 public class GroupApiController {
   private static final Logger log = LoggerFactory.getLogger(GroupApiController.class);
 
@@ -30,14 +30,14 @@ public class GroupApiController {
   private GroupService service;
 
   /**Return all Groups from database.*/
-  @GetMapping("/all")
+  @GetMapping()
   public List<GroupDTO> getAllGroups(){
     log.info("All data from groups was transfer to REST api");
     return service.getAllGroups();
   }
 
   /**Get id from field on the page and show edit page for this Group.*/
-  @PostMapping("/all")
+  @PostMapping()
   public GroupDTO findGroupById(@RequestParam(defaultValue = "0") int id){
     log.info("Request for finding group by id {} for REST api", id);
     return service.getGroupById(id);
@@ -52,19 +52,19 @@ public class GroupApiController {
 
   /**Get info from fields on the page for creating new Group.*/
   @PostMapping("/new")
-  public ResponseEntity<String> groupCreate(@Valid @RequestBody GroupDTO groupDTO){
+  public ResponseEntity<GroupDTO> groupCreate(@Valid @RequestBody GroupDTO groupDTO){
     GroupDTO savedGroup = service.createGroup(groupDTO);
     log.info("New group was created with name {}", savedGroup.getName());
-    return ResponseEntity.ok("New group was created successfully.");
+    return new ResponseEntity<>(savedGroup, HttpStatus.CREATED);
   }
 
   /**Get new info from fields on the page for update existing Group.*/
   @PutMapping("/{groupId}")
-  public ResponseEntity<String> groupUpdate(@PathVariable String groupId, @Valid @RequestBody GroupDTO groupDTO){
+  public ResponseEntity<GroupDTO> groupUpdate(@PathVariable String groupId, @Valid @RequestBody GroupDTO groupDTO){
     groupDTO.setId(Integer.parseInt(groupId));
-    service.updateGroupById(groupDTO);
+    GroupDTO updatedGroup = service.updateGroupById(groupDTO);
     log.info("Group with id {} was updated via REST.", groupId);
-    return ResponseEntity.ok("New group was update successfully.");
+    return ResponseEntity.ok(updatedGroup);
   }
 
   /**Delete Group by existing id.*/
@@ -72,7 +72,7 @@ public class GroupApiController {
   public ResponseEntity<String> deleteGroup(@PathVariable String groupId){
     service.deleteGroupById(Integer.parseInt(groupId));
     log.info("Group with id {} was deleted via REST.", groupId);
-    return ResponseEntity.ok("New group was deleted successfully.");
+    return ResponseEntity.noContent().build();
   }
 
   /**Handler for Validation Exception.*/

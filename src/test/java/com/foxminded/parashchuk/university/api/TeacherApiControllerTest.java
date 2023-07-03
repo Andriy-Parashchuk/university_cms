@@ -54,7 +54,7 @@ class TeacherApiControllerTest {
   @Test
   void getAllTeachers_shouldReturnAllData_whenDbIsNotEmpty() throws Exception {
     when(service.getAllTeachers()).thenReturn(teachers);
-    this.mockMvc.perform(get("/teachers_api/all"))
+    this.mockMvc.perform(get("/api/teachers"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$[0].id", is(1)))
@@ -73,7 +73,7 @@ class TeacherApiControllerTest {
   @Test
   void findTeacherById_shouldReturnGroup_whenTeacherIsExists() throws Exception {
     when(service.getTeacherById(1)).thenReturn(firstTeacher);
-    this.mockMvc.perform(post("/teachers_api/all")
+    this.mockMvc.perform(post("/api/teachers")
                     .param("id", "1"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
@@ -89,7 +89,7 @@ class TeacherApiControllerTest {
   @Test
   void findTeacherById_shouldReturnError_whenTeacherDoesNotExists() throws Exception {
     when(service.getTeacherById(1)).thenThrow(NoSuchElementException.class);
-    this.mockMvc.perform(post("/teachers_api/all")
+    this.mockMvc.perform(post("/api/teachers")
                     .param("id", "1"))
             .andExpect(status().isBadRequest())
             .andExpect(content().contentType("application/json"))
@@ -102,7 +102,7 @@ class TeacherApiControllerTest {
   @Test
   void teacherEditForm_shouldReturnTeacher_whenTeacherIsExists() throws Exception {
     when(service.getTeacherById(1)).thenReturn(firstTeacher);
-    this.mockMvc.perform(get("/teachers_api/1"))
+    this.mockMvc.perform(get("/api/teachers/1"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$.id", is(1)))
@@ -117,7 +117,7 @@ class TeacherApiControllerTest {
   @Test
   void teacherEditForm_shouldReturnError_whenTeacherDoesNotExists() throws Exception {
     when(service.getTeacherById(1)).thenThrow(NoSuchElementException.class);
-    this.mockMvc.perform(get("/teachers_api/1"))
+    this.mockMvc.perform(get("/api/teachers/1"))
             .andExpect(status().isBadRequest())
             .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$.error", is("This teacher does not exists.")))
@@ -132,10 +132,15 @@ class TeacherApiControllerTest {
     firstTeacher.setAudience(1);
 
     when(service.createTeacher(firstTeacher)).thenReturn(firstTeacher);
-    this.mockMvc.perform(post("/teachers_api/new").contentType("application/json")
+    this.mockMvc.perform(post("/api/teachers/new").contentType("application/json")
                     .content(objectMapper.writeValueAsString(firstTeacher)))
-            .andExpect(status().isOk())
-            .andExpect(content().string(containsString("New teacher was created successfully.")))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.id", is(1)))
+            .andExpect(jsonPath("$.firstName", is("first")))
+            .andExpect(jsonPath("$.lastName", is("teacher")))
+            .andExpect(jsonPath("$.email", is("test@test.test")))
+            .andExpect(jsonPath("$.department", is("bio")))
+            .andExpect(jsonPath("$.audience", is(1)))
             .andDo(print());
 
     verify(service, times(1)).createTeacher(firstTeacher);
@@ -146,7 +151,7 @@ class TeacherApiControllerTest {
     TeacherDTO teacherDTO = new TeacherDTO(0, "", "", "");
     teacherDTO.setDepartment("");
     teacherDTO.setAudience(1);
-    this.mockMvc.perform(post("/teachers_api/new").contentType("application/json")
+    this.mockMvc.perform(post("/api/teachers/new").contentType("application/json")
                     .content(objectMapper.writeValueAsString(teacherDTO)))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.firstName", is("Firstname size should be between 2 and 20.")))
@@ -164,10 +169,15 @@ class TeacherApiControllerTest {
     teacherDTO.setAudience(1);
 
     when(service.updateTeacherById(teacherDTO)).thenReturn(teacherDTO);
-    this.mockMvc.perform(put("/teachers_api/1").contentType("application/json")
+    this.mockMvc.perform(put("/api/teachers/1").contentType("application/json")
                     .content(objectMapper.writeValueAsString(teacherDTO)))
             .andExpect(status().isOk())
-            .andExpect(content().string(containsString("Teacher was updated successfully.")))
+            .andExpect(jsonPath("$.id", is(1)))
+            .andExpect(jsonPath("$.firstName", is("updated")))
+            .andExpect(jsonPath("$.lastName", is("teacher")))
+            .andExpect(jsonPath("$.email", is("test@test.test")))
+            .andExpect(jsonPath("$.department", is("bio")))
+            .andExpect(jsonPath("$.audience", is(1)))
             .andDo(print());
 
     verify(service, times(1)).updateTeacherById(teacherDTO);
@@ -179,7 +189,7 @@ class TeacherApiControllerTest {
     teacherDTO.setDepartment("");
     teacherDTO.setAudience(1);
 
-    this.mockMvc.perform(put("/teachers_api/1").contentType("application/json")
+    this.mockMvc.perform(put("/api/teachers/1").contentType("application/json")
                     .content(objectMapper.writeValueAsString(teacherDTO)))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.firstName", is("Firstname size should be between 2 and 20.")))
@@ -191,16 +201,16 @@ class TeacherApiControllerTest {
 
   @Test
   void teacherDelete_shouldReturnSuccessString_whenGetExistingId() throws Exception {
-    this.mockMvc.perform(delete("/teachers_api/1").contentType("application/json"))
-            .andExpect(status().isOk())
-            .andExpect(content().string(containsString("Teacher was deleted successfully.")))
+    doNothing().when(service).deleteTeacherById(1);
+    this.mockMvc.perform(delete("/api/teachers/1").contentType("application/json"))
+            .andExpect(status().isNoContent())
             .andDo(print());
   }
 
   @Test
   void teacherDelete_shouldReturnBadRequest_whenIdDoesNotExists() throws Exception {
     doThrow(EmptyResultDataAccessException.class).when(service).deleteTeacherById(1);
-    this.mockMvc.perform(delete("/teachers_api/1").contentType("application/json"))
+    this.mockMvc.perform(delete("/api/teachers/1").contentType("application/json"))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.error", is("This teacher does not exists.")))
 

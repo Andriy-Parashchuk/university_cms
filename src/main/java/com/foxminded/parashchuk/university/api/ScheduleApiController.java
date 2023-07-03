@@ -17,7 +17,7 @@ import java.util.*;
 
 /**Class for connecting UI with Schedule model via REST api.*/
 @RestController
-@RequestMapping("/schedule_api")
+@RequestMapping("/api/schedule")
 public class ScheduleApiController {
 
   @Autowired
@@ -26,7 +26,7 @@ public class ScheduleApiController {
   private static final Logger log = LoggerFactory.getLogger(ScheduleApiController.class);
 
   /**Get data from fields and show all lessons for group or teacher by day/month.*/
-  @PostMapping("/")
+  @PostMapping()
   public List<LessonDTO> getChosenSchedule(@RequestParam String type, @RequestParam(defaultValue = "0") int id,
                                            @RequestParam String period, @RequestParam String time)
           throws LessonsNotFoundExceptions {

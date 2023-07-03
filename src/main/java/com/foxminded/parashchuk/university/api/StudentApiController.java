@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 
 /**Class for connecting UI with Student model via REST.*/
 @RestController
-@RequestMapping("/students_api")
+@RequestMapping("/api/students")
 public class StudentApiController {
 
   @Autowired
@@ -29,14 +29,14 @@ public class StudentApiController {
   private static final Logger log = LoggerFactory.getLogger(StudentApiController.class);
 
   /**Return all Students from database and transfer via REST.*/
-  @GetMapping("/all")
+  @GetMapping()
   public List<StudentDTO> showAllStudents(){
     log.info("All data from students was transfer to REST");
     return service.getAllStudents();
   }
 
   /**Get id from field on the page and show edit page for this Student.*/
-  @PostMapping("/all")
+  @PostMapping()
   public StudentDTO findStudentById(@RequestParam(defaultValue = "0") int id){
     log.info("Request for finding student by id {} for REST api", id);
     return service.getStudentById(id);
@@ -51,20 +51,20 @@ public class StudentApiController {
 
   /**Get info from fields on the page for creating new Student.*/
   @PostMapping("/new")
-  public ResponseEntity<String> studentCreate(@Valid @RequestBody StudentDTO studentDTO){
+  public ResponseEntity<StudentDTO> studentCreate(@Valid @RequestBody StudentDTO studentDTO){
     StudentDTO savedStudent = service.createStudent(studentDTO);
     log.info("New student was created with firstname {}, lastname {}",
             savedStudent.getFirstName(), savedStudent.getLastName());
-    return ResponseEntity.ok("New student was created successfully.");
+    return new ResponseEntity<>(savedStudent, HttpStatus.CREATED);
   }
 
   /**Get new info from fields on the page for edit existing Student.*/
   @PutMapping("/{studentId}")
-  public ResponseEntity<String> studentUpdate(@PathVariable String studentId, @Valid @RequestBody StudentDTO studentDTO){
+  public ResponseEntity<StudentDTO> studentUpdate(@PathVariable String studentId, @Valid @RequestBody StudentDTO studentDTO){
     studentDTO.setId(Integer.parseInt(studentId));
-    service.updateStudentById(studentDTO);
+    StudentDTO updateStudent = service.updateStudentById(studentDTO);
     log.info("Student with id {} was updated via REST.", studentId);
-    return ResponseEntity.ok("Student was updated successfully.");
+    return ResponseEntity.ok(updateStudent);
   }
 
   /**Delete Student by existing id.*/
@@ -72,7 +72,7 @@ public class StudentApiController {
   public ResponseEntity<String> deleteStudent(@PathVariable String studentId){
     service.deleteStudentById(Integer.parseInt(studentId));
     log.info("Student with id {} was deleted via REST.", studentId);
-    return ResponseEntity.ok("Student was deleted successfully.");
+    return ResponseEntity.noContent().build();
   }
 
   /**Handler for Validation Exception.*/

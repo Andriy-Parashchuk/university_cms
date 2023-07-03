@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 
 /**Class REST api for Teacher model.*/
 @RestController
-@RequestMapping("/teachers_api")
+@RequestMapping("/api/teachers")
 public class TeacherApiController {
 
   @Autowired
@@ -30,14 +30,14 @@ public class TeacherApiController {
 
 
   /**Return all Teacher from database and show them to UI.*/
-  @GetMapping("/all")
+  @GetMapping()
   public List<TeacherDTO> getAllTeachers(){
     log.info("All data from teachers was transfer to REST api");
     return service.getAllTeachers();
   }
 
   /**Get id from field on the page and show edit page for this Teacher.*/
-  @PostMapping("/all")
+  @PostMapping()
   public TeacherDTO findTeacherById(@RequestParam(defaultValue = "0") int id){
     log.info("Request for finding teacher by id {} for REST api", id);
     return service.getTeacherById(id);
@@ -52,20 +52,20 @@ public class TeacherApiController {
 
   /**Get info from fields on the page for creating new Teacher.*/
   @PostMapping("/new")
-  public ResponseEntity<String> teacherCreate(@Valid @RequestBody TeacherDTO teacherDTO){
+  public ResponseEntity<TeacherDTO> teacherCreate(@Valid @RequestBody TeacherDTO teacherDTO){
     TeacherDTO savedTeacher = service.createTeacher(teacherDTO);
     log.info("New teacher was created with firstname {}, lastname {}",
             savedTeacher.getFirstName(), savedTeacher.getLastName());
-    return ResponseEntity.ok("New teacher was created successfully.");
+    return new ResponseEntity<>(savedTeacher, HttpStatus.CREATED);
   }
 
   /**Get new info from fields on the page for edit existing Teacher.*/
   @PutMapping("/{teacherId}")
-  public ResponseEntity<String> teacherUpdate(@PathVariable String teacherId, @Valid @RequestBody TeacherDTO teacherDTO){
+  public ResponseEntity<TeacherDTO> teacherUpdate(@PathVariable String teacherId, @Valid @RequestBody TeacherDTO teacherDTO){
     teacherDTO.setId(Integer.parseInt(teacherId));
-    service.updateTeacherById(teacherDTO);
+    TeacherDTO updatedTeacher = service.updateTeacherById(teacherDTO);
     log.info("Teacher with id {} was updated via REST.", teacherId);
-    return ResponseEntity.ok("Teacher was updated successfully.");
+    return ResponseEntity.ok(updatedTeacher);
   }
 
   /**Delete Teacher by existing id.*/
@@ -73,7 +73,7 @@ public class TeacherApiController {
   public ResponseEntity<String> deleteTeacher(@PathVariable String teacherId){
     service.deleteTeacherById(Integer.parseInt(teacherId));
     log.info("Teacher with id {} was deleted via REST.", teacherId);
-    return ResponseEntity.ok("Teacher was deleted successfully.");
+    return ResponseEntity.noContent().build();
   }
 
   /**Handler for Validation Exception.*/
