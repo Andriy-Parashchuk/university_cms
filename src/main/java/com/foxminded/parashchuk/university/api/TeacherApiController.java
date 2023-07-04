@@ -30,22 +30,22 @@ public class TeacherApiController {
 
 
   /**Return all Teacher from database and show them to UI.*/
-  @GetMapping()
-  public List<TeacherDTO> getAllTeachers(){
+  @GetMapping
+  public List<TeacherDTO> getAll(){
     log.info("All data from teachers was transfer to REST api");
     return service.getAllTeachers();
   }
 
   /**Return Teacher with id in path from database and show it to edit page.*/
   @GetMapping("/{teacherId}")
-  public TeacherDTO teacherEditForm(@PathVariable String teacherId){
+  public TeacherDTO getById(@PathVariable String teacherId){
     log.info("Show edit form for teacher with id {} for REST api", teacherId);
     return service.getTeacherById(Integer.parseInt(teacherId));
   }
 
   /**Get info from fields on the page for creating new Teacher.*/
-  @PostMapping()
-  public ResponseEntity<TeacherDTO> teacherCreate(@Valid @RequestBody TeacherDTO teacherDTO){
+  @PostMapping
+  public ResponseEntity<TeacherDTO> create(@Valid @RequestBody TeacherDTO teacherDTO){
     TeacherDTO savedTeacher = service.createTeacher(teacherDTO);
     log.info("New teacher was created with firstname {}, lastname {}",
             savedTeacher.getFirstName(), savedTeacher.getLastName());
@@ -54,7 +54,7 @@ public class TeacherApiController {
 
   /**Get new info from fields on the page for edit existing Teacher.*/
   @PutMapping("/{teacherId}")
-  public ResponseEntity<TeacherDTO> teacherUpdate(@PathVariable String teacherId, @Valid @RequestBody TeacherDTO teacherDTO){
+  public ResponseEntity<TeacherDTO> update(@PathVariable String teacherId, @Valid @RequestBody TeacherDTO teacherDTO){
     teacherDTO.setId(Integer.parseInt(teacherId));
     TeacherDTO updatedTeacher = service.updateTeacherById(teacherDTO);
     log.info("Teacher with id {} was updated via REST.", teacherId);
@@ -63,7 +63,7 @@ public class TeacherApiController {
 
   /**Delete Teacher by existing id.*/
   @DeleteMapping("/{teacherId}")
-  public ResponseEntity<String> deleteTeacher(@PathVariable String teacherId){
+  public ResponseEntity<String> delete(@PathVariable String teacherId){
     service.deleteTeacherById(Integer.parseInt(teacherId));
     log.info("Teacher with id {} was deleted via REST.", teacherId);
     return ResponseEntity.noContent().build();

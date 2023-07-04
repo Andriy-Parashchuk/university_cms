@@ -30,15 +30,15 @@ public class LessonApiController {
   private static final Logger log = LoggerFactory.getLogger(LessonApiController.class);
 
   /**Return all Students from database and transfer via REST.*/
-  @GetMapping()
-  public List<LessonDTO> showAllLessons(){
+  @GetMapping
+  public List<LessonDTO> getAll(){
     log.info("All data from lessons was transfer to REST");
     return service.getAllLessons();
   }
 
   /**Get info from fields on the page for creating new Lesson.*/
-  @PostMapping()
-  public ResponseEntity<LessonDTO> lessonCreate(@Valid @RequestBody LessonDTO lessonDTO){
+  @PostMapping
+  public ResponseEntity<LessonDTO> create(@Valid @RequestBody LessonDTO lessonDTO){
     LessonDTO savedLesson = service.createLesson(lessonDTO);
     log.info("New lesson was created with name {}", savedLesson.getName());
     return new ResponseEntity<>(savedLesson, HttpStatus.CREATED);
@@ -46,14 +46,14 @@ public class LessonApiController {
 
   /**Return Lesson with id in path from database and show it to edit page.*/
   @GetMapping("/{lessonId}")
-  public LessonDTO studentEditForm(@PathVariable String lessonId){
+  public LessonDTO getById(@PathVariable String lessonId){
     log.info("Show edit form for student with id {} for REST api", lessonId);
     return service.getLessonById(Integer.parseInt(lessonId));
   }
 
   /**Get new info from fields on the page for update existing Lesson.*/
   @PutMapping("/{lessonId}")
-  public ResponseEntity<LessonDTO> lessonUpdate(@PathVariable String lessonId, @Valid @RequestBody LessonDTO lessonDTO){
+  public ResponseEntity<LessonDTO> update(@PathVariable String lessonId, @Valid @RequestBody LessonDTO lessonDTO){
     lessonDTO.setId(Integer.parseInt(lessonId));
     LessonDTO updatedLesson = service.updateLessonById(lessonDTO);
     log.info("Lesson with id {} was updated via REST.", lessonId);
@@ -62,7 +62,7 @@ public class LessonApiController {
 
   /**Delete Lesson by existing id.*/
   @DeleteMapping("/{lessonId}")
-  public ResponseEntity<String> deleteLesson(@PathVariable String lessonId){
+  public ResponseEntity<String> delete(@PathVariable String lessonId){
       service.deleteLessonById(Integer.parseInt(lessonId));
       log.info("Lesson with id {} was deleted via REST.", lessonId);
       return ResponseEntity.noContent().build();

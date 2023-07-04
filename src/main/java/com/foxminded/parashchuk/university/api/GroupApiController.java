@@ -30,22 +30,22 @@ public class GroupApiController {
   private GroupService service;
 
   /**Return all Groups from database.*/
-  @GetMapping()
-  public List<GroupDTO> getAllGroups(){
+  @GetMapping
+  public List<GroupDTO> getAll(){
     log.info("All data from groups was transfer to REST api");
     return service.getAllGroups();
   }
 
   /**Return Group with id in path from database and show it to edit page.*/
   @GetMapping("/{groupId}")
-  public GroupDTO groupEditForm(@PathVariable String groupId){
+  public GroupDTO getById(@PathVariable String groupId){
     log.info("Show edit form for group with id {} for REST api", groupId);
     return service.getGroupById(Integer.parseInt(groupId));
   }
 
   /**Get info from fields on the page for creating new Group.*/
-  @PostMapping()
-  public ResponseEntity<GroupDTO> groupCreate(@Valid @RequestBody GroupDTO groupDTO){
+  @PostMapping
+  public ResponseEntity<GroupDTO> create(@Valid @RequestBody GroupDTO groupDTO){
     GroupDTO savedGroup = service.createGroup(groupDTO);
     log.info("New group was created with name {}", savedGroup.getName());
     return new ResponseEntity<>(savedGroup, HttpStatus.CREATED);
@@ -53,7 +53,7 @@ public class GroupApiController {
 
   /**Get new info from fields on the page for update existing Group.*/
   @PutMapping("/{groupId}")
-  public ResponseEntity<GroupDTO> groupUpdate(@PathVariable String groupId, @Valid @RequestBody GroupDTO groupDTO){
+  public ResponseEntity<GroupDTO> update(@PathVariable String groupId, @Valid @RequestBody GroupDTO groupDTO){
     groupDTO.setId(Integer.parseInt(groupId));
     GroupDTO updatedGroup = service.updateGroupById(groupDTO);
     log.info("Group with id {} was updated via REST.", groupId);
@@ -62,7 +62,7 @@ public class GroupApiController {
 
   /**Delete Group by existing id.*/
   @DeleteMapping("/{groupId}")
-  public ResponseEntity<String> deleteGroup(@PathVariable String groupId){
+  public ResponseEntity<String> delete(@PathVariable String groupId){
     service.deleteGroupById(Integer.parseInt(groupId));
     log.info("Group with id {} was deleted via REST.", groupId);
     return ResponseEntity.noContent().build();
