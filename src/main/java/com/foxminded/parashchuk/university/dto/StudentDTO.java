@@ -1,6 +1,7 @@
 package com.foxminded.parashchuk.university.dto;
 
 
+import com.foxminded.parashchuk.university.models.Group;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;

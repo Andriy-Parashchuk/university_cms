@@ -4,6 +4,7 @@ import com.foxminded.parashchuk.university.dao.StudentRepository;
 import com.foxminded.parashchuk.university.dto.StudentDTO;
 import com.foxminded.parashchuk.university.models.Student;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,16 @@ import java.util.stream.Collectors;
 /**Class contains requests for StudentRepository class.*/
 @Service
 public class StudentService {
+  private final StudentRepository dao;
+
+  private final ModelMapper mapper;
+
   @Autowired
-  private StudentRepository dao;
-  @Autowired
-  private ModelMapper mapper;
+  public StudentService(ModelMapper mapper, StudentRepository dao){
+    this.mapper = mapper;
+    this.dao = dao;
+    mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+  }
 
   private static final Logger log = LoggerFactory.getLogger(StudentService.class);
 
@@ -47,6 +54,7 @@ public class StudentService {
 
   /**Get one student from table in DB by id.*/
   public StudentDTO getStudentById(int id) {
+
     log.info("Get Student with id {}.", id);
     Student student = dao.findById(id).orElse(null);
     if (student == null) {
@@ -64,7 +72,7 @@ public class StudentService {
       log.error("Student with id {} is not found.", studentDTO.getId());
       throw new NoSuchElementException(String.format("Student with id %d is not found.", studentDTO.getId()));
     }
-    return mapper.map(dao.save(mapper.map(checkedStudent, Student.class)), StudentDTO.class);
+    return mapper.map(dao.save(mapper.map(studentDTO, Student.class)), StudentDTO.class);
   }
 
   /**Delete student by id from table in DB.*/

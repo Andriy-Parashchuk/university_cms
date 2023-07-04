@@ -4,6 +4,7 @@ import com.foxminded.parashchuk.university.dao.LessonRepository;
 import com.foxminded.parashchuk.university.dto.LessonDTO;
 import com.foxminded.parashchuk.university.models.Lesson;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,17 @@ import java.util.stream.Collectors;
 
 @Service
 public class LessonService {
+
+  private final LessonRepository dao;
+
+  private final ModelMapper mapper;
+
   @Autowired
-  private LessonRepository dao;
-  @Autowired
-  private ModelMapper mapper;
+  public LessonService(ModelMapper mapper, LessonRepository dao){
+    this.mapper = mapper;
+    this.dao = dao;
+    mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+  }
 
   private static final Logger log = LoggerFactory.getLogger(LessonService.class);
 

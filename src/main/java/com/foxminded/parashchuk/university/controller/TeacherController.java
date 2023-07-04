@@ -42,7 +42,7 @@ public class TeacherController {
     return "redirect:/teachers/" + id;
   }
 
-  /**Return Lesson with id in path from database and show it to edit page.*/
+  /**Return Teacher with id in path from database and show it to edit page.*/
   @GetMapping("/{teacherId}")
   public String teacherEditForm(Model model, @PathVariable String teacherId, RedirectAttributes redirectAttributes){
     try{

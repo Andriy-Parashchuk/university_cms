@@ -6,20 +6,18 @@ import com.foxminded.parashchuk.university.service.ScheduleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 
 /**Class for connecting UI with Schedule model.*/
@@ -41,8 +39,7 @@ public class ScheduleController {
   @PostMapping("/")
   public String getChosenSchedule(@RequestParam String type, @RequestParam(defaultValue="0") int id,
                                   @RequestParam String period, @RequestParam String time,
-                                  Model model, RedirectAttributes redirectAttributes)
-          throws LessonsNotFoundExceptions {
+                                  Model model, RedirectAttributes redirectAttributes) {
     List<LessonDTO> lessons;
     LocalDate date;
     try{

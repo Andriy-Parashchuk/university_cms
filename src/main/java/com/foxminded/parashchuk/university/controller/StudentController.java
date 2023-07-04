@@ -35,7 +35,7 @@ public class StudentController {
     return "all_students";
   }
 
-  /**Get id from field on the page and show edit page for this Lesson.*/
+  /**Get id from field on the page and show edit page for this Student.*/
   @PostMapping("/all")
   public String findStudentById(@RequestParam(defaultValue="0") int id, Model model){
     model.addAttribute("id", id);
@@ -43,7 +43,7 @@ public class StudentController {
     return "redirect:/students/" + id;
   }
 
-  /**Return Lesson with id in path from database and show it to edit page.*/
+  /**Return Student with id in path from database and show it to edit page.*/
   @GetMapping("/{studentId}")
   public String studentEditForm(Model model, @PathVariable String studentId, RedirectAttributes redirectAttributes){
     try{
@@ -59,7 +59,7 @@ public class StudentController {
     }
   }
 
-  /**Get new info from fields on the page for edit existing Lesson.*/
+  /**Get new info from fields on the page for edit existing Student.*/
   @PostMapping("/{studentId}")
   public String studentEdit(@PathVariable String studentId, @Valid StudentDTO studentDTO, BindingResult bindingResult,
                             Model model, RedirectAttributes redirectAttributes){
@@ -87,7 +87,7 @@ public class StudentController {
   }
 
 
-  /**Show page for creating new Lesson.*/
+  /**Show page for creating new Student.*/
   @GetMapping("/new")
   public String studentCreateForm(Model model){
     model.addAttribute("student", new StudentDTO());
@@ -95,7 +95,7 @@ public class StudentController {
     return "create/student_new";
   }
 
-  /**Get info from fields on the page for creating new Lesson.*/
+  /**Get info from fields on the page for creating new Student.*/
   @PostMapping("/new")
   public String studentCreate(@Valid StudentDTO studentDTO, BindingResult bindingResult,
                             Model model,
@@ -121,7 +121,7 @@ public class StudentController {
     return "redirect:/students/all";
   }
 
-  /**Delete Lesson by existing id.*/
+  /**Delete Student by existing id.*/
   @GetMapping("/delete/{studentId}")
   public String deleteStudent(Model model, @PathVariable String studentId, RedirectAttributes redirectAttributes){
     try {
