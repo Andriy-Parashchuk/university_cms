@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+  app:
+    container_name: app
+    image: 'university:latest'
+    build:
+      context: ./
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: 'postgres:13.1-alpine'
+    ports:
+      - "5432:5432"
+    container_name: postgres
+    environment:
+      - POSTGRES_DB=university
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
