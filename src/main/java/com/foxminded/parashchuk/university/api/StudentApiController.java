@@ -9,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +45,7 @@ public class StudentApiController {
 
   /**Get info from fields on the page for creating new Student.*/
   @PostMapping()
+  @PreAuthorize("hasRole('university_admin') or hasRole('university_teacher')")
   public ResponseEntity<StudentDTO> create(@Valid @RequestBody StudentDTO studentDTO){
     StudentDTO savedStudent = service.createStudent(studentDTO);
     log.info("New student was created with firstname {}, lastname {}",
@@ -53,6 +55,7 @@ public class StudentApiController {
 
   /**Get new info from fields on the page for edit existing Student.*/
   @PutMapping("/{studentId}")
+  @PreAuthorize("hasRole('university_admin') or hasRole('university_teacher')")
   public ResponseEntity<StudentDTO> update(@PathVariable String studentId, @Valid @RequestBody StudentDTO studentDTO){
     studentDTO.setId(Integer.parseInt(studentId));
     StudentDTO updateStudent = service.updateStudentById(studentDTO);
@@ -62,6 +65,7 @@ public class StudentApiController {
 
   /**Delete Student by existing id.*/
   @DeleteMapping("/{studentId}")
+  @PreAuthorize("hasRole('university_admin')")
   public ResponseEntity<String> delete(@PathVariable String studentId){
     service.deleteStudentById(Integer.parseInt(studentId));
     log.info("Student with id {} was deleted via REST.", studentId);

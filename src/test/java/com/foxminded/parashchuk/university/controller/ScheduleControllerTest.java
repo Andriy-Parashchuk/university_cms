@@ -1,5 +1,6 @@
 package com.foxminded.parashchuk.university.controller;
 
+import com.foxminded.parashchuk.university.config.TestSecurityConfig;
 import com.foxminded.parashchuk.university.dto.LessonDTO;
 import com.foxminded.parashchuk.university.exceptions.LessonsNotFoundExceptions;
 import com.foxminded.parashchuk.university.models.Lesson;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -29,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(ScheduleController.class)
 @AutoConfigureMockMvc
+@ContextConfiguration(classes = {TestSecurityConfig.class, ScheduleController.class})
 class ScheduleControllerTest {
 
   @MockBean

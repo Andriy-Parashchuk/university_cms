@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +46,7 @@ public class TeacherApiController {
 
   /**Get info from fields on the page for creating new Teacher.*/
   @PostMapping
+  @PreAuthorize("hasRole('university_admin') or hasRole('university_teacher')")
   public ResponseEntity<TeacherDTO> create(@Valid @RequestBody TeacherDTO teacherDTO){
     TeacherDTO savedTeacher = service.createTeacher(teacherDTO);
     log.info("New teacher was created with firstname {}, lastname {}",
@@ -54,6 +56,7 @@ public class TeacherApiController {
 
   /**Get new info from fields on the page for edit existing Teacher.*/
   @PutMapping("/{teacherId}")
+  @PreAuthorize("hasRole('university_admin') or hasRole('university_teacher')")
   public ResponseEntity<TeacherDTO> update(@PathVariable String teacherId, @Valid @RequestBody TeacherDTO teacherDTO){
     teacherDTO.setId(Integer.parseInt(teacherId));
     TeacherDTO updatedTeacher = service.updateTeacherById(teacherDTO);
@@ -63,6 +66,7 @@ public class TeacherApiController {
 
   /**Delete Teacher by existing id.*/
   @DeleteMapping("/{teacherId}")
+  @PreAuthorize("hasRole('university_admin')")
   public ResponseEntity<String> delete(@PathVariable String teacherId){
     service.deleteTeacherById(Integer.parseInt(teacherId));
     log.info("Teacher with id {} was deleted via REST.", teacherId);

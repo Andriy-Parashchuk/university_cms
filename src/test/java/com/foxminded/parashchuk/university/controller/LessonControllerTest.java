@@ -1,5 +1,6 @@
 package com.foxminded.parashchuk.university.controller;
 
+import com.foxminded.parashchuk.university.config.TestSecurityConfig;
 import com.foxminded.parashchuk.university.dto.LessonDTO;
 import com.foxminded.parashchuk.university.models.Lesson;
 import com.foxminded.parashchuk.university.service.LessonService;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -31,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(LessonController.class)
 @AutoConfigureMockMvc
+@ContextConfiguration(classes = {TestSecurityConfig.class, LessonController.class})
 class LessonControllerTest {
 
   @MockBean

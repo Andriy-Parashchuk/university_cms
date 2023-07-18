@@ -9,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +39,7 @@ public class LessonApiController {
 
   /**Get info from fields on the page for creating new Lesson.*/
   @PostMapping
+  @PreAuthorize("hasRole('university_admin') or hasRole('university_teacher')")
   public ResponseEntity<LessonDTO> create(@Valid @RequestBody LessonDTO lessonDTO){
     LessonDTO savedLesson = service.createLesson(lessonDTO);
     log.info("New lesson was created with name {}", savedLesson.getName());
@@ -53,6 +55,7 @@ public class LessonApiController {
 
   /**Get new info from fields on the page for update existing Lesson.*/
   @PutMapping("/{lessonId}")
+  @PreAuthorize("hasRole('university_admin') or hasRole('university_teacher')")
   public ResponseEntity<LessonDTO> update(@PathVariable String lessonId, @Valid @RequestBody LessonDTO lessonDTO){
     lessonDTO.setId(Integer.parseInt(lessonId));
     LessonDTO updatedLesson = service.updateLessonById(lessonDTO);
@@ -62,6 +65,7 @@ public class LessonApiController {
 
   /**Delete Lesson by existing id.*/
   @DeleteMapping("/{lessonId}")
+  @PreAuthorize("hasRole('university_admin') or hasRole('university_teacher')")
   public ResponseEntity<String> delete(@PathVariable String lessonId){
       service.deleteLessonById(Integer.parseInt(lessonId));
       log.info("Lesson with id {} was deleted via REST.", lessonId);

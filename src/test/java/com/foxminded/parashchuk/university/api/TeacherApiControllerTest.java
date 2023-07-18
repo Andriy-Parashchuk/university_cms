@@ -1,6 +1,7 @@
 package com.foxminded.parashchuk.university.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.foxminded.parashchuk.university.config.TestSecurityConfig;
 import com.foxminded.parashchuk.university.dto.TeacherDTO;
 import com.foxminded.parashchuk.university.service.TeacherService;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -26,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(TeacherApiController.class)
+@ContextConfiguration(classes = {TestSecurityConfig.class, TeacherApiController.class})
 class TeacherApiControllerTest {
 
   @Autowired

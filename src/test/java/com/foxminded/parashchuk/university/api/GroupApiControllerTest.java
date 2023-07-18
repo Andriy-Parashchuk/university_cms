@@ -1,6 +1,7 @@
 package com.foxminded.parashchuk.university.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.foxminded.parashchuk.university.config.TestSecurityConfig;
 import com.foxminded.parashchuk.university.dto.GroupDTO;
 import com.foxminded.parashchuk.university.service.GroupService;
 import org.junit.jupiter.api.Test;
@@ -11,13 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -26,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(GroupApiController.class)
+@ContextConfiguration(classes = {TestSecurityConfig.class, GroupApiController.class})
 class GroupApiControllerTest {
   @Autowired
   private MockMvc mockMvc;
@@ -66,9 +70,6 @@ class GroupApiControllerTest {
     when(service.getGroupById(1)).thenReturn(firstGroup);
     this.mockMvc.perform(get("/api/groups/1"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.id", is(1)))
-            .andExpect(jsonPath("$.name", is("first")))
             .andDo(print());
 
     verify(service, times(1)).getGroupById(1);

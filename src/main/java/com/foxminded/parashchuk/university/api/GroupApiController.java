@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +46,7 @@ public class GroupApiController {
 
   /**Get info from fields on the page for creating new Group.*/
   @PostMapping
+  @PreAuthorize("hasRole('university_admin') or hasRole('university_teacher')")
   public ResponseEntity<GroupDTO> create(@Valid @RequestBody GroupDTO groupDTO){
     GroupDTO savedGroup = service.createGroup(groupDTO);
     log.info("New group was created with name {}", savedGroup.getName());
@@ -53,6 +55,7 @@ public class GroupApiController {
 
   /**Get new info from fields on the page for update existing Group.*/
   @PutMapping("/{groupId}")
+  @PreAuthorize("hasRole('university_admin') or hasRole('university_teacher')")
   public ResponseEntity<GroupDTO> update(@PathVariable String groupId, @Valid @RequestBody GroupDTO groupDTO){
     groupDTO.setId(Integer.parseInt(groupId));
     GroupDTO updatedGroup = service.updateGroupById(groupDTO);
